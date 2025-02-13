@@ -1,0 +1,7 @@
+version: '2'
+plugins:
+  python:
+    enabled: true
+ratings:
+  paths:
+    - "src/"
