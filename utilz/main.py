@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 def init():
     init_logging(LOG_LEVEL)
-    load_dotenv(dotenv_path=".env", override=True, encoding="utf-8")
+    load_dotenv(dotenv_path="local_cicd/.env", override=True, encoding="utf-8")
 
 
 def main():

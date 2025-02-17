@@ -1,0 +1,6 @@
+[run]
+source = src/pyport
+omit =
+    **/__init__.py
+    tests/*
+    */test_*.py

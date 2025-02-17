@@ -14,7 +14,7 @@ from pyport.constants import PORT_API_US_URL, PORT_API_URL, GENERIC_HEADERS
 
 
 class PortClient:
-    def __init__(self, client_id: str = "", client_secret: str = "", us_region: bool = False,
+    def __init__(self, client_id: str, client_secret: str, us_region: bool = False,
                  auto_refresh: bool = True, refresh_interval: int = 900):
         """
         Initialize the PortClient.
@@ -74,7 +74,7 @@ class PortClient:
             except Exception as e:
                 self._logger.error(f"Failed to refresh token: {str(e)}")
 
-    def _get_access_token(self, client_id: str = "", client_secret: str = "") -> str:
+    def _get_access_token(self, client_id: str, client_secret: str) -> str:
         try:
             headers = GENERIC_HEADERS
             if not client_id or not client_secret:

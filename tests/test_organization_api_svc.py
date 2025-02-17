@@ -1,56 +1,67 @@
-from typing import Dict, List
-from src.pyport.models.api_category import BaseResource
+import unittest
+from unittest.mock import MagicMock
+from src.pyport.organization.organization_api_svc import Organizations
 
+class TestOrganizations(unittest.TestCase):
+    def setUp(self):
+        # Create a dummy client with a mocked make_request method.
+        self.mock_client = MagicMock()
+        # Instantiate Organizations with the dummy client.
+        self.organizations = Organizations(self.mock_client)
 
-class Organizations(BaseResource):
-    """Organizations API category for managing organizations."""
+    def test_get_organizations(self):
+        fake_orgs = [{"id": "org1"}, {"id": "org2"}]
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"organizations": fake_orgs}
+        self.mock_client.make_request.return_value = mock_response
 
-    def get_organizations(self) -> List[Dict]:
-        """
-        Retrieve all organizations.
+        result = self.organizations.get_organizations()
+        self.mock_client.make_request.assert_called_once_with("GET", "organizations")
+        self.assertEqual(result, fake_orgs)
 
-        :return: A list of organization dictionaries.
-        """
-        response = self._client.make_request("GET", "organizations")
-        return response.json().get("organizations", [])
+    def test_get_organization(self):
+        organization_id = "org1"
+        fake_org = {"id": organization_id, "name": "Test Organization"}
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"organization": fake_org}
+        self.mock_client.make_request.return_value = mock_response
 
-    def get_organization(self, organization_id: str) -> Dict:
-        """
-        Retrieve details for a specific organization.
+        result = self.organizations.get_organization(organization_id)
+        self.mock_client.make_request.assert_called_once_with("GET", f"organizations/{organization_id}")
+        self.assertEqual(result, fake_org)
 
-        :param organization_id: The identifier of the organization.
-        :return: A dictionary representing the organization.
-        """
-        response = self._client.make_request("GET", f"organizations/{organization_id}")
-        return response.json().get("organization", {})
+    def test_create_organization(self):
+        org_data = {"name": "New Organization"}
+        fake_response_data = {"id": "org_new", "name": "New Organization"}
+        mock_response = MagicMock()
+        mock_response.json.return_value = fake_response_data
+        self.mock_client.make_request.return_value = mock_response
 
-    def create_organization(self, organization_data: Dict) -> Dict:
-        """
-        Create a new organization.
+        result = self.organizations.create_organization(org_data)
+        self.mock_client.make_request.assert_called_once_with("POST", "organizations", json=org_data)
+        self.assertEqual(result, fake_response_data)
 
-        :param organization_data: A dictionary containing organization data.
-        :return: A dictionary representing the newly created organization.
-        """
-        response = self._client.make_request("POST", "organizations", json=organization_data)
-        return response.json()
+    def test_update_organization(self):
+        organization_id = "org1"
+        org_data = {"name": "Updated Organization"}
+        fake_response_data = {"id": organization_id, "name": "Updated Organization"}
+        mock_response = MagicMock()
+        mock_response.json.return_value = fake_response_data
+        self.mock_client.make_request.return_value = mock_response
 
-    def update_organization(self, organization_id: str, organization_data: Dict) -> Dict:
-        """
-        Update an existing organization.
+        result = self.organizations.update_organization(organization_id, org_data)
+        self.mock_client.make_request.assert_called_once_with("PUT", f"organizations/{organization_id}", json=org_data)
+        self.assertEqual(result, fake_response_data)
 
-        :param organization_id: The identifier of the organization to update.
-        :param organization_data: A dictionary with updated organization data.
-        :return: A dictionary representing the updated organization.
-        """
-        response = self._client.make_request("PUT", f"organizations/{organization_id}", json=organization_data)
-        return response.json()
+    def test_delete_organization(self):
+        organization_id = "org1"
+        mock_response = MagicMock()
+        mock_response.status_code = 204
+        self.mock_client.make_request.return_value = mock_response
 
-    def delete_organization(self, organization_id: str) -> bool:
-        """
-        Delete an organization.
+        result = self.organizations.delete_organization(organization_id)
+        self.mock_client.make_request.assert_called_once_with("DELETE", f"organizations/{organization_id}")
+        self.assertTrue(result)
 
-        :param organization_id: The identifier of the organization to delete.
-        :return: True if deletion was successful (HTTP 204), else False.
-        """
-        response = self._client.make_request("DELETE", f"organizations/{organization_id}")
-        return response.status_code == 204
+if __name__ == "__main__":
+    unittest.main()

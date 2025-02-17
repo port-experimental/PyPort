@@ -1,19 +1,23 @@
-![PyPort Logo](./assets/port.png)
+![PyPort Logo](/./assets/port.png)
 
-# PyPort
+# PyPort 🚀
 
-[![dan-amzulescu-port - pyport](https://img.shields.io/static/v1?label=dan-amzulescu-port&message=pyport&color=blue&logo=github)](https://github.com/dan-amzulescu-port/pyport "Go to GitHub repo")
+[![dan-amzulescu-port - pyport](https://img.shields.io/static/v1?label=dan-amzulescu-port&message=pyport&color=blue&logo=github)](https://github.com/dan-amzulescu-port/pyport)
 [![stars - pyport](https://img.shields.io/github/stars/dan-amzulescu-port/pyport?style=social)](https://github.com/dan-amzulescu-port/pyport)
 [![forks - pyport](https://img.shields.io/github/forks/dan-amzulescu-port/pyport?style=social)](https://github.com/dan-amzulescu-port/pyport)
 
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-90.00%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-91.00%25-brightgreen)
+![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
+![Security](https://img.shields.io/badge/security-A-brightgreen)
+![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
+
 ![GitHub issues](https://img.shields.io/github/issues/dan-amzulescu-port/pyport)
 [![GitHub tag](https://img.shields.io/github/tag/dan-amzulescu-port/pyport?include_prereleases=&sort=semver&color=blue)](https://github.com/dan-amzulescu-port/pyport/releases/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
-[![Documentation](https://img.shields.io/badge/docs-getport.io-blue?style=flat)](https://docs.getport.io)
+[![Documentation](https://img.shields.io/badge/docs-api.getport.io-blue?style=flat)](https://docs.port.io/api-reference/port-api/)
 
 _Package info_
 
@@ -27,7 +31,7 @@ _Package info_
 
 ---
 
-## Overview
+## 🔍 Overview
 
 Modern REST APIs can be powerful—but they aren’t always intuitive to work with. **PyPort** abstracts away the repetitive tasks of authentication, error handling, and logging, providing you with a clean, Pythonic client interface to interact with the Port IDP REST API.
 
@@ -35,7 +39,7 @@ Whether you're writing custom Python scripts or building larger applications, Py
 
 ---
 
-## Key Features
+## ✨ Key Features
 
 - **Intuitive Client Interface**  
   Interact with the Port IDP REST API effortlessly.
@@ -52,6 +56,13 @@ Whether you're writing custom Python scripts or building larger applications, Py
 > **Note:** Additional features and improvements are planned for future releases!
 
 ---
+
+##  🔒 Security Scan Report
+
+We've run a security scan on our code using Bandit. Check out the [Security Scan Report](SECURITYSCAN.md) for the details on what was found.
+
+---
+
 
 ## Installation
 
