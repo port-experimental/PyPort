@@ -9,3 +9,9 @@ coverage~=7.6.11
 coverage_badge~=1.1.2
 toml~=0.10.2
 coverage-lcov~=0.3.0
+radon~=6.0.1
+bandit~=1.8.2
+configparser~=7.1.0
+pip-audit~=2.8.0
+importlib_metadata~=8.6.1
+
