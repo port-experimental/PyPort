@@ -4,3 +4,4 @@ omit =
     **/__init__.py
     tests/*
     */test_*.py
+concurrency = thread

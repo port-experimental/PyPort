@@ -25,3 +25,8 @@ def cleanup(cicd_cfg: CicdConfig):
         print("Cleanup completed.")
     except Exception as e:
         print(f"Cleanup failed: {e}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    cicd_cfg1 = CicdConfig()
+    # cleanup(cicd_cfg)

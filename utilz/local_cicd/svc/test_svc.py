@@ -1,11 +1,12 @@
 import os
+import sys
 import unittest
+from importlib import reload
+
 import coverage
 import inspect
 
 from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
-from utilz.local_cicd.svc.badger_svc import Badger
-from utilz.local_cicd.svc.scanner_svc import CodeScanner
 
 
 def list_test_files(suite: unittest.TestSuite) -> list[str]:
@@ -26,6 +27,7 @@ def list_test_files(suite: unittest.TestSuite) -> list[str]:
                 pass
     return list(test_files)
 
+
 def run_tests(cicd_cfg: CicdConfig):
     """Run tests with coverage and Code Climate test reporter integration."""
     print("Running tests with coverage and Code Climate test reporter...")
@@ -35,6 +37,7 @@ def run_tests(cicd_cfg: CicdConfig):
 
     # Initialize coverage measurement.
     cov = coverage.Coverage(config_file=cicd_cfg.coverage_config_file)
+    cov.erase()
     cov.start()
 
     # Discover and run tests using unittest.
@@ -48,13 +51,6 @@ def run_tests(cicd_cfg: CicdConfig):
     print("\nDetailed Coverage Report:")
     cov.report(show_missing=True)
     cov.save()
-
-    # badge_url = self.badger.generate_coverage_badge(cov)
-    badger = Badger(cicd_cfg)
-    scanner = CodeScanner(cicd_cfg)
-    scanner.scan_coverage_badge()
-    badger.update_readme_badge(badge_url, "coverage")
-    # badger.update_readme_badge(badge_url, "coverage")
 
     # Determine exit code based on test success (0 if all passed, non-zero otherwise)
     exit_code = 0 if result.wasSuccessful() else 1

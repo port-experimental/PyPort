@@ -9,7 +9,7 @@ def ship_package(cicd_cfg: CicdConfig):
     Uploads the package to PyPI using Twine.
     Assumes the .pypirc file is located in the utilz directory and the dist directory is in src.
     """
-    repo_config_file  = cicd_cfg.pypi_repo_config_file  # Path to PyPI repository configuration file
+    repo_config_file = cicd_cfg.pypi_repo_config_file  # Path to PyPI repository configuration file
     dist_path = os.path.join("dist", "*")  # Path to distribution files
 
     try:
@@ -18,3 +18,9 @@ def ship_package(cicd_cfg: CicdConfig):
         print("Ship completed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Ship failed: {e}")
+
+
+if __name__ == "__main__":
+    # cicd_cfg1 = CicdConfig()
+    # ship_package(cicd_cfg1)
+    pass

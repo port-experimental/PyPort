@@ -6,11 +6,24 @@ import time
 
 import requests
 
+from pyport.action_runs.action_runs_api_svc import ActionRuns
 from pyport.actions.actions_api_svc import Actions
+from pyport.apps.apps_api_svc import Apps
+from pyport.audit.audit_api_svc import Audit
+from pyport.checklist.checklist_api_svc import Checklist
 from pyport.entities.entities_api_svc import Entities
+from pyport.integrations.integrations_api_svc import Integrations
+from pyport.migrations.migrations_api_svc import Migrations
+from pyport.organization.organization_api_svc import Organizations
 from pyport.pages.pages_api_svc import Pages
 from pyport.blueprints.blueprint_api_svc import Blueprints
 from pyport.constants import PORT_API_US_URL, PORT_API_URL, GENERIC_HEADERS
+from pyport.roles.roles_api_svc import Roles
+from pyport.scorecards.scorecards_api_svc import Scorecards
+from pyport.search.search_api_svc import Search
+from pyport.sidebars.sidebars_api_svc import Sidebars
+from pyport.teams.teams_api_svc import Teams
+from pyport.users.users_api_svc import Users
 
 
 class PortClient:
@@ -30,7 +43,9 @@ class PortClient:
         self._lock = threading.Lock()
 
         # Obtain the initial token.
-        self.token = self._get_access_token(client_id, client_secret)
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.token = self._get_access_token()
         # Initialize the session and sub-clients.
         self._init_session()
         self._init_sub_clients()
@@ -50,11 +65,24 @@ class PortClient:
         })
 
     def _init_sub_clients(self):
-        """Initializes the API sub-clients."""
+        """Initializes all API sub-clients."""
         self.blueprints = Blueprints(self)
         self.entities = Entities(self)
         self.actions = Actions(self)
         self.pages = Pages(self)
+        self.integrations = Integrations(self)
+        self.action_runs = ActionRuns(self)
+        self.organizations = Organizations(self)
+        self.teams = Teams(self)
+        self.users = Users(self)
+        self.roles = Roles(self)
+        self.audit = Audit(self)
+        self.migrations = Migrations(self)
+        self.search = Search(self)
+        self.sidebars = Sidebars(self)
+        self.checklist = Checklist(self)
+        self.apps = Apps(self)
+        self.scorecards = Scorecards(self)
 
     def _start_token_refresh_thread(self):
         refresh_thread = threading.Thread(target=self._token_refresh_loop, daemon=True)
@@ -74,13 +102,13 @@ class PortClient:
             except Exception as e:
                 self._logger.error(f"Failed to refresh token: {str(e)}")
 
-    def _get_access_token(self, client_id: str, client_secret: str) -> str:
+    def _get_access_token(self) -> str:
         try:
             headers = GENERIC_HEADERS
-            if not client_id or not client_secret:
-                client_id, client_secret = self._get_local_env_cred()
+            if not self.client_id or not self.client_secret:
+                self.client_id, self.client_secret = self._get_local_env_cred()
 
-            credentials = {'clientId': client_id, 'clientSecret': client_secret}
+            credentials = {'clientId': self.client_id, 'clientSecret': self.client_secret}
             payload = json.dumps(credentials)
             self._logger.debug("Sending authentication request to obtain access token...")
 

@@ -18,7 +18,7 @@ class TestPortClient(unittest.TestCase):
     @patch('src.pyport.api_client.PortClient._get_access_token', return_value='dummy_token')
     def test_initialization(self, mock_get_token):
         """Test that PortClient initializes sub-clients and session headers correctly."""
-        client = PortClient(auto_refresh=False)
+        client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         self.assertEqual(client.token, 'dummy_token')
         self.assertEqual(client._session.headers.get("Authorization"), "Bearer dummy_token")
         self.assertIsNotNone(client.blueprints)
@@ -51,7 +51,7 @@ class TestPortClient(unittest.TestCase):
         os.environ['PORT_CLIENT_ID'] = 'dummy_id'
         os.environ['PORT_CLIENT_SECRET'] = 'dummy_secret'
 
-        client = PortClient(auto_refresh=False)
+        client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         # Force calling _get_access_token by directly invoking it:
         token = client._get_access_token()
         self.assertEqual(token, expected_token)
@@ -66,7 +66,7 @@ class TestPortClient(unittest.TestCase):
         dummy_response.json.return_value = expected_json
         mock_request.return_value = dummy_response
 
-        client = PortClient(auto_refresh=False)
+        client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         response = client.make_request('GET', 'test-endpoint')
         mock_request.assert_called_once_with('GET', f"{client.api_url}/test-endpoint")
         self.assertEqual(response.json(), expected_json)
@@ -80,7 +80,7 @@ class TestPortClient(unittest.TestCase):
         dummy_response.raise_for_status.side_effect = requests.HTTPError("Not Found")
         mock_request.return_value = dummy_response
 
-        client = PortClient(auto_refresh=False)
+        client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         with self.assertRaises(requests.HTTPError) as context:
             client.make_request('GET', 'nonexistent-endpoint')
         self.assertIn("Not Found", str(context.exception))

@@ -1,13 +1,20 @@
 import os
 from typing import Dict, Iterable, Tuple
 
-try:
-    from importlib.metadata import version, PackageNotFoundError
-except ImportError:
-    from importlib_metadata import version, PackageNotFoundError
+
+def get_bandit_version() -> str:
+    try:
+        from importlib.metadata import version, PackageNotFoundError
+    except ImportError:
+        from importlib_metadata import version, PackageNotFoundError
+    try:
+        return version("bandit")
+    except PackageNotFoundError:
+        return "unknown"
+
 
 class SecurityAssessor:
-    def __init__(self, project_root: str,metrics_items: Iterable[Tuple[str, Dict]]) -> None:
+    def __init__(self, project_root: str, metrics_items: Iterable[Tuple[str, Dict]]) -> None:
         self.project_root = project_root
         self.metrics_items = metrics_items
         self.total_loc: int = 0
@@ -93,7 +100,7 @@ class SecurityAssessor:
         header_info = (
             f"{logo_md}\n\n"
             f"**Security Scan Report**\n\n"
-            f"Security scan performed using: Bandit v{self.get_bandit_version()}\n\n"
+            f"Security scan performed using: Bandit v{get_bandit_version()}\n\n"
             "This report summarizes the results of our automated security scan.\n\n"
         )
 
@@ -131,15 +138,3 @@ class SecurityAssessor:
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(md_content)
         print(f"Markdown security report generated and saved to '{report_path}'.")
-
-
-    # Helper method to get Bandit version (to keep our code DRY)
-    def get_bandit_version(self) -> str:
-        try:
-            from importlib.metadata import version, PackageNotFoundError
-        except ImportError:
-            from importlib_metadata import version, PackageNotFoundError
-        try:
-            return version("bandit")
-        except PackageNotFoundError:
-            return "unknown"

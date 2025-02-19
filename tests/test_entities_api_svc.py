@@ -13,7 +13,7 @@ class TestEntitiesService(unittest.TestCase):
         self.addCleanup(patcher_token.stop)
         self.mock_get_access_token = patcher_token.start()
 
-        self.client = PortClient(auto_refresh=False)
+        self.client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         self.client.make_request = MagicMock()
         self.entities = Entities(self.client)
         self.blueprint_id = "bp_123"

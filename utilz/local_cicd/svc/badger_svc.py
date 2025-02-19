@@ -5,7 +5,7 @@ import re
 import subprocess
 import sys
 
-from typing import List, Tuple, Callable
+from typing import List, Tuple
 
 from coverage import Coverage
 
@@ -27,7 +27,8 @@ def get_score_color(coverage_percentage):
         color = 'red'
     return color
 
-def get_maintainability_badge_scoring(scores: List[Tuple[float, str]] ) -> Tuple[float, str, str]:
+
+def get_maintainability_badge_scoring(scores: List[Tuple[float, str]]) -> Tuple[float, str, str]:
     """Compute average maintainability and choose badge color and overall grade."""
     if not scores:
         return 0.0, "lightgrey", "N/A"
@@ -77,7 +78,6 @@ class Badger(object):
                 # If the badge already exists, replace it; otherwise, prepend the new badge.
                 match = re.search(badge_pattern, content)
                 if match:
-                    matched_string = match.group(0)
                     updated_content = re.sub(badge_pattern, new_badge, content)
                 else:
                     updated_content = new_badge + '\n\n' + content
@@ -200,6 +200,7 @@ class Badger(object):
 
         print("Badges updated successfully.")
 
+
 if __name__ == "__main__":
     cicd_cfg1 = CicdConfig()
     badger = Badger(cicd_cfg1)
@@ -209,5 +210,5 @@ if __name__ == "__main__":
     # badger.update_readme_badge(cov_m, "maintainability")
     # cov_d = badger.get_dependencies_badge()
     # badger.update_readme_badge(cov_d, "dependencies")
-    cov_s = badger.get_security_badge()
-    badger.update_readme_badge(cov_s, "security")
+    # cov_s = badger.get_security_badge()
+    # badger.update_readme_badge(cov_s, "security")

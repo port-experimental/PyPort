@@ -3,7 +3,6 @@ import platform
 import re
 import subprocess
 import sys
-from pathlib import Path
 
 from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
 
@@ -11,7 +10,7 @@ from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
 def update_version_in_toml(cicd_cfg: CicdConfig):
 
     version_file_path = os.path.join(cicd_cfg.project_root, "version.txt")
-    toml_file_path = os.path.join(cicd_cfg.project_root, "src" ,"pyproject.toml")
+    toml_file_path = os.path.join(cicd_cfg.project_root, "src" , "pyproject.toml")
 
     with open(version_file_path, "r") as f:
         new_version = f.read().strip()  # Remove any extra whitespace or newlines
@@ -37,6 +36,7 @@ def update_version_in_toml(cicd_cfg: CicdConfig):
         with open(toml_file_path, "w") as f3:
             f3.write(updated_content)
 
+
 def build_package(cicd_cfg: CicdConfig):
     """Build the Python package using a subprocess call to `python -m build`."""
     print("Building package...")
@@ -52,8 +52,13 @@ def build_package(cicd_cfg: CicdConfig):
 
     try:
         os.chdir(src_path)
-        update_version_in_toml()
+        update_version_in_toml(cicd_cfg)
         subprocess.run([python_executable, '-m', 'build', '--no-isolation'], cwd=src_path, check=True)
         print("Build completed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Build failed: {e}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    cicd_cfg1 = CicdConfig()
+    # build_package(cicd_cfg)

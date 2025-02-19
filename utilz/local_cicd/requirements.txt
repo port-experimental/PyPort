@@ -14,4 +14,5 @@ bandit~=1.8.2
 configparser~=7.1.0
 pip-audit~=2.8.0
 importlib_metadata~=8.6.1
+wheel~=0.45.1
 

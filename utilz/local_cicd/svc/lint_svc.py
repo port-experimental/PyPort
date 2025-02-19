@@ -1,18 +1,20 @@
 import os
 import sys
-from pathlib import Path
 
 from flake8.api import legacy as flake8_api
 
 from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
 
 
-def lint_code(cicd_cfg: CicdConfig):
+def lint_code(path: str):
     """Run linting on the source code."""
-    print("Running lint...")
+    print(f"Running lint...for {path}")
 
     try:
-        os.chdir(cicd_cfg.src_folder)
+        if not os.path.exists(path):
+            raise Exception(f"Path '{path}' does not exist")
+
+        os.chdir(path)
 
         style_guide = flake8_api.get_style_guide(
             max_line_length=120,
@@ -26,3 +28,10 @@ def lint_code(cicd_cfg: CicdConfig):
         print("Linting passed.")
     except Exception as e:
         print(f"Linting failed: {e}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    cicd_cfg1 = CicdConfig()
+    lint_code(cicd_cfg1.src_folder)
+    lint_code(os.path.join(cicd_cfg1.project_root, "utilz"))
+    pass

@@ -15,7 +15,7 @@ class TestActionsService(unittest.TestCase):
         self.mock_get_access_token = patcher_token.start()
 
         # Initialize a dummy PortClient and override its make_request method.
-        self.client = PortClient(auto_refresh=False)
+        self.client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         self.client.make_request = MagicMock()
         self.actions = Actions(self.client)
         self.blueprint_id = "bp_123"

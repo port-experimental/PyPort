@@ -18,7 +18,7 @@ class TestPortClientRequests(unittest.TestCase):
         mock_response.json.return_value = expected_json
         mock_request.return_value = mock_response
 
-        client = PortClient(auto_refresh=False)
+        client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         response = client.make_request('GET', 'test-endpoint')
         self.assertEqual(response.json(), expected_json)
 
@@ -31,7 +31,7 @@ class TestPortClientRequests(unittest.TestCase):
         mock_response.raise_for_status.side_effect = Exception("Not Found")
         mock_request.return_value = mock_response
 
-        client = PortClient(auto_refresh=False)
+        client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         with self.assertRaises(Exception) as context:
             client.make_request('GET', 'nonexistent-endpoint')
         self.assertIn("Not Found", str(context.exception))
