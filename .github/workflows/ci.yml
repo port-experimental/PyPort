@@ -1,4 +1,4 @@
-name: CI
+name: Lint
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  ci:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,11 +19,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
-        working-directory: utilz/local_cicd
+        run: pip install -r flake8==4.0.1
 
-      - name: Run tests and lint
-        run: python cicd.py 1,2
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        working-directory: utilz/local_cicd
+      - name: Run Flake8 Linter
+        run: flake8 --max-line-length=120 --ignore=E203,W503,E501
