@@ -1,5 +1,4 @@
 import sys
-from pathlib import Path
 
 from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
 from utilz.local_cicd.svc.badger_svc import Badger
