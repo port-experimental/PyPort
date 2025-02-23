@@ -20,7 +20,9 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install flake8==4.0.1
+        run: |
+          pip install --upgrade pip
+          pip install importlib_metadata==4.13.0 flake8==4.0.1
 
       - name: Run Flake8 Linter
-        run: flake8 --max-line-length=120 --ignore=E203,W503,E501 src utilz
+        run: flake8 src utilz --max-line-length=120 --ignore=E203,W503,E501
