@@ -1,7 +1,5 @@
 import os
-import sys
 import unittest
-from importlib import reload
 
 import coverage
 import inspect
