@@ -1,5 +1,5 @@
 [project]
-name = "PyPort"
+name = "pyport"
 version = "0.1.17"
 description = "Port REST API Wrapper"
 authors = [
