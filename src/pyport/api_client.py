@@ -11,6 +11,7 @@ from pyport.actions.actions_api_svc import Actions
 from pyport.apps.apps_api_svc import Apps
 from pyport.audit.audit_api_svc import Audit
 from pyport.checklist.checklist_api_svc import Checklist
+from pyport.custom.custom_api_svc import Custom
 from pyport.entities.entities_api_svc import Entities
 from pyport.integrations.integrations_api_svc import Integrations
 from pyport.migrations.migrations_api_svc import Migrations
@@ -83,6 +84,7 @@ class PortClient:
         self.checklist = Checklist(self)
         self.apps = Apps(self)
         self.scorecards = Scorecards(self)
+        self.custom = Custom(self)
 
     def _start_token_refresh_thread(self):
         refresh_thread = threading.Thread(target=self._token_refresh_loop, daemon=True)
