@@ -64,6 +64,11 @@ class PortClient:
             "Content-Type": "application/json"
         })
 
+    @property
+    def default_headers(self) -> dict:
+        """Return a copy of the default request headers."""
+        return dict(self._session.headers)
+
     def _init_sub_clients(self):
         """Initializes all API sub-clients."""
         self.blueprints = Blueprints(self)

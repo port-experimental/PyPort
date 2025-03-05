@@ -1,6 +1,6 @@
 [project]
 name = "PyPort"
-version = "0.1.16"
+version = "0.1.17"
 description = "Port REST API Wrapper"
 authors = [
   { name = "Dan Amzulescu", email = "dan.a@getport.io" }

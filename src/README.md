@@ -1,5 +1,3 @@
-![PyPort Logo](/./assets/port.png)
-
 # PyPort 🚀
 
 [![dan-amzulescu-port - pyport](https://img.shields.io/static/v1?label=dan-amzulescu-port&message=pyport&color=blue&logo=github)](https://github.com/dan-amzulescu-port/pyport)
