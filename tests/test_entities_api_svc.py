@@ -44,7 +44,12 @@ class TestEntitiesService(unittest.TestCase):
         self.client.make_request.return_value = dummy_response
 
         result = self.entities.create_entity(self.blueprint_id, entity_data)
-        self.client.make_request.assert_called_once_with('POST', f"blueprints/{self.blueprint_id}/entities", json=entity_data)
+        expected_url = (f"blueprints/{self.blueprint_id}/entities?"
+                       f"upsert=False&"
+                       f"validation_only=False&"
+                       f"create_missing_related_entities=False&"
+                       f"merge=False")
+        self.client.make_request.assert_called_once_with('POST', expected_url, json=entity_data)
         self.assertEqual(result, entity_data)
 
     def test_delete_entity(self):

@@ -31,7 +31,11 @@ class Entities(BaseResource):
         # Adjust key ("entity") as needed based on your API's response format
         return response.json().get("entity", {})
 
-    def create_entity(self, blueprint_identifier: str, entity_data: Dict) -> Dict:
+    def create_entity(self, blueprint_identifier: str, entity_data: Dict,
+                      upsert: bool = False,
+                      validation_only: bool = False,
+                      create_missing_related_entities: bool = False,
+                      merge: bool = False) -> Dict:
         """
         Create a new entity under the specified blueprint.
 
@@ -39,9 +43,12 @@ class Entities(BaseResource):
         :param entity_data: A dictionary containing the data for the new entity.
         :return: A dictionary representing the created entity.
         """
-        response = self._client.make_request(
-            'POST', f"blueprints/{blueprint_identifier}/entities", json=entity_data
-        )
+        url = (f"blueprints/{blueprint_identifier}/entities?"
+               f"upsert={upsert}&"
+               f"validation_only={validation_only}&"
+               f"create_missing_related_entities={create_missing_related_entities}&"
+               f"merge={merge}")
+        response = self._client.make_request('POST', url, json=entity_data)
         return response.json()
 
     def update_entity(self, blueprint_identifier: str, entity_identifier: str, entity_data: Dict) -> Dict:
