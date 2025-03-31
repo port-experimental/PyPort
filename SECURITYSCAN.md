@@ -8,7 +8,7 @@ This report summarizes the results of our automated security scan.
 
 **Aggregated Metrics**
 
-- Total LOC: 2010
+- Total LOC: 2028
 - Weighted Vulnerability Score: 0
 - Vulnerability Density: 0.0000
 
@@ -35,7 +35,7 @@ This report summarizes the results of our automated security scan.
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/custom/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/custom/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/custom/custom_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/custom/custom_api_svc.py) | 65 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/entities/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/entities/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
-| [https://github.com/port-experimental/PyPort/blob/main/src/pyport/entities/entities_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/entities/entities_api_svc.py) | 57 | 0 | 0 | 0 | 0 | OK |
+| [https://github.com/port-experimental/PyPort/blob/main/src/pyport/entities/entities_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/entities/entities_api_svc.py) | 64 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/integrations/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/integrations/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/integrations/integrations_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/integrations/integrations_api_svc.py) | 44 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/migrations/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/migrations/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
@@ -49,7 +49,7 @@ This report summarizes the results of our automated security scan.
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/roles/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/roles/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/roles/roles_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/roles/roles_api_svc.py) | 44 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/scorecards/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/scorecards/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
-| [https://github.com/port-experimental/PyPort/blob/main/src/pyport/scorecards/scorecards_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/scorecards/scorecards_api_svc.py) | 44 | 0 | 0 | 0 | 0 | OK |
+| [https://github.com/port-experimental/PyPort/blob/main/src/pyport/scorecards/scorecards_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/scorecards/scorecards_api_svc.py) | 46 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/search/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/search/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/search/search_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/search/search_api_svc.py) | 20 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/services/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/services/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
@@ -62,4 +62,4 @@ This report summarizes the results of our automated security scan.
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/teams/teams_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/teams/teams_api_svc.py) | 44 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/users/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/users/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/users/users_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/users/users_api_svc.py) | 44 | 0 | 0 | 0 | 0 | OK |
-| [https://github.com/port-experimental/PyPort/blob/main/](https://github.com/port-experimental/PyPort/blob/main/) | 1005 | 0 | 0 | 0 | 0 | OK |
+| [https://github.com/port-experimental/PyPort/blob/main/](https://github.com/port-experimental/PyPort/blob/main/) | 1014 | 0 | 0 | 0 | 0 | OK |

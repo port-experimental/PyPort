@@ -5,23 +5,24 @@ from pyport.models.api_category import BaseResource
 class Scorecards(BaseResource):
     """Scorecards API category for managing scorecards."""
 
-    def get_scorecards(self) -> List[Dict]:
+    def get_scorecards(self, blueprint_id: str) -> List[Dict]:
         """
         Retrieve all scorecards.
-
+        :param blueprint_id: The identifier of the blueprint the scorecard is part of.
         :return: A list of scorecard dictionaries.
         """
-        response = self._client.make_request("GET", "scorecards")
+        response = self._client.make_request("GET", f"blueprints/{blueprint_id}/scorecards")
         return response.json().get("scorecards", [])
 
-    def get_scorecard(self, scorecard_id: str) -> Dict:
+    def get_scorecard(self, blueprint_id: str, scorecard_id: str) -> Dict:
         """
         Retrieve details for a specific scorecard.
 
         :param scorecard_id: The identifier of the scorecard.
+        :param blueprint_id: The identifier of the blueprint the scorecard is part of.
         :return: A dictionary representing the scorecard.
         """
-        response = self._client.make_request("GET", f"scorecards/{scorecard_id}")
+        response = self._client.make_request("GET", f"blueprints/{blueprint_id}/scorecards/{scorecard_id}")
         return response.json().get("scorecard", {})
 
     def create_scorecard(self, scorecard_data: Dict) -> Dict:
