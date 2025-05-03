@@ -5,11 +5,10 @@ from pyport.models.api_category import BaseResource
 class Actions(BaseResource):
     """Actions API category"""
 
-    def get_actions(self, blueprint_identifier: str) -> List[Dict]:
+    def get_actions(self) -> List[Dict]:
         """
         Retrieve all actions for a specified blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
         :return: A list of action dictionaries.
         """
         response = self._client.make_request('GET', "/v1/actions")
