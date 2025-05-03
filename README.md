@@ -2,9 +2,9 @@
 
 # PyPort 🚀
 
-[![dan-amzulescu-port - pyport](https://img.shields.io/static/v1?label=port-experimental&message=pyport&color=blue&logo=github)](https://github.com/dan-amzulescu-port/pyport)
-[![stars - pyport](https://img.shields.io/github/stars/dan-amzulescu-port/pyport?style=social)](https://github.com/dan-amzulescu-port/pyport)
-[![forks - pyport](https://img.shields.io/github/forks/dan-amzulescu-port/pyport?style=social)](https://github.com/dan-amzulescu-port/pyport)
+[![port-experimental - pyport](https://img.shields.io/static/v1?label=port-experimental&message=pyport&color=blue&logo=github)](https://github.com/port-experimental/pyport)
+[![stars - pyport](https://img.shields.io/github/stars/port-experimental/pyport?style=social)](https://github.com/port-experimental/pyport)
+[![forks - pyport](https://img.shields.io/github/forks/port-experimental/pyport?style=social)](https://github.com/port-experimental/pyport)
 
 
 _Repo metadata_
@@ -14,8 +14,8 @@ _Repo metadata_
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
 
-![GitHub issues](https://img.shields.io/github/issues/dan-amzulescu-port/pyport)
-[![GitHub tag](https://img.shields.io/github/tag/dan-amzulescu-port/pyport?include_prereleases=&sort=semver&color=blue)](https://github.com/dan-amzulescu-port/pyport/releases/)
+![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)
+[![GitHub tag](https://img.shields.io/github/tag/port-experimental/pyport?include_prereleases=&sort=semver&color=blue)](https://github.com/port-experimental/pyport/releases/)
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
 [![Documentation](https://img.shields.io/badge/docs-api.getport.io-blue?style=flat)](https://docs.port.io/api-reference/port-api/)
 
@@ -41,7 +41,6 @@ Whether you're writing custom Python scripts or building larger applications, Py
 
 For detailed information about the data model and code implementation, please refer to our comprehensive documentation at [PyPort Documentation](https://deepwiki.com/port-experimental/PyPort).
 
-If you have questions or need clarification on any aspect of this project, the documentation provides in-depth explanations, code examples, and best practices to help you get started quickly.
 ---
 
 ## ✨ Key Features
