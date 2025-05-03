@@ -2,14 +2,14 @@
 
 # PyPort 🚀
 
-[![dan-amzulescu-port - pyport](https://img.shields.io/static/v1?label=dan-amzulescu-port&message=pyport&color=blue&logo=github)](https://github.com/dan-amzulescu-port/pyport)
+[![dan-amzulescu-port - pyport](https://img.shields.io/static/v1?label=port-experimental&message=pyport&color=blue&logo=github)](https://github.com/dan-amzulescu-port/pyport)
 [![stars - pyport](https://img.shields.io/github/stars/dan-amzulescu-port/pyport?style=social)](https://github.com/dan-amzulescu-port/pyport)
 [![forks - pyport](https://img.shields.io/github/forks/dan-amzulescu-port/pyport?style=social)](https://github.com/dan-amzulescu-port/pyport)
 
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-89.00%25-green)
+![Coverage](https://img.shields.io/badge/coverage-87.00%25-green)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
@@ -37,6 +37,11 @@ Modern REST APIs can be powerful—but they aren’t always intuitive to work wi
 
 Whether you're writing custom Python scripts or building larger applications, PyPort is designed to speed up your development process by simplifying REST operations.
 
+## Documentation & Support
+
+For detailed information about the data model and code implementation, please refer to our comprehensive documentation at [PyPort Documentation](https://deepwiki.com/port-experimental/PyPort).
+
+If you have questions or need clarification on any aspect of this project, the documentation provides in-depth explanations, code examples, and best practices to help you get started quickly.
 ---
 
 ## ✨ Key Features
@@ -76,12 +81,13 @@ pip install pyport
 Below is a boilerplate example to help you get started with PyPort:
 
 ```python
-    import pyport
+from pyport import PortClient
 
-    PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
-    PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
-    pc = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
-    bps = pc.blueprints.get_blueprints()
+PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
+PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
+
+port_client = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
+blueprints = port_client.blueprints.get_blueprints()
 ```    
 
 Happy Coding!

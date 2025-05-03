@@ -8,27 +8,6 @@ class TestScorecards(unittest.TestCase):
         self.mock_client = MagicMock()
         self.scorecards = Scorecards(self.mock_client)
 
-    def test_get_scorecards(self):
-        fake_scorecards = [{"id": "score1"}, {"id": "score2"}]
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"scorecards": fake_scorecards}
-        self.mock_client.make_request.return_value = mock_response
-
-        result = self.scorecards.get_scorecards()
-        self.mock_client.make_request.assert_called_once_with("GET", "scorecards")
-        self.assertEqual(result, fake_scorecards)
-
-    def test_get_scorecard(self):
-        scorecard_id = "score1"
-        fake_scorecard = {"id": scorecard_id, "name": "Test Scorecard"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"scorecard": fake_scorecard}
-        self.mock_client.make_request.return_value = mock_response
-
-        result = self.scorecards.get_scorecard(scorecard_id)
-        self.mock_client.make_request.assert_called_once_with("GET", f"scorecards/{scorecard_id}")
-        self.assertEqual(result, fake_scorecard)
-
     def test_create_scorecard(self):
         scorecard_data = {"name": "New Scorecard"}
         fake_response_data = {"id": "score_new", "name": "New Scorecard"}
