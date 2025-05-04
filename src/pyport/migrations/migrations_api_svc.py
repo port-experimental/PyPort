@@ -54,3 +54,13 @@ class Migrations(BaseResource):
         """
         response = self._client.make_request("DELETE", f"migrations/{migration_id}")
         return response.status_code == 204
+
+    def cancel_migration(self, migration_id: str) -> Dict:
+        """
+        Cancel an in-progress migration.
+
+        :param migration_id: The identifier of the migration to cancel.
+        :return: A dictionary representing the result of the cancellation.
+        """
+        response = self._client.make_request("POST", f"migrations/{migration_id}/cancel")
+        return response.json()

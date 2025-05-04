@@ -78,3 +78,95 @@ class Entities(BaseResource):
         )
         # Assuming a successful deletion returns HTTP status 204 No Content
         return response.status_code == 204
+
+    def create_entities_bulk(self, blueprint_identifier: str, entities_data: List[Dict]) -> Dict:
+        """
+        Create multiple entities in bulk for the specified blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :param entities_data: A list of dictionaries, each containing data for a new entity.
+        :return: A dictionary representing the result of the bulk creation.
+        """
+        response = self._client.make_request(
+            'POST', f"blueprints/{blueprint_identifier}/entities/bulk", json={"entities": entities_data}
+        )
+        return response.json()
+
+    def get_entities_count(self, blueprint_identifier: str) -> int:
+        """
+        Get the count of entities for the specified blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :return: The count of entities.
+        """
+        response = self._client.make_request(
+            'GET', f"blueprints/{blueprint_identifier}/entities-count"
+        )
+        return response.json().get("count", 0)
+
+    def get_all_entities(self, blueprint_identifier: str) -> List[Dict]:
+        """
+        Retrieve all entities for the specified blueprint, including related entities.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :return: A list of entity dictionaries.
+        """
+        response = self._client.make_request(
+            'GET', f"blueprints/{blueprint_identifier}/all-entities"
+        )
+        return response.json().get("entities", [])
+
+    # Entity Search and Aggregation Methods
+
+    def search_entities(self, search_data: Dict) -> List[Dict]:
+        """
+        Search for entities across all blueprints.
+
+        :param search_data: A dictionary containing search criteria.
+        :return: A list of matching entity dictionaries.
+        """
+        response = self._client.make_request('POST', "entities/search", json=search_data)
+        return response.json().get("entities", [])
+
+    def search_blueprint_entities(self, blueprint_identifier: str, search_data: Dict) -> List[Dict]:
+        """
+        Search for entities within a specific blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :param search_data: A dictionary containing search criteria.
+        :return: A list of matching entity dictionaries.
+        """
+        response = self._client.make_request(
+            'POST', f"blueprints/{blueprint_identifier}/entities/search", json=search_data
+        )
+        return response.json().get("entities", [])
+
+    def aggregate_entities(self, aggregation_data: Dict) -> Dict:
+        """
+        Aggregate entities based on specified criteria.
+
+        :param aggregation_data: A dictionary containing aggregation criteria.
+        :return: A dictionary containing the aggregation results.
+        """
+        response = self._client.make_request('POST', "entities/aggregate", json=aggregation_data)
+        return response.json()
+
+    def aggregate_entities_over_time(self, aggregation_data: Dict) -> Dict:
+        """
+        Aggregate entities over time based on specified criteria.
+
+        :param aggregation_data: A dictionary containing aggregation criteria.
+        :return: A dictionary containing the time-based aggregation results.
+        """
+        response = self._client.make_request('POST', "entities/aggregate-over-time", json=aggregation_data)
+        return response.json()
+
+    def get_entity_properties_history(self, history_data: Dict) -> Dict:
+        """
+        Retrieve the history of entity properties.
+
+        :param history_data: A dictionary containing criteria for retrieving property history.
+        :return: A dictionary containing the property history.
+        """
+        response = self._client.make_request('POST', "entities/properties-history", json=history_data)
+        return response.json()

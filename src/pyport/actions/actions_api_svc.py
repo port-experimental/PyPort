@@ -48,7 +48,7 @@ class Actions(BaseResource):
                                              json=action_data)
         return response.json()
 
-    def delete_action(self, blueprint_identifier: str, action_identifier: str) -> bool:
+    def delete_action(self, action_identifier: str) -> bool:
         """
         Delete an action.
 
@@ -59,7 +59,7 @@ class Actions(BaseResource):
         response = self._client.make_request('DELETE', f"actions/{action_identifier}")
         return response.status_code == 204
 
-    def get_action_permissions(self, blueprint_identifier: str, action_identifier: str) -> Dict:
+    def get_action_permissions(self, action_identifier: str) -> Dict:
         """
         Retrieve the status of a specific action.
 
@@ -72,7 +72,7 @@ class Actions(BaseResource):
         )
         return response.json().get("status", {})
 
-    def update_action_permissions(self, blueprint_identifier: str, action_identifier: str) -> bool:
+    def update_action_permissions(self, action_identifier: str) -> bool:
         """
         Cancel an in-progress action.
 
@@ -81,6 +81,6 @@ class Actions(BaseResource):
         :return: True if cancellation was successful (e.g., status code 200), else False.
         """
         response = self._client.make_request(
-            'POST', f"actions/{action_identifier}/permissions"
+            'PATCH', f"actions/{action_identifier}/permissions"
         )
         return response.status_code == 200

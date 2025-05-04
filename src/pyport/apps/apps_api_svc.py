@@ -54,3 +54,13 @@ class Apps(BaseResource):
         """
         response = self._client.make_request("DELETE", f"apps/{app_id}")
         return response.status_code == 204
+
+    def rotate_app_secret(self, app_id: str) -> Dict:
+        """
+        Rotate the secret for a specific app.
+
+        :param app_id: The identifier of the app whose secret should be rotated.
+        :return: A dictionary containing the new secret.
+        """
+        response = self._client.make_request("POST", f"apps/{app_id}/rotate-secret")
+        return response.json()

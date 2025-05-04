@@ -11,6 +11,7 @@ from pyport.actions.actions_api_svc import Actions
 from pyport.apps.apps_api_svc import Apps
 from pyport.audit.audit_api_svc import Audit
 from pyport.checklist.checklist_api_svc import Checklist
+from pyport.data_sources.data_sources_api_svc import DataSources
 from pyport.entities.entities_api_svc import Entities
 from pyport.integrations.integrations_api_svc import Integrations
 from pyport.migrations.migrations_api_svc import Migrations
@@ -24,6 +25,7 @@ from pyport.search.search_api_svc import Search
 from pyport.sidebars.sidebars_api_svc import Sidebars
 from pyport.teams.teams_api_svc import Teams
 from pyport.users.users_api_svc import Users
+from pyport.webhooks.webhooks_api_svc import Webhooks
 
 
 class PortClient:
@@ -88,6 +90,8 @@ class PortClient:
         self.checklist = Checklist(self)
         self.apps = Apps(self)
         self.scorecards = Scorecards(self)
+        self.webhooks = Webhooks(self)
+        self.data_sources = DataSources(self)
 
     def _start_token_refresh_thread(self):
         refresh_thread = threading.Thread(target=self._token_refresh_loop, daemon=True)
@@ -117,7 +121,7 @@ class PortClient:
             payload = json.dumps(credentials)
             self._logger.debug("Sending authentication request to obtain access token...")
 
-            token_response = requests.post(f'{self.api_url}/auth/access_token', headers=headers,
+            token_response = requests.post(f'{self.api_url}/v1/auth/access_token', headers=headers,
                                            data=payload, timeout=10)
             if token_response.status_code != 200:
                 self._logger.error(
@@ -154,7 +158,7 @@ class PortClient:
         :param kwargs: Additional parameters passed to requests.request.
         :return: A requests.Response object.
         """
-        url = f"{self.api_url}/{endpoint}"
+        url = f"{self.api_url}/v1/{endpoint}"
         response = self._session.request(method, url, **kwargs)
         response.raise_for_status()
         return response

@@ -54,3 +54,32 @@ class Users(BaseResource):
         """
         response = self._client.make_request("DELETE", f"users/{user_id}")
         return response.status_code == 204
+
+    def invite_user(self, invitation_data: Dict) -> Dict:
+        """
+        Invite a new user to the organization.
+
+        :param invitation_data: A dictionary containing invitation data (email, role, etc.).
+        :return: A dictionary representing the invitation result.
+        """
+        response = self._client.make_request("POST", "users/invite", json=invitation_data)
+        return response.json()
+
+    def get_user_profile(self) -> Dict:
+        """
+        Retrieve the profile of the currently authenticated user.
+
+        :return: A dictionary representing the user profile.
+        """
+        response = self._client.make_request("GET", "profile")
+        return response.json().get("profile", {})
+
+    def rotate_user_credentials(self, user_email: str) -> Dict:
+        """
+        Rotate credentials for a specific user.
+
+        :param user_email: The email of the user whose credentials should be rotated.
+        :return: A dictionary containing the new credentials.
+        """
+        response = self._client.make_request("POST", f"rotate-credentials/{user_email}")
+        return response.json()

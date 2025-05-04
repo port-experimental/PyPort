@@ -53,3 +53,74 @@ class Blueprints(BaseResource):
         """
         response = self._client.make_request('DELETE', f"blueprints/{blueprint_identifier}")
         return response.status_code == 204
+
+    # Blueprint Permissions Methods
+
+    def get_blueprint_permissions(self, blueprint_identifier: str) -> Dict:
+        """
+        Retrieve permissions for a specific blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :return: A dictionary representing the blueprint permissions.
+        """
+        response = self._client.make_request('GET', f"blueprints/{blueprint_identifier}/permissions")
+        return response.json().get("permissions", {})
+
+    def update_blueprint_permissions(self, blueprint_identifier: str, permissions_data: Dict) -> Dict:
+        """
+        Update permissions for a specific blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :param permissions_data: A dictionary containing updated permissions data.
+        :return: A dictionary representing the updated blueprint permissions.
+        """
+        response = self._client.make_request('PUT', f"blueprints/{blueprint_identifier}/permissions", json=permissions_data)
+        return response.json()
+
+    # Blueprint Property Operations Methods
+
+    def rename_blueprint_property(self, blueprint_identifier: str, property_name: str, rename_data: Dict) -> Dict:
+        """
+        Rename a property in a blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :param property_name: The name of the property to rename.
+        :param rename_data: A dictionary containing the new name for the property.
+        :return: A dictionary representing the result of the rename operation.
+        """
+        response = self._client.make_request('POST', f"blueprints/{blueprint_identifier}/properties/{property_name}/rename", json=rename_data)
+        return response.json()
+
+    def rename_blueprint_mirror(self, blueprint_identifier: str, mirror_name: str, rename_data: Dict) -> Dict:
+        """
+        Rename a mirror in a blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :param mirror_name: The name of the mirror to rename.
+        :param rename_data: A dictionary containing the new name for the mirror.
+        :return: A dictionary representing the result of the rename operation.
+        """
+        response = self._client.make_request('POST', f"blueprints/{blueprint_identifier}/mirror/{mirror_name}/rename", json=rename_data)
+        return response.json()
+
+    def rename_blueprint_relation(self, blueprint_identifier: str, relation_identifier: str, rename_data: Dict) -> Dict:
+        """
+        Rename a relation in a blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :param relation_identifier: The identifier of the relation to rename.
+        :param rename_data: A dictionary containing the new name for the relation.
+        :return: A dictionary representing the result of the rename operation.
+        """
+        response = self._client.make_request('POST', f"blueprints/{blueprint_identifier}/relations/{relation_identifier}/rename", json=rename_data)
+        return response.json()
+
+    def get_blueprint_system_structure(self, blueprint_identifier: str) -> Dict:
+        """
+        Retrieve the system structure for a specific blueprint.
+
+        :param blueprint_identifier: The identifier of the blueprint.
+        :return: A dictionary representing the blueprint system structure.
+        """
+        response = self._client.make_request('GET', f"blueprints/system/{blueprint_identifier}/structure")
+        return response.json().get("structure", {})
