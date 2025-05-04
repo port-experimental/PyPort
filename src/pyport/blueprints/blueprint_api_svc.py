@@ -1,45 +1,168 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Union, Any
 
 from pyport.models.api_category import BaseResource
+from pyport.types import (
+    Blueprint, BlueprintResponse, BlueprintsResponse,
+    JsonDict, JsonList, Pagination
+)
 
 
 class Blueprints(BaseResource):
-    """Blueprints API category"""
+    """Blueprints API category for managing blueprint definitions.
 
-    def get_blueprints(self) -> List[Dict]:
-        """Get all blueprints"""
-        response = self._client.make_request('GET', 'blueprints')
-        # Corrected to call .json() only once.
+    Blueprints define the structure of entities in Port. They specify the properties,
+    relations, and other metadata that entities of a particular type should have.
+
+    Examples:
+        >>> client = PortClient(client_id="your-client-id", client_secret="your-client-secret")
+        >>> # Get all blueprints
+        >>> blueprints = client.blueprints.get_blueprints()
+        >>> # Get a specific blueprint
+        >>> service_blueprint = client.blueprints.get_blueprint("service")
+        >>> # Create a new blueprint
+        >>> new_blueprint = client.blueprints.create_blueprint({
+        ...     "identifier": "microservice",
+        ...     "title": "Microservice",
+        ...     "properties": {
+        ...         "language": {
+        ...             "type": "string",
+        ...             "title": "Language",
+        ...             "enum": ["Python", "JavaScript", "Java", "Go"]
+        ...         }
+        ...     }
+        ... })
+    """
+
+    def get_blueprints(self, page: int = 1, per_page: int = 100) -> List[Blueprint]:
+        """
+        Get all blueprints with pagination support.
+
+        This method retrieves a list of all blueprints defined in Port.
+        The results can be paginated using the page and per_page parameters.
+
+        Args:
+            page: The page number to retrieve (default: 1).
+            per_page: The number of blueprints per page (default: 100, max: 1000).
+
+        Returns:
+            A list of blueprint dictionaries. Each blueprint contains:
+            - identifier: The unique identifier of the blueprint
+            - title: The display name of the blueprint
+            - properties: The property definitions for entities of this blueprint
+            - relations: The relation definitions for entities of this blueprint
+            - and other metadata
+
+        Examples:
+            >>> # Get all blueprints
+            >>> blueprints = client.blueprints.get_blueprints()
+            >>> # Get the second page of blueprints, 50 per page
+            >>> page2 = client.blueprints.get_blueprints(page=2, per_page=50)
+        """
+        response = self._client.make_request(
+            'GET',
+            'blueprints',
+            params={'page': page, 'per_page': per_page}
+        )
         return response.json().get("blueprints", [])
 
-    def get_blueprint(self, blueprint_identifier: str) -> Dict:
+    def get_blueprint(self, blueprint_identifier: str) -> Blueprint:
         """
         Get a specific blueprint by its identifier.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :return: A dictionary representing the blueprint.
+        This method retrieves detailed information about a specific blueprint.
+
+        Args:
+            blueprint_identifier: The unique identifier of the blueprint to retrieve.
+
+        Returns:
+            A dictionary containing the blueprint details:
+            - identifier: The unique identifier of the blueprint
+            - title: The display name of the blueprint
+            - properties: The property definitions for entities of this blueprint
+            - relations: The relation definitions for entities of this blueprint
+            - and other metadata
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
+
+        Examples:
+            >>> # Get the 'service' blueprint
+            >>> service_blueprint = client.blueprints.get_blueprint("service")
+            >>> print(service_blueprint["title"])
+            'Service'
         """
         response = self._client.make_request('GET', f"blueprints/{blueprint_identifier}")
-        # Adjust the key "blueprint" if your API structure differs.
         return response.json().get("blueprint", {})
 
-    def create_blueprint(self, blueprint_data: Dict) -> Dict:
+    def create_blueprint(self, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
         Create a new blueprint.
 
-        :param blueprint_data: A dictionary containing the data for the new blueprint.
-        :return: A dictionary representing the created blueprint.
+        This method creates a new blueprint with the specified data.
+
+        Args:
+            blueprint_data: A dictionary containing the data for the new blueprint.
+                Must include at minimum:
+                - identifier: A unique identifier for the blueprint (string)
+                - title: A display name for the blueprint (string)
+
+                May also include:
+                - description: A description of the blueprint (string)
+                - icon: An icon for the blueprint (string)
+                - properties: Property definitions for entities of this blueprint (dict)
+                - relations: Relation definitions for entities of this blueprint (dict)
+                - calculationProperties: Calculated property definitions (dict)
+
+        Returns:
+            A dictionary representing the created blueprint.
+
+        Raises:
+            PortValidationError: If the blueprint data is invalid.
+            PortApiError: If another API error occurs.
+
+        Examples:
+            >>> # Create a simple blueprint
+            >>> new_blueprint = client.blueprints.create_blueprint({
+            ...     "identifier": "microservice",
+            ...     "title": "Microservice",
+            ...     "properties": {
+            ...         "language": {
+            ...             "type": "string",
+            ...             "title": "Language",
+            ...             "enum": ["Python", "JavaScript", "Java", "Go"]
+            ...         }
+            ...     }
+            ... })
         """
         response = self._client.make_request('POST', 'blueprints', json=blueprint_data)
         return response.json()
 
-    def update_blueprint(self, blueprint_identifier: str, blueprint_data: Dict) -> Dict:
+    def update_blueprint(self, blueprint_identifier: str, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
         Update an existing blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint to update.
-        :param blueprint_data: A dictionary containing the updated data for the blueprint.
-        :return: A dictionary representing the updated blueprint.
+        This method updates an existing blueprint with the specified data.
+
+        Args:
+            blueprint_identifier: The unique identifier of the blueprint to update.
+            blueprint_data: A dictionary containing the updated data for the blueprint.
+                May include any of the fields mentioned in create_blueprint.
+
+        Returns:
+            A dictionary representing the updated blueprint.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortValidationError: If the blueprint data is invalid.
+            PortApiError: If another API error occurs.
+
+        Examples:
+            >>> # Update a blueprint's title
+            >>> updated_blueprint = client.blueprints.update_blueprint(
+            ...     "microservice",
+            ...     {"title": "Cloud Microservice"}
+            ... )
         """
         response = self._client.make_request('PUT', f"blueprints/{blueprint_identifier}", json=blueprint_data)
         return response.json()
@@ -48,8 +171,24 @@ class Blueprints(BaseResource):
         """
         Delete a blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint to delete.
-        :return: True if deletion was successful (e.g., status code 204), otherwise False.
+        This method deletes a blueprint with the specified identifier.
+        Note that deleting a blueprint will also delete all entities of that blueprint.
+
+        Args:
+            blueprint_identifier: The unique identifier of the blueprint to delete.
+
+        Returns:
+            True if deletion was successful, otherwise False.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
+
+        Examples:
+            >>> # Delete a blueprint
+            >>> success = client.blueprints.delete_blueprint("microservice")
+            >>> if success:
+            ...     print("Blueprint deleted successfully")
         """
         response = self._client.make_request('DELETE', f"blueprints/{blueprint_identifier}")
         return response.status_code == 204
