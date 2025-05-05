@@ -32,7 +32,7 @@ class Actions(BaseResource):
         :param action_data: A dictionary containing data for the new action.
         :return: A dictionary representing the created action.
         """
-        response = self._client.make_request('POST', f"actions", json=action_data)
+        response = self._client.make_request('POST', "actions", json=action_data)
         return response.json()
 
     def update_action(self, blueprint_identifier: str, action_identifier: str, action_data: Dict) -> Dict:

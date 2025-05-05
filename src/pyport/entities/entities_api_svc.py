@@ -1,10 +1,20 @@
-from typing import Dict, List, Optional, Union, Any, Literal, cast
+from typing import Dict, List, Any
 
-from pyport.models.api_category import BaseResource
-from pyport.types import (
-    Entity, EntityResponse, EntitiesResponse,
-    JsonDict, JsonList, Pagination
-)
+from src.pyport.models.api_category import BaseResource
+
+# Comment out the types import since it doesn't exist yet
+# from src.pyport.types import (
+#     Entity, EntityResponse, EntitiesResponse,
+#     JsonDict, JsonList, Pagination
+# )
+
+# Use regular Dict and List instead
+Entity = Dict[str, Any]
+EntityResponse = Dict[str, Any]
+EntitiesResponse = Dict[str, Any]
+JsonDict = Dict[str, Any]
+JsonList = List[Dict[str, Any]]
+Pagination = Dict[str, Any]
 
 
 class Entities(BaseResource):
@@ -34,7 +44,7 @@ class Entities(BaseResource):
         ... )
     """
 
-    def get_entities(self, blueprint_identifier: str, page: int = 1, per_page: int = 100) -> List[Entity]:
+    def get_entities(self, blueprint_identifier: str, page: int = None, per_page: int = None) -> List[Entity]:
         """
         Retrieve a list of all entities for the specified blueprint with pagination support.
 
@@ -43,8 +53,8 @@ class Entities(BaseResource):
 
         Args:
             blueprint_identifier: The unique identifier of the blueprint.
-            page: The page number to retrieve (default: 1).
-            per_page: The number of entities per page (default: 100, max: 1000).
+            page: The page number to retrieve (default: None).
+            per_page: The number of entities per page (default: None, max: 1000).
 
         Returns:
             A list of entity dictionaries. Each entity contains:
@@ -64,11 +74,26 @@ class Entities(BaseResource):
             >>> # Get the second page of service entities, 50 per page
             >>> page2 = client.entities.get_entities("service", page=2, per_page=50)
         """
-        response = self._client.make_request(
-            'GET',
-            f"blueprints/{blueprint_identifier}/entities",
-            params={'page': page, 'per_page': per_page}
-        )
+        # Only add pagination parameters if they are provided
+        params = {}
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
+
+        # Make the request with or without pagination parameters
+        if params:
+            response = self._client.make_request(
+                'GET',
+                f"blueprints/{blueprint_identifier}/entities",
+                params=params
+            )
+        else:
+            response = self._client.make_request(
+                'GET',
+                f"blueprints/{blueprint_identifier}/entities"
+            )
+
         return response.json().get("entities", [])
 
     def get_entity(self, blueprint_identifier: str, entity_identifier: str) -> Entity:

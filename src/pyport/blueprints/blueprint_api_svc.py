@@ -1,10 +1,20 @@
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Any
 
-from pyport.models.api_category import BaseResource
-from pyport.types import (
-    Blueprint, BlueprintResponse, BlueprintsResponse,
-    JsonDict, JsonList, Pagination
-)
+from src.pyport.models.api_category import BaseResource
+
+# Comment out the types import since it doesn't exist yet
+# from src.pyport.types import (
+#     Blueprint, BlueprintResponse, BlueprintsResponse,
+#     JsonDict, JsonList, Pagination
+# )
+
+# Use regular Dict and List instead
+Blueprint = Dict[str, Any]
+BlueprintResponse = Dict[str, Any]
+BlueprintsResponse = Dict[str, Any]
+JsonDict = Dict[str, Any]
+JsonList = List[Dict[str, Any]]
+Pagination = Dict[str, Any]
 
 
 class Blueprints(BaseResource):
@@ -33,7 +43,7 @@ class Blueprints(BaseResource):
         ... })
     """
 
-    def get_blueprints(self, page: int = 1, per_page: int = 100) -> List[Blueprint]:
+    def get_blueprints(self, page: int = None, per_page: int = None) -> List[Blueprint]:
         """
         Get all blueprints with pagination support.
 
@@ -41,8 +51,8 @@ class Blueprints(BaseResource):
         The results can be paginated using the page and per_page parameters.
 
         Args:
-            page: The page number to retrieve (default: 1).
-            per_page: The number of blueprints per page (default: 100, max: 1000).
+            page: The page number to retrieve (default: None).
+            per_page: The number of blueprints per page (default: None, max: 1000).
 
         Returns:
             A list of blueprint dictionaries. Each blueprint contains:
@@ -58,11 +68,19 @@ class Blueprints(BaseResource):
             >>> # Get the second page of blueprints, 50 per page
             >>> page2 = client.blueprints.get_blueprints(page=2, per_page=50)
         """
-        response = self._client.make_request(
-            'GET',
-            'blueprints',
-            params={'page': page, 'per_page': per_page}
-        )
+        # Only add pagination parameters if they are provided
+        params = {}
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
+
+        # Make the request with or without pagination parameters
+        if params:
+            response = self._client.make_request('GET', 'blueprints', params=params)
+        else:
+            response = self._client.make_request('GET', 'blueprints')
+
         return response.json().get("blueprints", [])
 
     def get_blueprint(self, blueprint_identifier: str) -> Blueprint:

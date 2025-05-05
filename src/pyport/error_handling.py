@@ -3,11 +3,11 @@ Error handling utilities for the PyPort client library.
 """
 import json
 import logging
-from typing import Dict, Any, Optional, Type, Callable, TypeVar, Union, Tuple
+from typing import Dict, Any, Optional, Type, Callable, TypeVar
 
 import requests
 
-from pyport.exceptions import (
+from src.pyport.exceptions import (
     PortApiError,
     PortAuthenticationError,
     PortPermissionError,
@@ -150,7 +150,7 @@ def with_error_handling(
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except PortResourceNotFoundError as e:
+        except PortResourceNotFoundError:
             if on_not_found:
                 return on_not_found()
             raise

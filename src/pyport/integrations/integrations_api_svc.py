@@ -11,7 +11,7 @@ class Integrations(BaseResource):
 
         :return: A list of integration dictionaries.
         """
-        response = self._client.make_request("GET", "integration")
+        response = self._client.make_request("GET", "integrations")
         return response.json().get("integrations", [])
 
     def get_integration(self, integration_id: str) -> Dict:
@@ -21,7 +21,7 @@ class Integrations(BaseResource):
         :param integration_id: The identifier of the integration.
         :return: A dictionary representing the integration.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}")
+        response = self._client.make_request("GET", f"integrations/{integration_id}")
         return response.json().get("integration", {})
 
     def create_integration(self, integration_data: Dict) -> Dict:
@@ -31,7 +31,7 @@ class Integrations(BaseResource):
         :param integration_data: A dictionary containing integration data.
         :return: A dictionary representing the newly created integration.
         """
-        response = self._client.make_request("POST", "integration", json=integration_data)
+        response = self._client.make_request("POST", "integrations", json=integration_data)
         return response.json()
 
     def update_integration(self, integration_id: str, integration_data: Dict) -> Dict:
@@ -42,7 +42,7 @@ class Integrations(BaseResource):
         :param integration_data: A dictionary containing the updated data.
         :return: A dictionary representing the updated integration.
         """
-        response = self._client.make_request("PUT", f"integration/{integration_id}", json=integration_data)
+        response = self._client.make_request("PUT", f"integrations/{integration_id}", json=integration_data)
         return response.json()
 
     def delete_integration(self, integration_id: str) -> bool:
@@ -52,7 +52,7 @@ class Integrations(BaseResource):
         :param integration_id: The identifier of the integration to delete.
         :return: True if deletion was successful (HTTP 204), otherwise False.
         """
-        response = self._client.make_request("DELETE", f"integration/{integration_id}")
+        response = self._client.make_request("DELETE", f"integrations/{integration_id}")
         return response.status_code == 204
 
     # Integration OAuth2 Methods
@@ -63,7 +63,7 @@ class Integrations(BaseResource):
 
         :return: A dictionary containing OAuth2 configuration.
         """
-        response = self._client.make_request("GET", "integration/oauth2")
+        response = self._client.make_request("GET", "integrations/oauth2")
         return response.json()
 
     def create_oauth2_config(self, oauth2_data: Dict) -> Dict:
@@ -73,7 +73,7 @@ class Integrations(BaseResource):
         :param oauth2_data: A dictionary containing OAuth2 configuration data.
         :return: A dictionary representing the created/updated OAuth2 configuration.
         """
-        response = self._client.make_request("POST", "integration/oauth2", json=oauth2_data)
+        response = self._client.make_request("POST", "integrations/oauth2", json=oauth2_data)
         return response.json()
 
     # Integration Validation Methods
@@ -86,7 +86,7 @@ class Integrations(BaseResource):
         :param validation_data: A dictionary containing data to validate.
         :return: A dictionary representing the validation result.
         """
-        response = self._client.make_request("POST", f"integration/validate/{operation_type}", json=validation_data)
+        response = self._client.make_request("POST", f"integrations/validate/{operation_type}", json=validation_data)
         return response.json()
 
     # Integration Kinds Methods
@@ -98,7 +98,7 @@ class Integrations(BaseResource):
         :param integration_id: The identifier of the integration.
         :return: A list of kind dictionaries.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}/kinds")
+        response = self._client.make_request("GET", f"integrations/{integration_id}/kinds")
         return response.json().get("kinds", [])
 
     def get_integration_kind(self, integration_id: str, kind: str) -> Dict:
@@ -109,7 +109,7 @@ class Integrations(BaseResource):
         :param kind: The identifier of the kind.
         :return: A dictionary representing the integration kind.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}/kinds/{kind}")
+        response = self._client.make_request("GET", f"integrations/{integration_id}/kinds/{kind}")
         return response.json().get("kind", {})
 
     def update_integration_kind(self, integration_id: str, kind: str, kind_data: Dict) -> Dict:
@@ -121,7 +121,7 @@ class Integrations(BaseResource):
         :param kind_data: A dictionary containing the updated data.
         :return: A dictionary representing the updated integration kind.
         """
-        response = self._client.make_request("PUT", f"integration/{integration_id}/kinds/{kind}", json=kind_data)
+        response = self._client.make_request("PUT", f"integrations/{integration_id}/kinds/{kind}", json=kind_data)
         return response.json()
 
     def delete_integration_kind(self, integration_id: str, kind: str) -> bool:
@@ -132,7 +132,7 @@ class Integrations(BaseResource):
         :param kind: The identifier of the kind to delete.
         :return: True if deletion was successful (HTTP 204), otherwise False.
         """
-        response = self._client.make_request("DELETE", f"integration/{integration_id}/kinds/{kind}")
+        response = self._client.make_request("DELETE", f"integrations/{integration_id}/kinds/{kind}")
         return response.status_code == 204
 
     # Integration Kind Examples Methods
@@ -145,7 +145,7 @@ class Integrations(BaseResource):
         :param kind: The identifier of the kind.
         :return: A list of example dictionaries.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}/kinds/{kind}/examples")
+        response = self._client.make_request("GET", f"integrations/{integration_id}/kinds/{kind}/examples")
         return response.json().get("examples", [])
 
     def create_integration_kind_example(self, integration_id: str, kind: str, example_data: Dict) -> Dict:
@@ -157,7 +157,7 @@ class Integrations(BaseResource):
         :param example_data: A dictionary containing example data.
         :return: A dictionary representing the newly created example.
         """
-        response = self._client.make_request("POST", f"integration/{integration_id}/kinds/{kind}/examples", json=example_data)
+        response = self._client.make_request("POST", f"integrations/{integration_id}/kinds/{kind}/examples", json=example_data)
         return response.json()
 
     def get_integration_kind_example(self, integration_id: str, kind: str, example_id: str) -> Dict:
@@ -169,7 +169,7 @@ class Integrations(BaseResource):
         :param example_id: The identifier of the example.
         :return: A dictionary representing the integration kind example.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}/kinds/{kind}/examples/{example_id}")
+        response = self._client.make_request("GET", f"integrations/{integration_id}/kinds/{kind}/examples/{example_id}")
         return response.json().get("example", {})
 
     def update_integration_kind_example(self, integration_id: str, kind: str, example_id: str, example_data: Dict) -> Dict:
@@ -182,7 +182,7 @@ class Integrations(BaseResource):
         :param example_data: A dictionary containing the updated data.
         :return: A dictionary representing the updated integration kind example.
         """
-        response = self._client.make_request("PUT", f"integration/{integration_id}/kinds/{kind}/examples/{example_id}", json=example_data)
+        response = self._client.make_request("PUT", f"integrations/{integration_id}/kinds/{kind}/examples/{example_id}", json=example_data)
         return response.json()
 
     def delete_integration_kind_example(self, integration_id: str, kind: str, example_id: str) -> bool:
@@ -194,7 +194,7 @@ class Integrations(BaseResource):
         :param example_id: The identifier of the example to delete.
         :return: True if deletion was successful (HTTP 204), otherwise False.
         """
-        response = self._client.make_request("DELETE", f"integration/{integration_id}/kinds/{kind}/examples/{example_id}")
+        response = self._client.make_request("DELETE", f"integrations/{integration_id}/kinds/{kind}/examples/{example_id}")
         return response.status_code == 204
 
     # Integration Logs Methods
@@ -207,7 +207,7 @@ class Integrations(BaseResource):
         :param params: Optional query parameters for filtering logs.
         :return: A list of log dictionaries.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}/logs", params=params)
+        response = self._client.make_request("GET", f"integrations/{integration_id}/logs", params=params)
         return response.json().get("logs", [])
 
     # Integration Config Methods
@@ -219,7 +219,7 @@ class Integrations(BaseResource):
         :param integration_id: The identifier of the integration.
         :return: A dictionary representing the integration configuration.
         """
-        response = self._client.make_request("GET", f"integration/{integration_id}/config")
+        response = self._client.make_request("GET", f"integrations/{integration_id}/config")
         return response.json().get("config", {})
 
     def update_integration_config(self, integration_id: str, config_data: Dict) -> Dict:
@@ -230,7 +230,7 @@ class Integrations(BaseResource):
         :param config_data: A dictionary containing the updated configuration data.
         :return: A dictionary representing the updated integration configuration.
         """
-        response = self._client.make_request("PUT", f"integration/{integration_id}/config", json=config_data)
+        response = self._client.make_request("PUT", f"integrations/{integration_id}/config", json=config_data)
         return response.json()
 
     def check_provision_enabled(self) -> Dict:
@@ -239,5 +239,5 @@ class Integrations(BaseResource):
 
         :return: A dictionary containing provisioning status information.
         """
-        response = self._client.make_request("GET", "integration/provision-enabled")
+        response = self._client.make_request("GET", "integrations/provision-enabled")
         return response.json()

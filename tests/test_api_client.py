@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 import requests
 
 from src.pyport.api_client import PortClient
+from src.pyport.exceptions import PortResourceNotFoundError
 
 class TestPortClient(unittest.TestCase):
     def setUp(self):
@@ -81,9 +82,9 @@ class TestPortClient(unittest.TestCase):
         mock_request.return_value = dummy_response
 
         client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
-        with self.assertRaises(requests.HTTPError) as context:
+        with self.assertRaises(PortResourceNotFoundError) as context:
             client.make_request('GET', 'nonexistent-endpoint')
-        self.assertIn("Not Found", str(context.exception))
+        self.assertEqual(context.exception.status_code, 404)
 
 
 if __name__ == '__main__':
