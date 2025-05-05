@@ -80,6 +80,7 @@ pip install pyport
 Below is a boilerplate example to help you get started with PyPort:
 
 ```python
+import os
 from pyport import PortClient
 
 PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
