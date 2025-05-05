@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from src.pyport.api_client import PortClient
+from src.pyport.exceptions import PortResourceNotFoundError
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
@@ -34,7 +35,8 @@ class TestPortClientRequests(unittest.TestCase):
         client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
         with self.assertRaises(Exception) as context:
             client.make_request('GET', 'nonexistent-endpoint')
-        self.assertIn("Not Found", str(context.exception))
+        # Check that we get a PortResourceNotFoundError with status code 404
+        self.assertEqual(context.exception.status_code, 404)
 
 
 if __name__ == '__main__':

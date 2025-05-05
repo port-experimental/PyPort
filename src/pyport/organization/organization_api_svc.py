@@ -54,3 +54,55 @@ class Organizations(BaseResource):
         """
         response = self._client.make_request("DELETE", f"organizations/{organization_id}")
         return response.status_code == 204
+
+    # Organization Secrets Methods
+
+    def get_organization_secrets(self) -> List[Dict]:
+        """
+        Retrieve all organization secrets.
+
+        :return: A list of secret dictionaries.
+        """
+        response = self._client.make_request("GET", "organization/secrets")
+        return response.json().get("secrets", [])
+
+    def get_organization_secret(self, secret_name: str) -> Dict:
+        """
+        Retrieve details for a specific organization secret.
+
+        :param secret_name: The name of the secret.
+        :return: A dictionary representing the secret.
+        """
+        response = self._client.make_request("GET", f"organization/secrets/{secret_name}")
+        return response.json().get("secret", {})
+
+    def create_organization_secret(self, secret_data: Dict) -> Dict:
+        """
+        Create a new organization secret.
+
+        :param secret_data: A dictionary containing secret data (name and value).
+        :return: A dictionary representing the newly created secret.
+        """
+        response = self._client.make_request("POST", "organization/secrets", json=secret_data)
+        return response.json()
+
+    def update_organization_secret(self, secret_name: str, secret_data: Dict) -> Dict:
+        """
+        Update an existing organization secret.
+
+        :param secret_name: The name of the secret to update.
+        :param secret_data: A dictionary with updated secret data.
+        :return: A dictionary representing the updated secret.
+        """
+        response = self._client.make_request("PUT", f"organization/secrets/{secret_name}", json=secret_data)
+        return response.json()
+
+    def delete_organization_secret(self, secret_name: str) -> bool:
+        """
+        Delete an organization secret.
+
+        :param secret_name: The name of the secret to delete.
+        :return: True if deletion was successful (HTTP 204), else False.
+        """
+        response = self._client.make_request("DELETE", f"organization/secrets/{secret_name}")
+        return response.status_code == 204

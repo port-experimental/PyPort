@@ -32,6 +32,21 @@ class Custom(BaseResource):
     specifying the HTTP method, path, headers, parameters, and payload.
     """
 
+    def _prepare_headers(self, headers: Optional[Dict[str, str]]) -> Optional[Dict[str, str]]:
+        """
+        Prepare headers for the request by merging with default headers.
+
+        :param headers: Custom headers to include in the request.
+        :return: Merged headers or None if no custom headers provided.
+        """
+        default_headers = self._client.default_headers
+
+        if headers:
+            merged_headers = default_headers.copy()
+            merged_headers.update(headers)
+            return merged_headers
+        return None
+
     def send_request(
         self,
         method: str,
@@ -59,18 +74,11 @@ class Custom(BaseResource):
         validate_http_method(method)
         validate_path(path)
 
-        # Get default headers via the public property on the client.
-        default_headers = self._client.default_headers
+        # Prepare headers
+        merged_headers = self._prepare_headers(headers)
 
-        # Merge any custom headers with the client's default headers.
-        if headers:
-            merged_headers = default_headers.copy()
-            merged_headers.update(headers)
-        else:
-            merged_headers = None
-
-        # Delegate to the client's make_request method.
-        response = self._client.make_request(
+        # Delegate to the client's make_request method
+        return self._client.make_request(
             method,
             path,
             headers=merged_headers,
@@ -79,4 +87,3 @@ class Custom(BaseResource):
             json=json_data,
             timeout=timeout
         )
-        return response

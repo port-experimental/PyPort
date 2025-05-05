@@ -9,9 +9,9 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-87.00%25-green)
+![Coverage](https://img.shields.io/badge/coverage-56.00%25-yellow)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
-![Security](https://img.shields.io/badge/security-A-brightgreen)
+![Security](https://img.shields.io/badge/security-Error-red)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
 
 ![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)
@@ -80,6 +80,7 @@ pip install pyport
 Below is a boilerplate example to help you get started with PyPort:
 
 ```python
+import os
 from pyport import PortClient
 
 PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")

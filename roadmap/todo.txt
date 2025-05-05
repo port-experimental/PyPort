@@ -1,0 +1,81 @@
+# PyPort Development TODO List
+
+## Comprehensive Test Suite
+- Create a mock client for testing without making real API calls
+- Implement request recording and playback functionality
+- Add utilities for simulating different API responses
+- Develop unit tests for all API service classes
+- Create integration tests for core functionality
+- Add test fixtures for common scenarios
+- Implement CI/CD integration for automated testing
+- Achieve high code coverage (>90%)
+- Document testing best practices
+
+## Pagination Support
+- Add page and per_page parameters to list methods
+- Implement automatic pagination with auto_paginate parameter
+- Create iterator pattern for paginated results
+- Support lazy loading of pages
+- Add progress callbacks for long-running operations
+- Handle API-specific pagination quirks
+- Document pagination behavior
+- Add examples of different pagination approaches
+
+## Consistent Return Values
+- Define consistent patterns for different types of endpoints
+- Update all API service classes to follow these patterns
+- Add raw parameter to control whether to return raw responses
+- Implement response processing for different endpoint types
+- Consider using dataclasses or Pydantic models for responses
+- Create models for common response types
+- Add type conversion utilities
+- Ensure backward compatibility
+- Document return value structures
+
+## Enhanced Retry Logic
+- Implement exponential backoff algorithm with jitter
+- Add configurable retry settings (max_retries, retry_delay, etc.)
+- Support different retry strategies
+- Add ability to customize retry conditions
+- Respect Retry-After headers from the server
+- Only retry idempotent requests by default
+- Implement circuit breaker pattern for persistent errors
+- Add hooks for custom retry handling
+- Improve retry logging with detailed information
+- Add retry statistics
+
+## Configuration Management
+- Support loading configuration from environment variables
+- Add support for configuration files (JSON, YAML, etc.)
+- Implement programmatic configuration
+- Define priority order for configuration sources
+- Add validation for all configuration values
+- Provide helpful error messages for invalid configurations
+- Define sensible defaults for all configuration options
+- Document all configuration options
+- Add configuration troubleshooting guide
+
+## API Versioning Support
+- Add version parameter to client constructor
+- Support different URL patterns for different versions
+- Handle version-specific endpoints and parameters
+- Implement version detection
+- Create compatibility matrix for features vs. versions
+- Add version information to method docstrings
+- Provide warnings for deprecated features
+- Implement adapters for different API versions
+- Document breaking changes between versions
+- Create migration guides
+
+## Async Support
+- Create AsyncPortClient class
+- Implement async versions of all API methods
+- Use aiohttp or httpx for async HTTP requests
+- Support all the same features as synchronous client
+- Add async-specific features (connection pooling, etc.)
+- Implement concurrent request batching
+- Add support for streaming responses
+- Provide utilities for managing concurrency
+- Create examples of async usage
+- Document async-specific behavior
+- Provide performance comparison with sync version
