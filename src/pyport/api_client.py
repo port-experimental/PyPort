@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import random
 import threading
 import time
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
@@ -22,6 +23,10 @@ from pyport.exceptions import (
     PortResourceNotFoundError, PortServerError, PortTimeoutError, PortValidationError
 )
 from pyport.integrations.integrations_api_svc import Integrations
+from pyport.logging import (
+    configure_logging, log_request, log_response, log_error,
+    get_correlation_id, logger as pyport_logger
+)
 from pyport.migrations.migrations_api_svc import Migrations
 from pyport.organization.organization_api_svc import Organizations
 from pyport.pages.pages_api_svc import Pages
@@ -40,18 +45,28 @@ T = TypeVar('T')
 
 class PortClient:
     def __init__(self, client_id: str, client_secret: str, us_region: bool = False,
-                 auto_refresh: bool = True, refresh_interval: int = 900):
+                 auto_refresh: bool = True, refresh_interval: int = 900,
+                 log_level: int = logging.INFO, log_format: Optional[str] = None,
+                 log_handler: Optional[logging.Handler] = None):
         """
         Initialize the PortClient.
 
-        :param client_id: API client ID.
-        :param client_secret: API client secret.
-        :param us_region: Whether to use the US region API URL.
-        :param auto_refresh: If True, a background thread will refresh the token periodically.
-        :param refresh_interval: Token refresh interval in seconds (default 900 sec = 15 minutes).
+        Args:
+            client_id: API client ID.
+            client_secret: API client secret.
+            us_region: Whether to use the US region API URL.
+            auto_refresh: If True, a background thread will refresh the token periodically.
+            refresh_interval: Token refresh interval in seconds (default 900 sec = 15 minutes).
+            log_level: The logging level to use (default: logging.INFO).
+            log_format: The format string to use for log messages.
+                If None, a default format will be used.
+            log_handler: A logging handler to use. If None, a StreamHandler will be created.
         """
+        # Configure logging
+        configure_logging(level=log_level, format_string=log_format, handler=log_handler)
+
         self.api_url = PORT_API_US_URL if us_region else PORT_API_URL
-        self._logger = logging.getLogger(__name__)
+        self._logger = pyport_logger
         self._lock = threading.Lock()
 
         # Obtain the initial token.
@@ -192,33 +207,48 @@ class PortClient:
         """
         Handle the authentication response.
 
-        :param response: The response from the authentication request.
-        :param endpoint: The API endpoint.
-        :return: The access token.
-        :raises PortApiError: If the response is invalid or doesn't contain a token.
+        Args:
+            response: The response from the authentication request.
+            endpoint: The API endpoint.
+
+        Returns:
+            The access token.
+
+        Raises:
+            PortApiError: If the response is invalid or doesn't contain a token.
         """
         if response.status_code == 200:
             try:
                 return self._extract_token_from_response(response.json(), endpoint)
             except json.JSONDecodeError as e:
-                raise PortApiError(
+                error = PortApiError(
                     "Invalid JSON response from authentication endpoint",
                     endpoint=endpoint,
                     method="POST"
-                ) from e
+                )
+                log_error(error)
+                raise error from e
 
         # Handle error response
-        raise handle_error_response(response, endpoint, "POST")
+        error = handle_error_response(response, endpoint, "POST")
+        log_error(error)
+        raise error
 
     def _get_access_token(self) -> str:
         """
         Get an access token from the API.
 
-        :return: The access token.
-        :raises PortAuthenticationError: If authentication fails.
-        :raises PortApiError: If another API error occurs.
-        :raises PortConfigurationError: If client credentials are missing.
+        Returns:
+            The access token.
+
+        Raises:
+            PortAuthenticationError: If authentication fails.
+            PortApiError: If another API error occurs.
+            PortConfigurationError: If client credentials are missing.
         """
+        # Generate a correlation ID for this request
+        correlation_id = get_correlation_id()
+
         try:
             # Prepare request
             endpoint, headers, payload = self._prepare_auth_request()
@@ -226,13 +256,23 @@ class PortClient:
 
             self._logger.debug("Sending authentication request to obtain access token...")
 
+            # Log the request (masking sensitive data)
+            log_request("POST", url, headers=headers, json_data=json.loads(payload),
+                       correlation_id=correlation_id)
+
             try:
                 # Make the request
                 response = requests.post(url, headers=headers, data=payload, timeout=10)
+
+                # Log the response
+                log_response(response, correlation_id)
+
                 return self._handle_auth_response(response, endpoint)
             except requests.RequestException as e:
                 # Convert requests exceptions to Port exceptions
-                raise handle_request_exception(e, endpoint, "POST")
+                error = handle_request_exception(e, endpoint, "POST")
+                log_error(error, correlation_id)
+                raise error
 
         except (PortApiError, PortAuthenticationError, PortConfigurationError):
             # Re-raise these exceptions as they're already properly formatted
@@ -240,11 +280,13 @@ class PortClient:
         except Exception as e:
             # Catch any other exceptions and convert to PortApiError
             self._logger.error(f"An unexpected error occurred while obtaining access token: {str(e)}")
-            raise PortApiError(
+            error = PortApiError(
                 f"Unexpected error during authentication: {str(e)}",
                 endpoint="auth/access_token",
                 method="POST"
-            ) from e
+            )
+            log_error(error, correlation_id)
+            raise error from e
 
     def _get_local_env_cred(self):
         """
@@ -260,31 +302,17 @@ class PortClient:
             raise PortConfigurationError("Environment variables PORT_CLIENT_ID or PORT_CLIENT_SECRET are not set")
         return PORT_CLIENT_ID, PORT_CLIENT_SECRET
 
-    def _log_request(self, method: str, url: str, **kwargs) -> None:
-        """Log the request details without sensitive information."""
-        has_auth = 'auth' in kwargs
-        has_headers = 'headers' in kwargs
-        has_json = 'json' in kwargs
-        self._logger.debug(
-            f"Making {method} request to {url} "
-            f"(auth: {has_auth}, headers: {has_headers}, json payload: {has_json})"
-        )
-
-    def _log_response(self, url: str, response: requests.Response) -> None:
-        """Log the response details."""
-        content_length = len(response.content) if response.content else 0
-        self._logger.debug(
-            f"Received response from {url}: status={response.status_code}, "
-            f"content_length={content_length} bytes"
-        )
-
-    def _handle_response(self, response: requests.Response, endpoint: str, method: str) -> requests.Response:
+    def _handle_response(self, response: requests.Response, endpoint: str, method: str, correlation_id: str) -> requests.Response:
         """Handle the response, returning it if successful or raising an appropriate exception."""
+        # Log the response
+        log_response(response, correlation_id)
+
         if 200 <= response.status_code < 300:
             return response
 
         # Handle error response
         error = handle_error_response(response, endpoint, method)
+        log_error(error, correlation_id)
         raise error
 
     def _retry_request(self, error: PortApiError, attempt: int, retries: int, retry_delay: float) -> float:
@@ -298,52 +326,91 @@ class PortClient:
         else:
             sleep_time = retry_delay * (2 ** attempt)  # Exponential backoff
 
+            # Add jitter to prevent thundering herd
+            if hasattr(self, 'retry_jitter') and self.retry_jitter:
+                jitter = random.uniform(0, 0.1 * sleep_time)  # 10% jitter
+                sleep_time += jitter
+
         self._logger.warning(
             f"{error.__class__.__name__} occurred. "
             f"Retrying in {sleep_time:.2f} seconds. Attempt {attempt + 1}/{retries}."
         )
         return sleep_time
 
-    def _make_single_request(self, method: str, url: str, endpoint: str, **kwargs) -> requests.Response:
+    def _make_single_request(self, method: str, url: str, endpoint: str, correlation_id: str = None, **kwargs) -> requests.Response:
         """
         Make a single HTTP request and handle the response.
 
-        :param method: HTTP method (e.g., 'GET', 'POST').
-        :param url: The full URL to request.
-        :param endpoint: The API endpoint (for error reporting).
-        :param kwargs: Additional parameters passed to requests.request.
-        :return: The response if successful.
-        :raises PortApiError: If the request fails.
+        Args:
+            method: HTTP method (e.g., 'GET', 'POST').
+            url: The full URL to request.
+            endpoint: The API endpoint (for error reporting).
+            correlation_id: A correlation ID for tracking the request.
+            **kwargs: Additional parameters passed to requests.request.
+
+        Returns:
+            The response if successful.
+
+        Raises:
+            PortApiError: If the request fails.
         """
+        # Generate or use the provided correlation ID
+        if correlation_id is None:
+            correlation_id = get_correlation_id()
+
+        # Log the request
+        log_request(method, url, headers=kwargs.get('headers'), params=kwargs.get('params'),
+                   data=kwargs.get('data'), json_data=kwargs.get('json'), correlation_id=correlation_id)
+
         try:
             # Make the request
             response = self._session.request(method, url, **kwargs)
-            self._log_response(url, response)
 
             # Handle the response
-            return self._handle_response(response, endpoint, method)
+            return self._handle_response(response, endpoint, method, correlation_id)
         except requests.RequestException as e:
             # Convert requests exceptions to Port exceptions
-            raise handle_request_exception(e, endpoint, method)
+            error = handle_request_exception(e, endpoint, method)
+            log_error(error, correlation_id)
+            raise error
 
-    def make_request(self, method: str, endpoint: str, retries: int = 3, retry_delay: float = 1.0, **kwargs) -> requests.Response:
+    def make_request(self, method: str, endpoint: str, retries: int = None, retry_delay: float = None,
+                   correlation_id: str = None, **kwargs) -> requests.Response:
         """
         Make an HTTP request to the API with error handling and retry logic.
 
-        :param method: HTTP method (e.g., 'GET', 'POST').
-        :param endpoint: API endpoint appended to the base URL.
-        :param retries: Number of retry attempts for transient errors (default: 3).
-        :param retry_delay: Initial delay between retries in seconds (default: 1.0).
-        :param kwargs: Additional parameters passed to requests.request.
-        :return: A requests.Response object.
-        :raises PortApiError: Base class for all Port API errors.
+        Args:
+            method: HTTP method (e.g., 'GET', 'POST').
+            endpoint: API endpoint appended to the base URL.
+            retries: Number of retry attempts for transient errors.
+                If None, uses the client's default (self.max_retries).
+            retry_delay: Initial delay between retries in seconds.
+                If None, uses the client's default (self.retry_delay).
+            correlation_id: A correlation ID for tracking the request.
+                If None, a new ID will be generated.
+            **kwargs: Additional parameters passed to requests.request.
+
+        Returns:
+            A requests.Response object.
+
+        Raises:
+            PortApiError: Base class for all Port API errors.
         """
+        # Use client defaults if not specified
+        if retries is None:
+            retries = getattr(self, 'max_retries', 3)
+        if retry_delay is None:
+            retry_delay = getattr(self, 'retry_delay', 1.0)
+
+        # Generate or use the provided correlation ID
+        if correlation_id is None:
+            correlation_id = get_correlation_id()
+
         url = f"{self.api_url}/v1/{endpoint}"
-        self._log_request(method, url, **kwargs)
 
         for attempt in range(retries + 1):
             try:
-                return self._make_single_request(method, url, endpoint, **kwargs)
+                return self._make_single_request(method, url, endpoint, correlation_id, **kwargs)
             except PortApiError as error:
                 # Handle retry logic
                 if error.is_transient() and attempt < retries:
