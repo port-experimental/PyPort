@@ -261,57 +261,38 @@ def with_error_handling(
         def wrapper(*args, **kwargs):
             try:
                 return fn(*args, **kwargs)
-            except PortResourceNotFoundError as e:
-                if on_not_found:
-                    return on_not_found()
-                raise
-            except PortValidationError as e:
-                if on_validation_error:
-                    return on_validation_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortAuthenticationError as e:
-                if on_authentication_error:
-                    return on_authentication_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortPermissionError as e:
-                if on_permission_error:
-                    return on_permission_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortRateLimitError as e:
-                if on_rate_limit_error:
-                    return on_rate_limit_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortServerError as e:
-                if on_server_error:
-                    return on_server_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortTimeoutError as e:
-                if on_timeout_error:
-                    return on_timeout_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortConnectionError as e:
-                if on_connection_error:
-                    return on_connection_error(e)
-                if on_error:
-                    return on_error(e)
-                raise
-            except PortApiError as e:
-                if on_error:
-                    return on_error(e)
-                raise
+            except Exception as e:
+                return _handle_exception(e)
         return wrapper
+
+    def _handle_exception(e):
+        """Handle an exception based on its type."""
+        # Handle specific exception types
+        if isinstance(e, PortResourceNotFoundError) and on_not_found:
+            return on_not_found()
+
+        # Map exception types to their handlers
+        handlers = {
+            PortValidationError: on_validation_error,
+            PortAuthenticationError: on_authentication_error,
+            PortPermissionError: on_permission_error,
+            PortRateLimitError: on_rate_limit_error,
+            PortServerError: on_server_error,
+            PortTimeoutError: on_timeout_error,
+            PortConnectionError: on_connection_error
+        }
+
+        # Check for a specific handler for this exception type
+        for exc_type, handler in handlers.items():
+            if isinstance(e, exc_type) and handler:
+                return handler(e)
+
+        # Fall back to the generic error handler
+        if isinstance(e, PortApiError) and on_error:
+            return on_error(e)
+
+        # If no handler was found, re-raise the exception
+        raise
 
     # Handle both @with_error_handling and @with_error_handling()
     if func is None:
