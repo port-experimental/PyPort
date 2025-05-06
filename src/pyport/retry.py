@@ -175,7 +175,50 @@ class CircuitBreakerState:
 
 
 class RetryConfig:
-    """Configuration for retry behavior."""
+    """
+    Configuration for retry behavior.
+
+    This class encapsulates all the configuration options for retry behavior,
+    including retry strategies, conditions, circuit breaker, and statistics.
+
+    Attributes:
+        max_retries: Maximum number of retry attempts.
+        retry_delay: Initial delay between retries in seconds.
+        max_delay: Maximum delay between retries in seconds.
+        strategy: Retry strategy to use (CONSTANT, LINEAR, EXPONENTIAL, FIBONACCI).
+        jitter: Whether to add random jitter to retry delays.
+        jitter_factor: Factor to use for jitter (0.0-1.0).
+        retry_on: Exception types or function that determines if an exception should be retried.
+        retry_status_codes: HTTP status codes that should trigger retries.
+        idempotent_methods: HTTP methods that are safe to retry.
+        circuit_breaker: Circuit breaker state to prevent cascading failures.
+        retry_hook: Function to call before each retry attempt.
+        stats: Statistics about retry attempts.
+
+    Examples:
+        >>> # Basic configuration with exponential backoff
+        >>> config = RetryConfig(
+        ...     max_retries=3,
+        ...     retry_delay=1.0,
+        ...     strategy=RetryStrategy.EXPONENTIAL
+        ... )
+        >>>
+        >>> # Configuration with custom retry conditions
+        >>> config = RetryConfig(
+        ...     max_retries=5,
+        ...     retry_status_codes={429, 500, 503},
+        ...     retry_on=PortTimeoutError
+        ... )
+        >>>
+        >>> # Configuration with a retry hook for logging
+        >>> def log_retry(error, attempt, delay):
+        ...     print(f"Retry {attempt} after {error} with delay {delay}s")
+        >>>
+        >>> config = RetryConfig(
+        ...     max_retries=3,
+        ...     retry_hook=log_retry
+        ... )
+    """
 
     def __init__(
         self,
@@ -321,13 +364,77 @@ def with_retry(
     """
     Decorator to add retry logic to a function.
 
+    This decorator wraps a function with retry logic based on the provided
+    configuration. When the wrapped function raises an exception that matches
+    the retry conditions, it will be called again after a delay determined by
+    the retry strategy.
+
+    The decorator can be used in two ways:
+
+    1. As a simple decorator with default settings:
+       ```python
+       @with_retry
+       def my_function():
+           # Function that might fail
+           pass
+       ```
+
+    2. With a custom configuration:
+       ```python
+       @with_retry(config=RetryConfig(max_retries=5))
+       def my_function():
+           # Function that might fail
+           pass
+       ```
+
+    3. With custom configuration parameters:
+       ```python
+       @with_retry(max_retries=5, retry_delay=0.5)
+       def my_function():
+           # Function that might fail
+           pass
+       ```
+
+    For HTTP requests, the function should accept a 'method' parameter that
+    indicates the HTTP method being used. This is used to determine if the
+    request is idempotent and safe to retry.
+
     Args:
-        func: The function to retry.
-        config: Retry configuration to use.
-        **retry_kwargs: Additional keyword arguments to pass to RetryConfig.
+        func: The function to retry. This function will be called repeatedly
+            until it succeeds or the retry conditions are exhausted.
+        config: Retry configuration to use. If None, a new configuration will
+            be created using the retry_kwargs.
+        **retry_kwargs: Additional keyword arguments to pass to RetryConfig
+            if config is None. These can include max_retries, retry_delay,
+            strategy, etc.
 
     Returns:
-        A wrapped function that will retry on failure.
+        A wrapped function that will retry on failure according to the
+        specified configuration.
+
+    Examples:
+        >>> # Basic usage
+        >>> @with_retry
+        ... def fetch_data(url, method="GET"):
+        ...     response = requests.get(url)
+        ...     response.raise_for_status()
+        ...     return response.json()
+        >>>
+        >>> # With custom configuration
+        >>> @with_retry(max_retries=5, retry_delay=0.5)
+        ... def fetch_data(url, method="GET"):
+        ...     response = requests.get(url)
+        ...     response.raise_for_status()
+        ...     return response.json()
+        >>>
+        >>> # Using the decorator programmatically
+        >>> def fetch_data(url):
+        ...     response = requests.get(url)
+        ...     response.raise_for_status()
+        ...     return response.json()
+        >>>
+        >>> retry_fetch = with_retry(fetch_data, max_retries=3)
+        >>> data = retry_fetch("https://api.example.com/data", method="GET")
     """
     # Create a retry configuration if one wasn't provided
     if config is None:

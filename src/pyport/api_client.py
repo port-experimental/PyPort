@@ -1,3 +1,42 @@
+"""
+Port API Client for Python.
+
+This module provides the main client for interacting with the Port API. It handles:
+
+1. Authentication and token management
+2. Request handling with retry logic
+3. Error handling and response processing
+4. Access to all API resources through specialized service classes
+
+The PortClient class is the main entry point for the library and provides
+access to all API resources through properties like `blueprints`, `entities`, etc.
+
+Example:
+    ```python
+    from pyport import PortClient
+
+    # Create a client
+    client = PortClient(
+        client_id="your-client-id",
+        client_secret="your-client-secret"
+    )
+
+    # Get all blueprints
+    blueprints = client.blueprints.get_blueprints()
+
+    # Create a new entity
+    entity = client.entities.create_entity(
+        "service",  # Blueprint identifier
+        {
+            "identifier": "my-service",
+            "title": "My Service",
+            "properties": {
+                "language": "Python"
+            }
+        }
+    )
+    ```
+"""
 import json
 import logging
 import os
@@ -56,6 +95,46 @@ T = TypeVar('T')
 
 
 class PortClient:
+    """
+    Main client for interacting with the Port API.
+
+    This class provides a unified interface for all Port API operations,
+    handling authentication, request management, and error handling.
+    It exposes various service classes as properties for accessing
+    different parts of the API.
+
+    Attributes:
+        blueprints: Access to blueprint-related operations
+        entities: Access to entity-related operations
+        actions: Access to action-related operations
+        action_runs: Access to action run-related operations
+        pages: Access to page-related operations
+        integrations: Access to integration-related operations
+        organizations: Access to organization-related operations
+        teams: Access to team-related operations
+        users: Access to user-related operations
+        roles: Access to role-related operations
+        audit: Access to audit-related operations
+        migrations: Access to migration-related operations
+        search: Access to search-related operations
+        sidebars: Access to sidebar-related operations
+        checklist: Access to checklist-related operations
+        apps: Access to app-related operations
+        scorecards: Access to scorecard-related operations
+
+    Examples:
+        >>> # Create a client
+        >>> client = PortClient(
+        ...     client_id="your-client-id",
+        ...     client_secret="your-client-secret"
+        ... )
+        >>>
+        >>> # Get all blueprints
+        >>> blueprints = client.blueprints.get_blueprints()
+        >>>
+        >>> # Get a specific entity
+        >>> entity = client.entities.get_entity("service", "my-service")
+    """
     def __init__(self, client_id: str, client_secret: str, us_region: bool = False,
                  auto_refresh: bool = True, refresh_interval: int = 900,
                  log_level: int = logging.INFO, log_format: Optional[str] = None,
@@ -73,15 +152,62 @@ class PortClient:
         Initialize the PortClient.
 
         Args:
-            client_id: API client ID.
-            client_secret: API client secret.
-            us_region: Whether to use the US region API URL.
-            auto_refresh: If True, a background thread will refresh the token periodically.
-            refresh_interval: Token refresh interval in seconds (default 900 sec = 15 minutes).
+            client_id: API client ID obtained from Port.
+            client_secret: API client secret obtained from Port.
+            us_region: Whether to use the US region API URL (default: False).
+                Set to True if your Port instance is in the US region.
+            auto_refresh: If True, a background thread will refresh the token periodically (default: True).
+                Set to False if you want to manage token refresh manually.
+            refresh_interval: Token refresh interval in seconds (default: 900 sec = 15 minutes).
+                Tokens typically expire after 30 minutes, so refreshing every 15 minutes is recommended.
             log_level: The logging level to use (default: logging.INFO).
-            log_format: The format string to use for log messages.
-                If None, a default format will be used.
-            log_handler: A logging handler to use. If None, a StreamHandler will be created.
+                Use logging.DEBUG for more detailed logs including request/response information.
+            log_format: The format string to use for log messages (default: None).
+                If None, a default format will be used: "%(asctime)s - %(name)s - %(levelname)s - %(message)s".
+            log_handler: A logging handler to use (default: None).
+                If None, a StreamHandler will be created that outputs to stderr.
+            max_retries: Maximum number of retry attempts for transient errors (default: 3).
+                Set to 0 to disable retries.
+            retry_delay: Initial delay between retries in seconds (default: 1.0).
+                This delay will be adjusted based on the retry strategy.
+            max_delay: Maximum delay between retries in seconds (default: 10.0).
+                No retry will wait longer than this, regardless of the strategy.
+            retry_strategy: Strategy for calculating retry delays (default: RetryStrategy.EXPONENTIAL).
+                Options: CONSTANT, LINEAR, EXPONENTIAL, FIBONACCI.
+            retry_jitter: Whether to add random jitter to retry delays (default: True).
+                Helps prevent thundering herd problems when multiple clients retry simultaneously.
+            retry_status_codes: HTTP status codes that should trigger retries (default: {429, 500, 502, 503, 504}).
+                Only applies to status codes returned by the API.
+            retry_on: Exception types or a function that returns True if the exception should be retried.
+                If None, uses default logic based on exception type and status code.
+            idempotent_methods: HTTP methods that are safe to retry (default: {"GET", "HEAD", "PUT", "DELETE", "OPTIONS"}).
+                Non-idempotent methods like POST are not retried by default to avoid duplicate operations.
+
+        Examples:
+            >>> # Basic client with default settings
+            >>> client = PortClient(
+            ...     client_id="your-client-id",
+            ...     client_secret="your-client-secret"
+            ... )
+            >>>
+            >>> # Client with custom retry settings
+            >>> client = PortClient(
+            ...     client_id="your-client-id",
+            ...     client_secret="your-client-secret",
+            ...     max_retries=5,
+            ...     retry_delay=0.5,
+            ...     retry_strategy=RetryStrategy.LINEAR
+            ... )
+            >>>
+            >>> # Client with custom logging
+            >>> import logging
+            >>> handler = logging.FileHandler("port_api.log")
+            >>> client = PortClient(
+            ...     client_id="your-client-id",
+            ...     client_secret="your-client-secret",
+            ...     log_level=logging.DEBUG,
+            ...     log_handler=handler
+            ... )
         """
         # Configure logging
         configure_logging(level=log_level, format_string=log_format, handler=log_handler)
@@ -415,22 +541,74 @@ class PortClient:
         """
         Make an HTTP request to the API with error handling and retry logic.
 
+        This is the main method for making API requests. It handles authentication,
+        request preparation, error handling, and retry logic. All API service classes
+        use this method to communicate with the Port API.
+
         Args:
-            method: HTTP method (e.g., 'GET', 'POST').
+            method: HTTP method (e.g., 'GET', 'POST', 'PUT', 'DELETE').
+                Different methods have different semantics:
+                - GET: Retrieve resources (idempotent)
+                - POST: Create resources (not idempotent)
+                - PUT: Replace resources (idempotent)
+                - PATCH: Update resources (not idempotent)
+                - DELETE: Remove resources (idempotent)
             endpoint: API endpoint appended to the base URL.
+                For example, "blueprints" or "blueprints/{blueprint_id}".
+                The method automatically adds the API version prefix (e.g., "/v1/").
             retries: Number of retry attempts for transient errors.
                 If None, uses the client's default (self.retry_config.max_retries).
+                Set to 0 to disable retries for this specific request.
             retry_delay: Initial delay between retries in seconds (e.g., 1.0 = 1 second).
                 If None, uses the client's default (self.retry_config.retry_delay).
+                This delay will be adjusted based on the retry strategy.
             correlation_id: A correlation ID for tracking the request.
                 If None, a new ID will be generated.
+                This ID is included in logs and can be used to trace a request through the system.
             **kwargs: Additional parameters passed to requests.request.
+                Common parameters include:
+                - params: Dict of URL parameters
+                - json: Dict to be serialized as JSON in the request body
+                - data: Dict or string to be sent in the request body
+                - headers: Dict of HTTP headers to add/override
+                - timeout: Request timeout in seconds
 
         Returns:
-            A requests.Response object.
+            A requests.Response object containing the API response.
+            Use response.json() to get the parsed JSON content.
 
         Raises:
+            PortAuthenticationError: If authentication fails.
+            PortResourceNotFoundError: If the requested resource doesn't exist.
+            PortValidationError: If the request data is invalid.
+            PortPermissionError: If the client doesn't have permission.
+            PortRateLimitError: If the API rate limit is exceeded.
+            PortServerError: If the server returns a 5xx error.
+            PortTimeoutError: If the request times out.
+            PortConnectionError: If there's a network connection error.
             PortApiError: Base class for all Port API errors.
+
+        Examples:
+            >>> # Get all blueprints
+            >>> response = client.make_request('GET', 'blueprints')
+            >>> blueprints = response.json().get('blueprints', [])
+            >>>
+            >>> # Create a new blueprint
+            >>> blueprint_data = {
+            ...     "identifier": "microservice",
+            ...     "title": "Microservice"
+            ... }
+            >>> response = client.make_request('POST', 'blueprints', json=blueprint_data)
+            >>> new_blueprint = response.json().get('blueprint', {})
+            >>>
+            >>> # Get a specific blueprint with custom retry settings
+            >>> response = client.make_request(
+            ...     'GET',
+            ...     'blueprints/microservice',
+            ...     retries=5,
+            ...     retry_delay=0.5
+            ... )
+            >>> blueprint = response.json().get('blueprint', {})
         """
         # Generate or use the provided correlation ID
         if correlation_id is None:

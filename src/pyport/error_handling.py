@@ -61,11 +61,35 @@ def handle_request_exception(
     """
     Convert a requests exception to a Port API exception.
 
-    :param exc: The requests exception.
-    :param endpoint: The API endpoint.
-    :param method: The HTTP method.
-    :param kwargs: Additional context for the exception.
-    :return: A Port API exception.
+    This function handles exceptions that occur during the HTTP request process,
+    such as timeouts, connection errors, and other network-related issues.
+    It converts these exceptions into Port-specific exceptions that provide
+    more context and are easier to handle in application code.
+
+    Args:
+        exc: The requests exception that occurred during the request.
+            This can be any exception from the requests library, such as
+            Timeout, ConnectionError, etc.
+        endpoint: The API endpoint that was being accessed when the exception occurred.
+            This is used for context in the exception message.
+        method: The HTTP method that was being used (GET, POST, etc.).
+            This is used for context in the exception message.
+        **kwargs: Additional context for the exception.
+            These are passed through to the Port exception constructor.
+
+    Returns:
+        A Port API exception that corresponds to the requests exception.
+        The specific type depends on the input exception:
+        - requests.Timeout -> PortTimeoutError
+        - requests.ConnectionError -> PortConnectionError
+        - Other requests.RequestException -> PortApiError
+
+    Examples:
+        >>> try:
+        ...     response = requests.get("https://api.example.com/resource", timeout=1)
+        ... except requests.Timeout as e:
+        ...     port_error = handle_request_exception(e, "resource", "GET")
+        ...     print(type(port_error))  # <class 'PortTimeoutError'>
     """
     if isinstance(exc, requests.Timeout):
         return PortTimeoutError(
@@ -131,10 +155,40 @@ def handle_error_response(
     """
     Create an appropriate exception based on the response status code.
 
-    :param response: The HTTP response.
-    :param endpoint: The API endpoint.
-    :param method: The HTTP method.
-    :return: A Port API exception.
+    This function analyzes an HTTP error response and creates the most appropriate
+    Port-specific exception based on the status code and response content.
+    It extracts error details from the response body and includes them in the
+    exception message for better error reporting.
+
+    The function maps HTTP status codes to specific exception types:
+    - 400: PortValidationError (invalid request data)
+    - 401: PortAuthenticationError (authentication failed)
+    - 403: PortPermissionError (permission denied)
+    - 404: PortResourceNotFoundError (resource not found)
+    - 429: PortRateLimitError (rate limit exceeded)
+    - 5xx: PortServerError (server-side error)
+    - Other: PortApiError (generic API error)
+
+    For rate limit errors (429), it also extracts the Retry-After header
+    and includes it in the exception for proper retry handling.
+
+    Args:
+        response: The HTTP response object containing the error details.
+            This should be a response with a non-2xx status code.
+        endpoint: The API endpoint that was accessed.
+            This is included in the exception for context.
+        method: The HTTP method that was used (GET, POST, etc.).
+            This is included in the exception for context.
+
+    Returns:
+        A Port API exception of the appropriate type based on the status code.
+        The exception includes the status code, endpoint, method, and response body.
+
+    Examples:
+        >>> response = requests.get("https://api.example.com/not-found")
+        >>> if response.status_code != 200:
+        ...     error = handle_error_response(response, "not-found", "GET")
+        ...     print(type(error))  # <class 'PortResourceNotFoundError'>
     """
     # Extract error details
     error_detail, response_body = _extract_error_detail(response)
