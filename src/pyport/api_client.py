@@ -311,27 +311,34 @@ class PortClient:
 
     def _init_sub_clients(self):
         """Initializes all API sub-clients."""
-        self.blueprints = Blueprints(self)
-        self.entities = Entities(self)
-        self.actions = Actions(self)
-        self.pages = Pages(self)
-        self.integrations = Integrations(self)
-        self.action_runs = ActionRuns(self)
-        self.organizations = Organizations(self)
-        self.teams = Teams(self)
-        self.users = Users(self)
-        self.roles = Roles(self)
-        self.audit = Audit(self)
-        self.migrations = Migrations(self)
-        self.search = Search(self)
-        self.sidebars = Sidebars(self)
-        self.checklist = Checklist(self)
-        self.apps = Apps(self)
-        self.scorecards = Scorecards(self)
+        # Map of attribute names to their corresponding service classes
+        service_classes = {
+            'blueprints': Blueprints,
+            'entities': Entities,
+            'actions': Actions,
+            'pages': Pages,
+            'integrations': Integrations,
+            'action_runs': ActionRuns,
+            'organizations': Organizations,
+            'teams': Teams,
+            'users': Users,
+            'roles': Roles,
+            'audit': Audit,
+            'migrations': Migrations,
+            'search': Search,
+            'sidebars': Sidebars,
+            'checklist': Checklist,
+            'apps': Apps,
+            'scorecards': Scorecards,
+        }
 
-        # Remove references to modules that don't exist yet
-        # self.webhooks = Webhooks(self)
-        # self.data_sources = DataSources(self)
+        # Initialize each service class
+        for attr_name, service_class in service_classes.items():
+            setattr(self, attr_name, service_class(self))
+
+        # Future services (commented out for now)
+        # 'webhooks': Webhooks,
+        # 'data_sources': DataSources,
 
     def _start_token_refresh_thread(self):
         refresh_thread = threading.Thread(target=self._token_refresh_loop, daemon=True)
@@ -376,16 +383,28 @@ class PortClient:
         Background thread that periodically refreshes the access token.
         """
         while True:
+            # Wait for the refresh interval
             time.sleep(self._refresh_interval)
-            try:
-                self._logger.debug("Refreshing access token...")
-                new_token = self._get_access_token()
-                with self._lock:
-                    self.token = new_token
-                    self._session.headers.update({"Authorization": f"Bearer {self.token}"})
-                self._logger.info("Access token refreshed successfully.")
-            except Exception as e:
-                self._handle_token_refresh_error(e)
+
+            # Attempt to refresh the token
+            self._refresh_token()
+
+    def _refresh_token(self):
+        """
+        Refresh the access token and update the session headers.
+        """
+        try:
+            self._logger.debug("Refreshing access token...")
+            new_token = self._get_access_token()
+
+            # Update the token and session headers
+            with self._lock:
+                self.token = new_token
+                self._session.headers.update({"Authorization": f"Bearer {self.token}"})
+
+            self._logger.info("Access token refreshed successfully.")
+        except Exception as e:
+            self._handle_token_refresh_error(e)
 
     def _extract_token_from_response(self, response_data: Dict[str, Any], endpoint: str) -> str:
         """Extract the access token from the response data."""
@@ -535,15 +554,36 @@ class PortClient:
         """
         Get client credentials from environment variables.
 
-        :return: A tuple of (client_id, client_secret).
-        :raises PortConfigurationError: If credentials are missing.
+        Returns:
+            A tuple of (client_id, client_secret).
+
+        Raises:
+            PortConfigurationError: If credentials are missing.
         """
-        PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
-        PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
-        if not PORT_CLIENT_ID or not PORT_CLIENT_SECRET:
-            self._logger.error("Missing environment variables: PORT_CLIENT_ID or PORT_CLIENT_SECRET.")
-            raise PortConfigurationError("Environment variables PORT_CLIENT_ID or PORT_CLIENT_SECRET are not set")
-        return PORT_CLIENT_ID, PORT_CLIENT_SECRET
+        # Get credentials from environment variables
+        client_id = os.getenv("PORT_CLIENT_ID")
+        client_secret = os.getenv("PORT_CLIENT_SECRET")
+
+        # Validate credentials
+        self._validate_credentials(client_id, client_secret, "environment variables")
+
+        return client_id, client_secret
+
+    def _validate_credentials(self, client_id: Optional[str], client_secret: Optional[str], source: str):
+        """
+        Validate that client credentials are present.
+
+        Args:
+            client_id: The client ID to validate.
+            client_secret: The client secret to validate.
+            source: The source of the credentials (for error messages).
+
+        Raises:
+            PortConfigurationError: If credentials are missing.
+        """
+        if not client_id or not client_secret:
+            self._logger.error(f"Missing credentials from {source}.")
+            raise PortConfigurationError(f"Client ID or client secret not found in {source}")
 
     def _handle_response(self, response: requests.Response, endpoint: str, method: str, correlation_id: str) -> requests.Response:
         """Handle the response, returning it if successful or raising an appropriate exception."""
