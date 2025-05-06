@@ -1,28 +1,90 @@
-from typing import Dict, List
-from pyport.models.api_category import BaseResource
+from typing import Dict, List, Any, Optional, cast
+
+from src.pyport.types import User, UsersResponse, UserResponse
+
+from src.pyport.models.api_category import BaseResource
+from src.pyport.models.response import PortListResponse, PortItemResponse
 
 
 class Users(BaseResource):
-    """Users API category for managing users."""
+    """Users API category for managing users.
 
-    def get_users(self) -> List[Dict]:
+    This class provides methods for interacting with the Users API endpoints.
+
+    Examples:
+        >>> client = PortClient(client_id="your-client-id", client_secret="your-client-secret")
+        >>> # Get all users
+        >>> users = client.users.get_users()
+        >>> # Get a specific user
+        >>> user = client.users.get_user("user-id")
+    """
+
+    def __init__(self, client):
+        """Initialize the Users API service.
+
+        Args:
+            client: The API client to use for requests.
+        """
+        super().__init__(client, resource_name="users")
+
+    def get_users(self, params: Optional[Dict[str, Any]] = None) -> List[User]:
         """
         Retrieve all users.
 
-        :return: A list of user dictionaries.
-        """
-        response = self._client.make_request("GET", "users")
-        return response.json().get("users", [])
+        This method retrieves a list of all users in the organization.
 
-    def get_user(self, user_id: str) -> Dict:
+        Args:
+            params: Optional query parameters for the request.
+
+        Returns:
+            A list of user dictionaries, each containing:
+            - id: The unique identifier of the user
+            - email: The email address of the user
+            - firstName: The first name of the user
+            - lastName: The last name of the user
+            - status: The status of the user (e.g., "active")
+            - role: The role of the user
+            - createdAt: The creation timestamp
+            - updatedAt: The last update timestamp
+
+        Examples:
+            >>> users = client.users.get_users()
+            >>> for user in users:
+            ...     print(f"{user['firstName']} {user['lastName']} ({user['email']})")
+        """
+        # Use the base class list method
+        users = self.list(params=params)
+        return cast(List[User], users)
+
+    def get_user(self, user_id: str, params: Optional[Dict[str, Any]] = None) -> User:
         """
         Retrieve details for a specific user.
 
-        :param user_id: The identifier of the user.
-        :return: A dictionary representing the user.
+        This method retrieves detailed information about a specific user.
+
+        Args:
+            user_id: The unique identifier of the user to retrieve.
+            params: Optional query parameters for the request.
+
+        Returns:
+            A dictionary containing the user details:
+            - id: The unique identifier of the user
+            - email: The email address of the user
+            - firstName: The first name of the user
+            - lastName: The last name of the user
+            - status: The status of the user (e.g., "active")
+            - role: The role of the user
+            - createdAt: The creation timestamp
+            - updatedAt: The last update timestamp
+
+        Examples:
+            >>> user = client.users.get_user("user-id")
+            >>> print(f"User: {user['firstName']} {user['lastName']}")
+            >>> print(f"Email: {user['email']}")
         """
-        response = self._client.make_request("GET", f"users/{user_id}")
-        return response.json().get("user", {})
+        # Use the base class get method
+        response = self.get(user_id, params=params)
+        return cast(User, response.get("user", {}))
 
     def create_user(self, user_data: Dict) -> Dict:
         """

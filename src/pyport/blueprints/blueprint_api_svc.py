@@ -1,20 +1,11 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional, cast
 
 from src.pyport.models.api_category import BaseResource
-
-# Comment out the types import since it doesn't exist yet
-# from src.pyport.types import (
-#     Blueprint, BlueprintResponse, BlueprintsResponse,
-#     JsonDict, JsonList, Pagination
-# )
-
-# Use regular Dict and List instead
-Blueprint = Dict[str, Any]
-BlueprintResponse = Dict[str, Any]
-BlueprintsResponse = Dict[str, Any]
-JsonDict = Dict[str, Any]
-JsonList = List[Dict[str, Any]]
-Pagination = Dict[str, Any]
+from src.pyport.models.response import PortListResponse
+from src.pyport.types import (
+    Blueprint, BlueprintResponse, BlueprintsResponse,
+    JsonDict, JsonList, Pagination
+)
 
 
 class Blueprints(BaseResource):
@@ -44,9 +35,14 @@ class Blueprints(BaseResource):
     """
 
     def __init__(self, client):
+        """Initialize the Blueprints API service.
+
+        Args:
+            client: The API client to use for requests.
+        """
         super().__init__(client, resource_name="blueprints")
 
-    def get_blueprints(self, page: int = None, per_page: int = None) -> List[Blueprint]:
+    def get_blueprints(self, page: Optional[int] = None, per_page: Optional[int] = None) -> List[Blueprint]:
         """
         Get all blueprints with pagination support.
 
@@ -72,14 +68,15 @@ class Blueprints(BaseResource):
             >>> page2 = client.blueprints.get_blueprints(page=2, per_page=50)
         """
         # Only add pagination parameters if they are provided
-        params = {}
+        params: Dict[str, Any] = {}
         if page is not None:
             params['page'] = page
         if per_page is not None:
             params['per_page'] = per_page
 
         # Use the base class list method
-        return self.list(params=params)
+        blueprints = self.list(params=params)
+        return cast(List[Blueprint], blueprints)
 
     def get_blueprint(self, blueprint_identifier: str) -> Blueprint:
         """
@@ -110,7 +107,8 @@ class Blueprints(BaseResource):
         """
         # Use the base class get method
         response = self.get(blueprint_identifier)
-        return response.get("blueprint", {})
+        blueprint = response.get("blueprint", {})
+        return cast(Blueprint, blueprint)
 
     def create_blueprint(self, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
@@ -154,7 +152,8 @@ class Blueprints(BaseResource):
         """
         # Use the base class create method
         response = self.create(blueprint_data)
-        return response.get("blueprint", {})
+        blueprint = response.get("blueprint", {})
+        return cast(Blueprint, blueprint)
 
     def update_blueprint(self, blueprint_identifier: str, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
@@ -184,7 +183,8 @@ class Blueprints(BaseResource):
         """
         # Use the base class update method
         response = self.update(blueprint_identifier, blueprint_data)
-        return response.get("blueprint", {})
+        blueprint = response.get("blueprint", {})
+        return cast(Blueprint, blueprint)
 
     def delete_blueprint(self, blueprint_identifier: str) -> bool:
         """
