@@ -1,5 +1,31 @@
 """
 Error handling utilities for the PyPort client library.
+
+This module provides centralized error handling for the PyPort client library.
+It includes functions for converting HTTP errors to Port-specific exceptions,
+handling request exceptions, and decorators for adding error handling to functions.
+
+Example usage:
+
+```python
+# Using the with_error_handling decorator
+from src.pyport.error_handling import with_error_handling
+
+@with_error_handling
+def get_blueprint(blueprint_id):
+    # This function will have error handling added
+    response = client.make_request("GET", f"blueprints/{blueprint_id}")
+    return response.json()
+
+# Using custom error handlers
+@with_error_handling(
+    on_not_found=lambda: {"message": "Blueprint not found"},
+    on_error=lambda e: {"error": str(e)}
+)
+def get_blueprint_with_handlers(blueprint_id):
+    response = client.make_request("GET", f"blueprints/{blueprint_id}")
+    return response.json()
+```
 """
 import json
 import logging
@@ -135,27 +161,105 @@ def handle_error_response(
 
 
 def with_error_handling(
-    func: Callable[..., T],
+    func: Optional[Callable[..., T]] = None,
+    *,
     on_error: Optional[ErrorHandler] = None,
-    on_not_found: Optional[Callable[[], Any]] = None
+    on_not_found: Optional[Callable[[], Any]] = None,
+    on_validation_error: Optional[Callable[[PortValidationError], Any]] = None,
+    on_authentication_error: Optional[Callable[[PortAuthenticationError], Any]] = None,
+    on_permission_error: Optional[Callable[[PortPermissionError], Any]] = None,
+    on_rate_limit_error: Optional[Callable[[PortRateLimitError], Any]] = None,
+    on_server_error: Optional[Callable[[PortServerError], Any]] = None,
+    on_timeout_error: Optional[Callable[[PortTimeoutError], Any]] = None,
+    on_connection_error: Optional[Callable[[PortConnectionError], Any]] = None
 ) -> Callable[..., T]:
     """
     Decorator to add error handling to a function.
 
-    :param func: The function to wrap.
-    :param on_error: Optional handler for errors.
-    :param on_not_found: Optional handler for not found errors.
-    :return: The wrapped function.
+    This decorator can be used in two ways:
+
+    1. As a simple decorator:
+       @with_error_handling
+       def my_function():
+           ...
+
+    2. As a decorator with arguments:
+       @with_error_handling(on_not_found=lambda: None)
+       def my_function():
+           ...
+
+    Args:
+        func: The function to wrap.
+        on_error: Handler for all PortApiError exceptions.
+        on_not_found: Handler for PortResourceNotFoundError exceptions.
+        on_validation_error: Handler for PortValidationError exceptions.
+        on_authentication_error: Handler for PortAuthenticationError exceptions.
+        on_permission_error: Handler for PortPermissionError exceptions.
+        on_rate_limit_error: Handler for PortRateLimitError exceptions.
+        on_server_error: Handler for PortServerError exceptions.
+        on_timeout_error: Handler for PortTimeoutError exceptions.
+        on_connection_error: Handler for PortConnectionError exceptions.
+
+    Returns:
+        The wrapped function.
     """
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except PortResourceNotFoundError:
-            if on_not_found:
-                return on_not_found()
-            raise
-        except PortApiError as e:
-            if on_error:
-                return on_error(e)
-            raise
-    return wrapper
+    def decorator(fn):
+        def wrapper(*args, **kwargs):
+            try:
+                return fn(*args, **kwargs)
+            except PortResourceNotFoundError as e:
+                if on_not_found:
+                    return on_not_found()
+                raise
+            except PortValidationError as e:
+                if on_validation_error:
+                    return on_validation_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortAuthenticationError as e:
+                if on_authentication_error:
+                    return on_authentication_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortPermissionError as e:
+                if on_permission_error:
+                    return on_permission_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortRateLimitError as e:
+                if on_rate_limit_error:
+                    return on_rate_limit_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortServerError as e:
+                if on_server_error:
+                    return on_server_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortTimeoutError as e:
+                if on_timeout_error:
+                    return on_timeout_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortConnectionError as e:
+                if on_connection_error:
+                    return on_connection_error(e)
+                if on_error:
+                    return on_error(e)
+                raise
+            except PortApiError as e:
+                if on_error:
+                    return on_error(e)
+                raise
+        return wrapper
+
+    # Handle both @with_error_handling and @with_error_handling()
+    if func is None:
+        return decorator
+    return decorator(func)

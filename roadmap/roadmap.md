@@ -28,9 +28,7 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Mock client for testing
   - Test fixtures and utilities
 
-- 🔜 **Pagination Support**
-  - Automatic and manual pagination options
-  - Iterator pattern for paginated results
+
 
 ### Medium-term (v0.2.2)
 

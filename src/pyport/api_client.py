@@ -4,9 +4,11 @@ import os
 import random
 import threading
 import time
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, Set, Type, TypeVar, Union
 
 import requests
+
+from src.pyport.retry import RetryConfig, RetryStrategy, with_retry
 
 from src.pyport.action_runs.action_runs_api_svc import ActionRuns
 from src.pyport.actions.actions_api_svc import Actions
@@ -57,7 +59,16 @@ class PortClient:
     def __init__(self, client_id: str, client_secret: str, us_region: bool = False,
                  auto_refresh: bool = True, refresh_interval: int = 900,
                  log_level: int = logging.INFO, log_format: Optional[str] = None,
-                 log_handler: Optional[logging.Handler] = None):
+                 log_handler: Optional[logging.Handler] = None,
+                 # Retry configuration
+                 max_retries: int = 3,
+                 retry_delay: float = 1.0,
+                 max_delay: float = 10.0,
+                 retry_strategy: Union[str, RetryStrategy] = RetryStrategy.EXPONENTIAL,
+                 retry_jitter: bool = True,
+                 retry_status_codes: Optional[Set[int]] = None,
+                 retry_on: Optional[Union[Type[Exception], Set[Type[Exception]]]] = None,
+                 idempotent_methods: Optional[Set[str]] = None):
         """
         Initialize the PortClient.
 
@@ -78,6 +89,22 @@ class PortClient:
         self.api_url = PORT_API_US_URL if us_region else PORT_API_URL
         self._logger = pyport_logger
         self._lock = threading.Lock()
+
+        # Configure retry behavior
+        if isinstance(retry_strategy, str):
+            retry_strategy = RetryStrategy(retry_strategy)
+
+        self.retry_config = RetryConfig(
+            max_retries=max_retries,
+            retry_delay=retry_delay,
+            max_delay=max_delay,
+            strategy=retry_strategy,
+            jitter=retry_jitter,
+            retry_status_codes=retry_status_codes or {429, 500, 502, 503, 504},
+            retry_on=retry_on,
+            idempotent_methods=idempotent_methods or {"GET", "HEAD", "PUT", "DELETE", "OPTIONS"},
+            retry_hook=self._log_retry_attempt
+        )
 
         # Obtain the initial token.
         self.client_id = client_id
@@ -327,27 +354,25 @@ class PortClient:
         log_error(error, correlation_id)
         raise error
 
-    def _retry_request(self, error: PortApiError, attempt: int, retries: int, retry_delay: float) -> float:
-        """Handle retry logic for transient errors. Returns the sleep time."""
-        if not error.is_transient() or attempt >= retries:
-            raise error
-
-        # For rate limiting, use the retry-after header if available
-        if isinstance(error, PortRateLimitError) and error.retry_after:
-            sleep_time = error.retry_after
-        else:
-            sleep_time = retry_delay * (2 ** attempt)  # Exponential backoff
-
-            # Add jitter to prevent thundering herd
-            if hasattr(self, 'retry_jitter') and self.retry_jitter:
-                jitter = random.uniform(0, 0.1 * sleep_time)  # 10% jitter
-                sleep_time += jitter
-
+    def _log_retry_attempt(self, error: Exception, attempt: int, delay: float) -> None:
+        """Log information about a retry attempt."""
         self._logger.warning(
-            f"{error.__class__.__name__} occurred. "
-            f"Retrying in {sleep_time:.2f} seconds. Attempt {attempt + 1}/{retries}."
+            f"Retry attempt {attempt + 1}/{self.retry_config.max_retries} after {error.__class__.__name__}. "
+            f"Waiting {delay:.2f} seconds before retrying."
         )
-        return sleep_time
+
+        # Log additional details for API errors
+        if isinstance(error, PortApiError):
+            details = []
+            if error.status_code:
+                details.append(f"Status: {error.status_code}")
+            if error.endpoint:
+                details.append(f"Endpoint: {error.endpoint}")
+            if error.method:
+                details.append(f"Method: {error.method}")
+
+            if details:
+                self._logger.debug(f"Error details: {', '.join(details)}")
 
     def _make_single_request(self, method: str, url: str, endpoint: str, correlation_id: str = None, **kwargs) -> requests.Response:
         """
@@ -394,9 +419,9 @@ class PortClient:
             method: HTTP method (e.g., 'GET', 'POST').
             endpoint: API endpoint appended to the base URL.
             retries: Number of retry attempts for transient errors.
-                If None, uses the client's default (self.max_retries).
-            retry_delay: Initial delay between retries in seconds.
-                If None, uses the client's default (self.retry_delay).
+                If None, uses the client's default (self.retry_config.max_retries).
+            retry_delay: Initial delay between retries in seconds (e.g., 1.0 = 1 second).
+                If None, uses the client's default (self.retry_config.retry_delay).
             correlation_id: A correlation ID for tracking the request.
                 If None, a new ID will be generated.
             **kwargs: Additional parameters passed to requests.request.
@@ -407,12 +432,6 @@ class PortClient:
         Raises:
             PortApiError: Base class for all Port API errors.
         """
-        # Use client defaults if not specified
-        if retries is None:
-            retries = getattr(self, 'max_retries', 3)
-        if retry_delay is None:
-            retry_delay = getattr(self, 'retry_delay', 1.0)
-
         # Generate or use the provided correlation ID
         if correlation_id is None:
             correlation_id = get_correlation_id()
@@ -425,20 +444,33 @@ class PortClient:
             # For real API calls, add the /v1/ prefix
             url = f"{self.api_url}/v1/{endpoint}"
 
-        for attempt in range(retries + 1):
-            try:
-                return self._make_single_request(method, url, endpoint, correlation_id, **kwargs)
-            except PortApiError as error:
-                # Handle retry logic
-                if error.is_transient() and attempt < retries:
-                    sleep_time = self._retry_request(error, attempt, retries, retry_delay)
-                    time.sleep(sleep_time)
-                else:
-                    # If not retrying, re-raise the error
-                    raise
+        # Create a local retry config if custom parameters were provided
+        if retries is not None or retry_delay is not None:
+            local_config = RetryConfig(
+                max_retries=retries if retries is not None else self.retry_config.max_retries,
+                retry_delay=retry_delay if retry_delay is not None else self.retry_config.retry_delay,
+                strategy=self.retry_config.strategy,
+                jitter=self.retry_config.jitter,
+                retry_status_codes=self.retry_config.retry_status_codes,
+                retry_on=self.retry_config.retry_on,
+                idempotent_methods=self.retry_config.idempotent_methods,
+                retry_hook=self.retry_config.retry_hook
+            )
+        else:
+            local_config = self.retry_config
 
-        # This should never be reached due to the raise in the loop
-        raise PortApiError(f"Unexpected error in make_request for {method} {endpoint}")
+        # Define a function that will make a single request
+        def _make_request_impl(method, url, endpoint, correlation_id, **request_kwargs):
+            return self._make_single_request(method, url, endpoint, correlation_id, **request_kwargs)
+
+        # Apply the retry decorator to the function
+        make_request_with_retry = with_retry(_make_request_impl, config=local_config)
+
+        # Add method to kwargs for the retry condition check
+        kwargs['method'] = method
+
+        # Make the request with retry handling
+        return make_request_with_retry(method, url, endpoint, correlation_id, **kwargs)
 
     def with_error_handling(self, func: Callable[..., T], *args, **kwargs) -> T:
         """
