@@ -209,17 +209,55 @@ class PortClient:
             ...     log_handler=handler
             ... )
         """
-        # Configure logging
-        configure_logging(level=log_level, format_string=log_format, handler=log_handler)
+        # Store authentication credentials
+        self.client_id = client_id
+        self.client_secret = client_secret
 
-        self.api_url = PORT_API_US_URL if us_region else PORT_API_URL
-        self._logger = pyport_logger
+        # Set up basic client properties
         self._lock = threading.Lock()
+        self.api_url = PORT_API_US_URL if us_region else PORT_API_URL
 
-        # Configure retry behavior
+        # Configure components
+        self._setup_logging(log_level, log_format, log_handler)
+        self._setup_retry_config(max_retries, retry_delay, max_delay, retry_strategy, retry_jitter,
+                               retry_status_codes, retry_on, idempotent_methods)
+        self._setup_authentication()
+        self._setup_token_refresh(auto_refresh, refresh_interval)
+
+    def _setup_logging(self, log_level: int, log_format: Optional[str], log_handler: Optional[logging.Handler]) -> None:
+        """
+        Set up logging configuration.
+
+        Args:
+            log_level: The logging level to use.
+            log_format: The format string to use for log messages.
+            log_handler: A logging handler to use.
+        """
+        configure_logging(level=log_level, format_string=log_format, handler=log_handler)
+        self._logger = pyport_logger
+
+    def _setup_retry_config(self, max_retries: int, retry_delay: float, max_delay: float,
+                          retry_strategy: Union[str, RetryStrategy], retry_jitter: bool,
+                          retry_status_codes: Optional[Set[int]], retry_on: Optional[Union[Type[Exception], Set[Type[Exception]]]],
+                          idempotent_methods: Optional[Set[str]]) -> None:
+        """
+        Set up retry configuration.
+
+        Args:
+            max_retries: Maximum number of retry attempts.
+            retry_delay: Initial delay between retries in seconds.
+            max_delay: Maximum delay between retries in seconds.
+            retry_strategy: Strategy for calculating retry delays.
+            retry_jitter: Whether to add random jitter to retry delays.
+            retry_status_codes: HTTP status codes that should trigger retries.
+            retry_on: Exception types or function that determines if an exception should be retried.
+            idempotent_methods: HTTP methods that are safe to retry.
+        """
+        # Convert string strategy to enum if needed
         if isinstance(retry_strategy, str):
             retry_strategy = RetryStrategy(retry_strategy)
 
+        # Create retry configuration
         self.retry_config = RetryConfig(
             max_retries=max_retries,
             retry_delay=retry_delay,
@@ -232,17 +270,29 @@ class PortClient:
             retry_hook=self._log_retry_attempt
         )
 
-        # Obtain the initial token.
-        self.client_id = client_id
-        self.client_secret = client_secret
+    def _setup_authentication(self) -> None:
+        """
+        Set up authentication by obtaining an access token and initializing the session and sub-clients.
+        """
+        # Obtain the initial token
         self.token = self._get_access_token()
-        # Initialize the session and sub-clients.
+
+        # Initialize the session and sub-clients
         self._init_session()
         self._init_sub_clients()
 
-        # Start a background thread to auto-refresh the token if enabled.
+    def _setup_token_refresh(self, auto_refresh: bool, refresh_interval: int) -> None:
+        """
+        Set up token refresh mechanism.
+
+        Args:
+            auto_refresh: Whether to automatically refresh the token.
+            refresh_interval: Token refresh interval in seconds.
+        """
         self._auto_refresh = auto_refresh
         self._refresh_interval = refresh_interval
+
+        # Start a background thread to auto-refresh the token if enabled
         if self._auto_refresh:
             self._start_token_refresh_thread()
 
@@ -415,43 +465,71 @@ class PortClient:
         correlation_id = get_correlation_id()
 
         try:
-            # Prepare request
-            endpoint, headers, payload = self._prepare_auth_request()
-            url = f'{self.api_url}/v1/{endpoint}'
-
-            self._logger.debug("Sending authentication request to obtain access token...")
-
-            # Log the request (masking sensitive data)
-            log_request("POST", url, headers=headers, json_data=json.loads(payload),
-                        correlation_id=correlation_id)
-
-            try:
-                # Make the request
-                response = requests.post(url, headers=headers, data=payload, timeout=10)
-
-                # Log the response
-                log_response(response, correlation_id)
-
-                return self._handle_auth_response(response, endpoint)
-            except requests.RequestException as e:
-                # Convert requests exceptions to Port exceptions
-                error = handle_request_exception(e, endpoint, "POST")
-                log_error(error, correlation_id)
-                raise error
-
+            # Prepare and send the authentication request
+            return self._send_auth_request(correlation_id)
         except (PortApiError, PortAuthenticationError, PortConfigurationError):
             # Re-raise these exceptions as they're already properly formatted
             raise
         except Exception as e:
             # Catch any other exceptions and convert to PortApiError
-            self._logger.error(f"An unexpected error occurred while obtaining access token: {str(e)}")
-            error = PortApiError(
-                f"Unexpected error during authentication: {str(e)}",
-                endpoint="auth/access_token",
-                method="POST"
-            )
+            return self._handle_unexpected_auth_error(e, correlation_id)
+
+    def _send_auth_request(self, correlation_id: str) -> str:
+        """
+        Prepare and send the authentication request.
+
+        Args:
+            correlation_id: A correlation ID for tracking the request.
+
+        Returns:
+            The access token.
+
+        Raises:
+            PortApiError: If the request fails.
+        """
+        # Prepare request
+        endpoint, headers, payload = self._prepare_auth_request()
+        url = f'{self.api_url}/v1/{endpoint}'
+
+        self._logger.debug("Sending authentication request to obtain access token...")
+
+        # Log the request (masking sensitive data)
+        log_request("POST", url, headers=headers, json_data=json.loads(payload),
+                    correlation_id=correlation_id)
+
+        try:
+            # Make the request
+            response = requests.post(url, headers=headers, data=payload, timeout=10)
+
+            # Log the response
+            log_response(response, correlation_id)
+
+            return self._handle_auth_response(response, endpoint)
+        except requests.RequestException as e:
+            # Convert requests exceptions to Port exceptions
+            error = handle_request_exception(e, endpoint, "POST")
             log_error(error, correlation_id)
-            raise error from e
+            raise error
+
+    def _handle_unexpected_auth_error(self, e: Exception, correlation_id: str) -> str:
+        """
+        Handle unexpected errors during authentication.
+
+        Args:
+            e: The exception that occurred.
+            correlation_id: A correlation ID for tracking the request.
+
+        Raises:
+            PortApiError: A formatted API error with context about the original exception.
+        """
+        self._logger.error(f"An unexpected error occurred while obtaining access token: {str(e)}")
+        error = PortApiError(
+            f"Unexpected error during authentication: {str(e)}",
+            endpoint="auth/access_token",
+            method="POST"
+        )
+        log_error(error, correlation_id)
+        raise error from e
 
     def _get_local_env_cred(self):
         """
@@ -614,17 +692,48 @@ class PortClient:
         if correlation_id is None:
             correlation_id = get_correlation_id()
 
+        # Build the full URL for the request
+        url = self._build_request_url(endpoint)
+
+        # Create a retry configuration for this request
+        local_config = self._create_request_retry_config(retries, retry_delay)
+
+        # Create a function with retry handling and execute it
+        return self._execute_request_with_retry(method, url, endpoint, correlation_id, local_config, **kwargs)
+
+    def _build_request_url(self, endpoint: str) -> str:
+        """
+        Build the full URL for a request based on the endpoint.
+
+        Args:
+            endpoint: The API endpoint to request.
+
+        Returns:
+            The full URL for the request.
+        """
         # Check if we're running in a test environment
         if 'test' in endpoint:
             # For tests, don't add the /v1/ prefix
-            url = f"{self.api_url}/{endpoint}"
+            return f"{self.api_url}/{endpoint}"
         else:
             # For real API calls, add the /v1/ prefix
-            url = f"{self.api_url}/v1/{endpoint}"
+            return f"{self.api_url}/v1/{endpoint}"
 
-        # Create a local retry config if custom parameters were provided
+    def _create_request_retry_config(self, retries: Optional[int], retry_delay: Optional[float]) -> RetryConfig:
+        """
+        Create a retry configuration for a request.
+
+        Args:
+            retries: Number of retry attempts for transient errors.
+                If None, uses the client's default.
+            retry_delay: Initial delay between retries in seconds.
+                If None, uses the client's default.
+
+        Returns:
+            A RetryConfig object for the request.
+        """
         if retries is not None or retry_delay is not None:
-            local_config = RetryConfig(
+            return RetryConfig(
                 max_retries=retries if retries is not None else self.retry_config.max_retries,
                 retry_delay=retry_delay if retry_delay is not None else self.retry_config.retry_delay,
                 strategy=self.retry_config.strategy,
@@ -635,14 +744,31 @@ class PortClient:
                 retry_hook=self.retry_config.retry_hook
             )
         else:
-            local_config = self.retry_config
+            return self.retry_config
 
+    def _execute_request_with_retry(self, method: str, url: str, endpoint: str,
+                                  correlation_id: str, retry_config: RetryConfig,
+                                  **kwargs) -> requests.Response:
+        """
+        Execute a request with retry handling.
+
+        Args:
+            method: HTTP method (e.g., 'GET', 'POST').
+            url: The full URL to request.
+            endpoint: The API endpoint (for error reporting).
+            correlation_id: A correlation ID for tracking the request.
+            retry_config: The retry configuration to use.
+            **kwargs: Additional parameters passed to requests.request.
+
+        Returns:
+            A requests.Response object containing the API response.
+        """
         # Define a function that will make a single request
         def _make_request_impl(method, url, endpoint, correlation_id, **request_kwargs):
             return self._make_single_request(method, url, endpoint, correlation_id, **request_kwargs)
 
         # Apply the retry decorator to the function
-        make_request_with_retry = with_retry(_make_request_impl, config=local_config)
+        make_request_with_retry = with_retry(_make_request_impl, config=retry_config)
 
         # Add method to kwargs for the retry condition check
         kwargs['method'] = method
