@@ -1,20 +1,7 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional, cast
 
 from src.pyport.models.api_category import BaseResource
-
-# Comment out the types import since it doesn't exist yet
-# from src.pyport.types import (
-#     Blueprint, BlueprintResponse, BlueprintsResponse,
-#     JsonDict, JsonList, Pagination
-# )
-
-# Use regular Dict and List instead
-Blueprint = Dict[str, Any]
-BlueprintResponse = Dict[str, Any]
-BlueprintsResponse = Dict[str, Any]
-JsonDict = Dict[str, Any]
-JsonList = List[Dict[str, Any]]
-Pagination = Dict[str, Any]
+from src.pyport.types import Blueprint
 
 
 class Blueprints(BaseResource):
@@ -43,7 +30,15 @@ class Blueprints(BaseResource):
         ... })
     """
 
-    def get_blueprints(self, page: int = None, per_page: int = None) -> List[Blueprint]:
+    def __init__(self, client):
+        """Initialize the Blueprints API service.
+
+        Args:
+            client: The API client to use for requests.
+        """
+        super().__init__(client, resource_name="blueprints")
+
+    def get_blueprints(self, page: Optional[int] = None, per_page: Optional[int] = None) -> List[Blueprint]:
         """
         Get all blueprints with pagination support.
 
@@ -69,19 +64,15 @@ class Blueprints(BaseResource):
             >>> page2 = client.blueprints.get_blueprints(page=2, per_page=50)
         """
         # Only add pagination parameters if they are provided
-        params = {}
+        params: Dict[str, Any] = {}
         if page is not None:
             params['page'] = page
         if per_page is not None:
             params['per_page'] = per_page
 
-        # Make the request with or without pagination parameters
-        if params:
-            response = self._client.make_request('GET', 'blueprints', params=params)
-        else:
-            response = self._client.make_request('GET', 'blueprints')
-
-        return response.json().get("blueprints", [])
+        # Use the base class list method
+        blueprints = self.list(params=params)
+        return cast(List[Blueprint], blueprints)
 
     def get_blueprint(self, blueprint_identifier: str) -> Blueprint:
         """
@@ -110,8 +101,10 @@ class Blueprints(BaseResource):
             >>> print(service_blueprint["title"])
             'Service'
         """
-        response = self._client.make_request('GET', f"blueprints/{blueprint_identifier}")
-        return response.json().get("blueprint", {})
+        # Use the base class get method
+        response = self.get(blueprint_identifier)
+        blueprint = response.get("blueprint", {})
+        return cast(Blueprint, blueprint)
 
     def create_blueprint(self, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
@@ -153,8 +146,10 @@ class Blueprints(BaseResource):
             ...     }
             ... })
         """
-        response = self._client.make_request('POST', 'blueprints', json=blueprint_data)
-        return response.json()
+        # Use the base class create method
+        response = self.create(blueprint_data)
+        blueprint = response.get("blueprint", {})
+        return cast(Blueprint, blueprint)
 
     def update_blueprint(self, blueprint_identifier: str, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
@@ -182,8 +177,10 @@ class Blueprints(BaseResource):
             ...     {"title": "Cloud Microservice"}
             ... )
         """
-        response = self._client.make_request('PUT', f"blueprints/{blueprint_identifier}", json=blueprint_data)
-        return response.json()
+        # Use the base class update method
+        response = self.update(blueprint_identifier, blueprint_data)
+        blueprint = response.get("blueprint", {})
+        return cast(Blueprint, blueprint)
 
     def delete_blueprint(self, blueprint_identifier: str) -> bool:
         """
@@ -208,8 +205,8 @@ class Blueprints(BaseResource):
             >>> if success:
             ...     print("Blueprint deleted successfully")
         """
-        response = self._client.make_request('DELETE', f"blueprints/{blueprint_identifier}")
-        return response.status_code == 204
+        # Use the base class delete method
+        return self.delete(blueprint_identifier)
 
     # Blueprint Permissions Methods
 

@@ -13,7 +13,7 @@ class TestBlueprintsService(unittest.TestCase):
         self.addCleanup(patcher_token.stop)
         self.mock_get_access_token = patcher_token.start()
 
-        self.client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
+        self.client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True, skip_auth=True)
         self.client.make_request = MagicMock()
         self.blueprints = Blueprints(self.client)
         self.blueprint_id = "bp_123"
@@ -39,7 +39,7 @@ class TestBlueprintsService(unittest.TestCase):
     def test_create_blueprint(self):
         blueprint_data = {"name": "Test Blueprint"}
         dummy_response = MagicMock()
-        dummy_response.json.return_value = blueprint_data
+        dummy_response.json.return_value = {"blueprint": blueprint_data}
         self.client.make_request.return_value = dummy_response
 
         result = self.blueprints.create_blueprint(blueprint_data)

@@ -1,28 +1,87 @@
-from typing import Dict, List
-from pyport.models.api_category import BaseResource
+from typing import Dict, List, Any, Optional, cast
+
+from src.pyport.types import Team
+
+from src.pyport.models.api_category import BaseResource
 
 
 class Teams(BaseResource):
-    """Teams API category for managing teams."""
+    """Teams API category for managing teams.
 
-    def get_teams(self) -> List[Dict]:
+    This class provides methods for interacting with the Teams API endpoints.
+
+    Examples:
+        >>> client = PortClient(client_id="your-client-id", client_secret="your-client-secret")
+        >>> # Get all teams
+        >>> teams = client.teams.get_teams()
+        >>> # Get a specific team
+        >>> team = client.teams.get_team("team-id")
+    """
+
+    def __init__(self, client):
+        """Initialize the Teams API service.
+
+        Args:
+            client: The API client to use for requests.
+        """
+        super().__init__(client, resource_name="teams")
+
+    def get_teams(self, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Team]:
         """
         Retrieve all teams.
 
-        :return: A list of team dictionaries.
-        """
-        response = self._client.make_request("GET", "teams")
-        return response.json().get("teams", [])
+        This method retrieves a list of all teams in the organization.
 
-    def get_team(self, team_id: str) -> Dict:
+        Args:
+            params: Optional query parameters for the request.
+
+        Returns:
+            A list of team dictionaries, each containing:
+            - id: The unique identifier of the team
+            - name: The name of the team
+            - description: The description of the team (if any)
+            - members: A list of member IDs
+            - createdAt: The creation timestamp
+            - updatedAt: The last update timestamp
+
+        Examples:
+            >>> teams = client.teams.get_teams()
+            >>> for team in teams:
+            ...     print(f"{team['name']} ({team['id']})")
+        """
+        # For backward compatibility, ignore kwargs
+        # Use the base class list method
+        teams = self.list(params=params)
+        return cast(List[Team], teams)
+
+    def get_team(self, team_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Team:
         """
         Retrieve details for a specific team.
 
-        :param team_id: The identifier of the team.
-        :return: A dictionary representing the team.
+        This method retrieves detailed information about a specific team.
+
+        Args:
+            team_id: The unique identifier of the team to retrieve.
+            params: Optional query parameters for the request.
+
+        Returns:
+            A dictionary containing the team details:
+            - id: The unique identifier of the team
+            - name: The name of the team
+            - description: The description of the team (if any)
+            - members: A list of member IDs
+            - createdAt: The creation timestamp
+            - updatedAt: The last update timestamp
+
+        Examples:
+            >>> team = client.teams.get_team("team-id")
+            >>> print(f"Team: {team['name']}")
+            >>> print(f"Members: {len(team['members'])}")
         """
-        response = self._client.make_request("GET", f"teams/{team_id}")
-        return response.json().get("team", {})
+        # For backward compatibility, ignore kwargs
+        # Use the base class get method
+        response = self.get(team_id, params=params)
+        return cast(Team, response.get("team", {}))
 
     def create_team(self, team_data: Dict) -> Dict:
         """

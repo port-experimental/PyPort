@@ -88,10 +88,19 @@ class CodeScanner(object):
             print("Error running bandit:", e)
             return
 
+        # Process the output to handle potential non-JSON content at the beginning
+        output = result.stdout
+
+        # Check if the first character is '{' and if not, remove the first line
+        if output and output.strip() and output.strip()[0] != '{':
+            print("First character is not '{', removing first line...")
+            output = '\n'.join(output.splitlines()[1:])
+
         try:
-            data = json.loads(result.stdout)
+            data = json.loads(output)
         except json.JSONDecodeError:
             print("Failed to parse bandit output.")
+            print(f"Output starts with: {output[:100]}...")
             return
         sa = SecurityAssessor(self.cicd_cfg.project_root, data["metrics"])
         sa.compute_assessment()

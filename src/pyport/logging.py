@@ -14,6 +14,15 @@ from typing import Any, Dict, Optional, Set
 # Default logger for the PyPort client library
 logger = logging.getLogger("pyport")
 
+# Mapping of string log levels to logging module constants
+LOG_LEVEL_MAP = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+}
+
 # Sensitive fields that should be masked in logs
 SENSITIVE_FIELDS = {
     "client_id", "client_secret", "token", "accessToken", "refreshToken", "password",
@@ -27,11 +36,31 @@ URL_SENSITIVE_PATTERN = re.compile(
 )
 
 
+def init_logging(log_level: str) -> None:
+    """
+    Initialize logging with a string log level.
+
+    This is a simplified version of configure_logging that takes a string log level
+    and sets up basic logging with a file and stream handler.
+
+    Args:
+        log_level: The logging level as a string ("DEBUG", "INFO", etc.)
+    """
+    level = LOG_LEVEL_MAP.get(log_level.upper(), logging.INFO)
+    logging.basicConfig(level=level,
+                        format='%(asctime)s - %(levelname)s - %(message)s',
+                        handlers=[
+                            logging.FileHandler("app.log"),
+                            logging.StreamHandler()
+                        ])
+
+
 def configure_logging(
     level: int = logging.INFO,
     format_string: Optional[str] = None,
     handler: Optional[logging.Handler] = None,
-    propagate: bool = False
+    propagate: bool = False,
+    log_file: Optional[str] = None
 ) -> None:
     """
     Configure logging for the PyPort client library.
@@ -42,6 +71,7 @@ def configure_logging(
             If None, a default format will be used.
         handler: A logging handler to use. If None, a StreamHandler will be created.
         propagate: Whether to propagate log messages to the root logger (default: False).
+        log_file: Path to a log file. If provided, a FileHandler will be added.
     """
     global logger
 
@@ -55,18 +85,24 @@ def configure_logging(
     for hdlr in logger.handlers[:]:
         logger.removeHandler(hdlr)
 
+    # Create a formatter
+    if format_string is None:
+        format_string = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    formatter = logging.Formatter(format_string)
+
     # Create a handler if none was provided
     if handler is None:
         handler = logging.StreamHandler()
 
-    # Set the format
-    if format_string is None:
-        format_string = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    formatter = logging.Formatter(format_string)
+    # Set the formatter and add the handler
     handler.setFormatter(formatter)
-
-    # Add the handler to the logger
     logger.addHandler(handler)
+
+    # Add a file handler if a log file was specified
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
 
 def get_correlation_id() -> str:
@@ -274,13 +310,15 @@ def log_request(
     if correlation_id is None:
         correlation_id = get_correlation_id()
 
-    # Format the request for logging
-    request_info = format_request_for_logging(
-        method, url, headers, params, data, json_data, correlation_id, **kwargs
-    )
+    # Only format and log the request if debug logging is enabled
+    if logger.isEnabledFor(logging.DEBUG):
+        # Format the request for logging
+        request_info = format_request_for_logging(
+            method, url, headers, params, data, json_data, correlation_id, **kwargs
+        )
 
-    # Log the request
-    logger.debug(f"Request: {json.dumps(request_info)}")
+        # Log the request
+        logger.debug(f"Request: {json.dumps(request_info)}")
 
     return correlation_id
 
@@ -298,11 +336,13 @@ def log_response(
         correlation_id: A correlation ID for tracking the request.
         include_body: Whether to include the response body in the log.
     """
-    # Format the response for logging
-    response_info = format_response_for_logging(response, correlation_id, include_body)
+    # Only format and log the response if debug logging is enabled
+    if logger.isEnabledFor(logging.DEBUG):
+        # Format the response for logging
+        response_info = format_response_for_logging(response, correlation_id, include_body)
 
-    # Log the response
-    logger.debug(f"Response: {json.dumps(response_info)}")
+        # Log the response
+        logger.debug(f"Response: {json.dumps(response_info)}")
 
 
 def log_error(
@@ -316,22 +356,24 @@ def log_error(
         error: The error to log.
         correlation_id: A correlation ID for tracking the request.
     """
-    # Create a dictionary with error information
-    error_info = {
-        "type": type(error).__name__,
-        "message": str(error),
-        "correlation_id": correlation_id
-    }
+    # Only create the error info if error logging is enabled
+    if logger.isEnabledFor(logging.ERROR):
+        # Create a dictionary with error information
+        error_info = {
+            "type": type(error).__name__,
+            "message": str(error),
+            "correlation_id": correlation_id
+        }
 
-    # Add additional information for Port API errors
-    if hasattr(error, "status_code"):
-        error_info["status_code"] = error.status_code
-    if hasattr(error, "endpoint"):
-        error_info["endpoint"] = error.endpoint
-    if hasattr(error, "method"):
-        error_info["method"] = error.method
-    if hasattr(error, "response_body") and error.response_body:
-        error_info["response_body"] = mask_sensitive_data(error.response_body)
+        # Add additional information for Port API errors
+        if hasattr(error, "status_code"):
+            error_info["status_code"] = error.status_code
+        if hasattr(error, "endpoint"):
+            error_info["endpoint"] = error.endpoint
+        if hasattr(error, "method"):
+            error_info["method"] = error.method
+        if hasattr(error, "response_body") and error.response_body:
+            error_info["response_body"] = mask_sensitive_data(error.response_body)
 
-    # Log the error
-    logger.error(f"Error: {json.dumps(error_info)}")
+        # Log the error
+        logger.error(f"Error: {json.dumps(error_info)}")

@@ -6,7 +6,7 @@ from pyport.constants import LOG_LEVEL
 
 # Debugging Package from Local
 # from src.pyport.api_client import PortClient
-from pyport.services.logging_svc import init_logging
+from pyport.logging import init_logging
 from dotenv import load_dotenv
 
 
