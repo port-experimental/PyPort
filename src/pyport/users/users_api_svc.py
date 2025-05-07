@@ -27,7 +27,7 @@ class Users(BaseResource):
         """
         super().__init__(client, resource_name="users")
 
-    def get_users(self, params: Optional[Dict[str, Any]] = None) -> List[User]:
+    def get_users(self, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[User]:
         """
         Retrieve all users.
 
@@ -52,11 +52,12 @@ class Users(BaseResource):
             >>> for user in users:
             ...     print(f"{user['firstName']} {user['lastName']} ({user['email']})")
         """
+        # For backward compatibility, ignore kwargs
         # Use the base class list method
         users = self.list(params=params)
         return cast(List[User], users)
 
-    def get_user(self, user_id: str, params: Optional[Dict[str, Any]] = None) -> User:
+    def get_user(self, user_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> User:
         """
         Retrieve details for a specific user.
 
@@ -82,6 +83,7 @@ class Users(BaseResource):
             >>> print(f"User: {user['firstName']} {user['lastName']}")
             >>> print(f"Email: {user['email']}")
         """
+        # For backward compatibility, ignore kwargs
         # Use the base class get method
         response = self.get(user_id, params=params)
         return cast(User, response.get("user", {}))

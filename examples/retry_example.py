@@ -43,7 +43,7 @@ def get_client() -> PortClient:
         # Retry configuration
         max_retries=5,
         retry_delay=1.0,
-        max_delay=10.0,
+        max_delay=30.0,
         retry_strategy=RetryStrategy.EXPONENTIAL,
         retry_jitter=True
     )

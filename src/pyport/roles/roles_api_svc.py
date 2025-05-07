@@ -27,7 +27,7 @@ class Roles(BaseResource):
         """
         super().__init__(client, resource_name="roles")
 
-    def get_roles(self, params: Optional[Dict[str, Any]] = None) -> List[Role]:
+    def get_roles(self, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Role]:
         """
         Retrieve all roles.
 
@@ -50,11 +50,12 @@ class Roles(BaseResource):
             >>> for role in roles:
             ...     print(f"{role['name']} ({role['id']})")
         """
+        # For backward compatibility, ignore kwargs
         # Use the base class list method
         roles = self.list(params=params)
         return cast(List[Role], roles)
 
-    def get_role(self, role_id: str, params: Optional[Dict[str, Any]] = None) -> Role:
+    def get_role(self, role_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Role:
         """
         Retrieve details for a specific role.
 
@@ -78,6 +79,7 @@ class Roles(BaseResource):
             >>> print(f"Role: {role['name']}")
             >>> print(f"Permissions: {', '.join(role['permissions'])}")
         """
+        # For backward compatibility, ignore kwargs
         # Use the base class get method
         response = self.get(role_id, params=params)
         return cast(Role, response.get("role", {}))

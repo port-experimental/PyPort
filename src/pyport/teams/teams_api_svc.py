@@ -27,7 +27,7 @@ class Teams(BaseResource):
         """
         super().__init__(client, resource_name="teams")
 
-    def get_teams(self, params: Optional[Dict[str, Any]] = None) -> List[Team]:
+    def get_teams(self, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Team]:
         """
         Retrieve all teams.
 
@@ -50,11 +50,12 @@ class Teams(BaseResource):
             >>> for team in teams:
             ...     print(f"{team['name']} ({team['id']})")
         """
+        # For backward compatibility, ignore kwargs
         # Use the base class list method
         teams = self.list(params=params)
         return cast(List[Team], teams)
 
-    def get_team(self, team_id: str, params: Optional[Dict[str, Any]] = None) -> Team:
+    def get_team(self, team_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Team:
         """
         Retrieve details for a specific team.
 
@@ -78,6 +79,7 @@ class Teams(BaseResource):
             >>> print(f"Team: {team['name']}")
             >>> print(f"Members: {len(team['members'])}")
         """
+        # For backward compatibility, ignore kwargs
         # Use the base class get method
         response = self.get(team_id, params=params)
         return cast(Team, response.get("team", {}))
