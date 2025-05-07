@@ -172,17 +172,22 @@ class RequestManager:
             A requests.Response object containing the API response.
         """
         # Define a function that will make a single request
-        def _make_request_impl(method, url, endpoint, correlation_id, **request_kwargs):
-            return self._make_single_request(method, url, endpoint, correlation_id, **request_kwargs)
+        def _make_request_impl(method_arg, url, endpoint, correlation_id, **request_kwargs):
+            # Remove the method parameter from request_kwargs to avoid duplicate
+            request_kwargs.pop('method', None)
+            return self._make_single_request(method_arg, url, endpoint, correlation_id, **request_kwargs)
 
         # Apply the retry decorator to the function
         make_request_with_retry = with_retry(_make_request_impl, config=retry_config)
 
+        # Make a copy of kwargs to avoid modifying the original
+        request_kwargs = kwargs.copy()
+
         # Add method to kwargs for the retry condition check
-        kwargs['method'] = method
+        request_kwargs['method'] = method
 
         # Make the request with retry handling
-        return make_request_with_retry(method, url, endpoint, correlation_id, **kwargs)
+        return make_request_with_retry(method, url, endpoint, correlation_id, **request_kwargs)
 
     def _make_single_request(self, method: str, url: str, endpoint: str, correlation_id: str, **kwargs) -> requests.Response:
         """

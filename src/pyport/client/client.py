@@ -146,6 +146,9 @@ class PortClient:
             skip_auth=skip_auth
         )
 
+        # For backward compatibility
+        self.token = self._auth_manager.token
+
         # Initialize session with the token from the auth manager
         self._init_session()
 

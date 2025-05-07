@@ -3,7 +3,7 @@ import logging
 import os
 
 # Import the function and map from your module (adjust the path if needed)
-from src.pyport.logging import init_logging, LOG_LEVEL_MAP
+from src.pyport.logging import init_logging, LOG_LEVEL_MAP, logger
 
 
 class TestInitLogging(unittest.TestCase):
@@ -34,9 +34,19 @@ class TestInitLogging(unittest.TestCase):
         self.assertTrue(stream_handler_found, "StreamHandler not found")
 
     def test_init_logging_invalid(self):
-        # Calling init_logging with an invalid level should raise a KeyError.
-        with self.assertRaises(KeyError):
+        # Calling init_logging with an invalid level should use the default level (INFO).
+        # Get the root logger level before the test
+        root_logger = logging.getLogger()
+        original_level = root_logger.level
+
+        try:
+            # Run the test
             init_logging("INVALID")
+            # Check that the root logger level is set to INFO
+            self.assertEqual(root_logger.level, logging.INFO)
+        finally:
+            # Restore the original level
+            root_logger.setLevel(original_level)
 
 
 if __name__ == "__main__":

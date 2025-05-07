@@ -80,7 +80,11 @@ class BaseResource(ABC):
         Raises:
             PortApiError: If the API request fails.
         """
-        response = self._client.make_request("GET", self._get_resource_path(), params=params, **kwargs)
+        # For backward compatibility, only include params if it's not None and not empty
+        if params is not None and params:
+            response = self._client.make_request("GET", self._get_resource_path(), params=params, **kwargs)
+        else:
+            response = self._client.make_request("GET", self._get_resource_path(), **kwargs)
         return response.json().get(self._resource_name, [])
 
     def get(self, resource_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
@@ -101,7 +105,11 @@ class BaseResource(ABC):
             PortResourceNotFoundError: If the resource does not exist.
             PortApiError: If the API request fails for another reason.
         """
-        response = self._client.make_request("GET", self._get_resource_path(resource_id), params=params, **kwargs)
+        # For backward compatibility, only include params if it's not None and not empty
+        if params is not None and params:
+            response = self._client.make_request("GET", self._get_resource_path(resource_id), params=params, **kwargs)
+        else:
+            response = self._client.make_request("GET", self._get_resource_path(resource_id), **kwargs)
         return response.json()
 
     def create(self, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
@@ -122,7 +130,11 @@ class BaseResource(ABC):
             PortValidationError: If the data is invalid.
             PortApiError: If the API request fails for another reason.
         """
-        response = self._client.make_request("POST", self._get_resource_path(), json=data, params=params, **kwargs)
+        # For backward compatibility, only include params if it's not None and not empty
+        if params is not None and params:
+            response = self._client.make_request("POST", self._get_resource_path(), json=data, params=params, **kwargs)
+        else:
+            response = self._client.make_request("POST", self._get_resource_path(), json=data, **kwargs)
         return response.json()
 
     def update(self, resource_id: str, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
@@ -145,7 +157,11 @@ class BaseResource(ABC):
             PortValidationError: If the data is invalid.
             PortApiError: If the API request fails for another reason.
         """
-        response = self._client.make_request("PUT", self._get_resource_path(resource_id), json=data, params=params, **kwargs)
+        # For backward compatibility, only include params if it's not None and not empty
+        if params is not None and params:
+            response = self._client.make_request("PUT", self._get_resource_path(resource_id), json=data, params=params, **kwargs)
+        else:
+            response = self._client.make_request("PUT", self._get_resource_path(resource_id), json=data, **kwargs)
         return response.json()
 
     def patch(self, resource_id: str, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
@@ -169,7 +185,11 @@ class BaseResource(ABC):
             PortValidationError: If the data is invalid.
             PortApiError: If the API request fails for another reason.
         """
-        response = self._client.make_request("PATCH", self._get_resource_path(resource_id), json=data, params=params, **kwargs)
+        # For backward compatibility, only include params if it's not None and not empty
+        if params is not None and params:
+            response = self._client.make_request("PATCH", self._get_resource_path(resource_id), json=data, params=params, **kwargs)
+        else:
+            response = self._client.make_request("PATCH", self._get_resource_path(resource_id), json=data, **kwargs)
         return response.json()
 
     def delete(self, resource_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> bool:
@@ -190,5 +210,9 @@ class BaseResource(ABC):
             PortResourceNotFoundError: If the resource does not exist.
             PortApiError: If the API request fails for another reason.
         """
-        response = self._client.make_request("DELETE", self._get_resource_path(resource_id), params=params, **kwargs)
+        # For backward compatibility, only include params if it's not None and not empty
+        if params is not None and params:
+            response = self._client.make_request("DELETE", self._get_resource_path(resource_id), params=params, **kwargs)
+        else:
+            response = self._client.make_request("DELETE", self._get_resource_path(resource_id), **kwargs)
         return response.status_code == 204
