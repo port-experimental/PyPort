@@ -38,7 +38,7 @@ class TestPortClient(unittest.TestCase):
         self.assertIn("Environment variables PORT_CLIENT_ID or PORT_CLIENT_SECRET are not set", str(context.exception))
     '''
 
-    @patch('src.pyport.api_client.requests.post')
+    @patch('src.pyport.client.auth.requests.post')
     def test_get_access_token_success(self, mock_post):
         """Test that _get_access_token returns the token on a successful API call."""
         expected_token = "real_dummy_token"

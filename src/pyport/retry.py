@@ -48,7 +48,7 @@ import random
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Type, TypeVar, Union
+from typing import Callable, List, Optional, Set, Type, TypeVar, Union
 
 from src.pyport.exceptions import PortApiError, PortRateLimitError
 
@@ -289,7 +289,7 @@ class RetryConfig:
 
         # Check if the circuit breaker allows attempts
         if not self.circuit_breaker.can_attempt():
-            logger.warning(f"Circuit breaker is open. Not retrying.")
+            logger.warning("Circuit breaker is open. Not retrying.")
             return False
 
         # Check if the exception is retryable based on custom condition
@@ -445,7 +445,7 @@ def with_retry(
 
         # Check if the circuit breaker is open before making any attempts
         if not config.circuit_breaker.can_attempt():
-            logger.warning(f"Circuit breaker is open. Not attempting the request.")
+            logger.warning("Circuit breaker is open. Not attempting the request.")
             # Create a dummy exception to raise
             if 'exception' in kwargs:
                 # If an exception was provided in kwargs, use it

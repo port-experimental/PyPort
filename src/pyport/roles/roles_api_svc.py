@@ -1,9 +1,8 @@
 from typing import Dict, List, Any, Optional, cast
 
-from src.pyport.types import Role, RolesResponse, RoleResponse
+from src.pyport.types import Role
 
 from src.pyport.models.api_category import BaseResource
-from src.pyport.models.response import PortListResponse, PortItemResponse
 
 
 class Roles(BaseResource):

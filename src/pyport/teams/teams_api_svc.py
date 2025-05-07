@@ -1,9 +1,8 @@
 from typing import Dict, List, Any, Optional, cast
 
-from src.pyport.types import Team, TeamsResponse, TeamResponse
+from src.pyport.types import Team
 
 from src.pyport.models.api_category import BaseResource
-from src.pyport.models.response import PortListResponse, PortItemResponse
 
 
 class Teams(BaseResource):

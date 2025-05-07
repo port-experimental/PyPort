@@ -15,10 +15,10 @@ from typing import Dict, Any, Optional, Tuple
 
 import requests
 
-from src.pyport.constants import PORT_API_URL, PORT_API_US_URL
+# No need to import PORT_API_URL and PORT_API_US_URL as they're not used directly
 from src.pyport.error_handling import handle_request_exception
 from src.pyport.exceptions import PortApiError, PortAuthenticationError, PortConfigurationError
-from src.pyport.logging import log_request, log_response, log_error, get_correlation_id, logger as pyport_logger
+from src.pyport.logging import log_request, log_response, log_error, get_correlation_id, logger
 
 
 class AuthManager:
@@ -47,7 +47,7 @@ class AuthManager:
         self.api_url = api_url
         self._auto_refresh = auto_refresh
         self._refresh_interval = refresh_interval
-        self._logger = pyport_logger
+        self._logger = logger
         self._lock = threading.Lock()
 
         # Initialize token

@@ -7,17 +7,13 @@ This module handles HTTP requests to the Port API, including:
 - Retry logic
 """
 
-import json
-import random
-from typing import Any, Dict, Optional, Set, Type, TypeVar, Union, Callable
+from typing import Optional, TypeVar, Callable
 
 import requests
 
-from src.pyport.constants import GENERIC_HEADERS
-from src.pyport.error_handling import handle_error_response, handle_request_exception, with_error_handling as error_handling
-from src.pyport.exceptions import PortApiError
-from src.pyport.logging import log_request, log_response, log_error, get_correlation_id, logger as pyport_logger
-from src.pyport.retry import RetryConfig, RetryStrategy, with_retry
+from src.pyport.error_handling import handle_error_response, handle_request_exception, with_error_handling
+from src.pyport.logging import log_request, log_response, log_error, get_correlation_id, logger
+from src.pyport.retry import RetryConfig, with_retry
 
 # Type variable for generic functions
 T = TypeVar('T')
@@ -42,7 +38,7 @@ class RequestManager:
         self.api_url = api_url
         self._session = session
         self.retry_config = retry_config
-        self._logger = pyport_logger
+        self._logger = logger
 
     def make_request(self, method: str, endpoint: str, retries: int = None, retry_delay: float = None,
                      correlation_id: str = None, **kwargs) -> requests.Response:
@@ -155,8 +151,8 @@ class RequestManager:
             return self.retry_config
 
     def _execute_request_with_retry(self, method: str, url: str, endpoint: str,
-                                  correlation_id: str, retry_config: RetryConfig,
-                                  **kwargs) -> requests.Response:
+                                    correlation_id: str, retry_config: RetryConfig,
+                                    **kwargs) -> requests.Response:
         """
         Execute a request with retry handling.
 
@@ -281,7 +277,7 @@ class RequestManager:
         on_not_found = kwargs.pop('on_not_found', None)
 
         # Apply error handling decorator
-        decorated_func = error_handling(
+        decorated_func = with_error_handling(
             func,
             on_error=on_error,
             on_not_found=on_not_found

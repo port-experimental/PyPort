@@ -19,9 +19,9 @@ from src.pyport.client.auth import AuthManager
 from src.pyport.client.request import RequestManager
 from src.pyport.constants import PORT_API_URL, PORT_API_US_URL, GENERIC_HEADERS
 from src.pyport.entities.entities_api_svc import Entities
-from src.pyport.exceptions import PortApiError
+# PortApiError is not used directly
 from src.pyport.integrations.integrations_api_svc import Integrations
-from src.pyport.logging import configure_logging, logger as pyport_logger
+from src.pyport.logging import configure_logging, logger
 from src.pyport.migrations.migrations_api_svc import Migrations
 from src.pyport.organization.organization_api_svc import Organizations
 from src.pyport.pages.pages_api_svc import Pages
@@ -134,7 +134,7 @@ class PortClient:
         # Configure components
         self._setup_logging(log_level, log_format, log_handler)
         self._setup_retry_config(max_retries, retry_delay, max_delay, retry_strategy, retry_jitter,
-                               retry_status_codes, retry_on, idempotent_methods)
+                                 retry_status_codes, retry_on, idempotent_methods)
 
         # Initialize authentication manager
         self._auth_manager = AuthManager(
@@ -172,12 +172,14 @@ class PortClient:
             log_handler: A logging handler to use.
         """
         configure_logging(level=log_level, format_string=log_format, handler=log_handler)
-        self._logger = pyport_logger
+        self._logger = logger
 
     def _setup_retry_config(self, max_retries: int, retry_delay: float, max_delay: float,
-                          retry_strategy: Union[str, RetryStrategy], retry_jitter: bool,
-                          retry_status_codes: Optional[Set[int]], retry_on: Optional[Union[Type[Exception], Set[Type[Exception]]]],
-                          idempotent_methods: Optional[Set[str]]) -> None:
+                            retry_strategy: Union[str, RetryStrategy], retry_jitter: bool,
+                            retry_status_codes: Optional[Set[int]],
+                            retry_on: Optional[Union[Type[Exception], Set[Type[Exception]]]],
+                            idempotent_methods: Optional[Set[str]]
+                            ) -> None:
         """
         Set up retry configuration.
 

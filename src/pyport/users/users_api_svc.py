@@ -1,9 +1,8 @@
 from typing import Dict, List, Any, Optional, cast
 
-from src.pyport.types import User, UsersResponse, UserResponse
+from src.pyport.types import User
 
 from src.pyport.models.api_category import BaseResource
-from src.pyport.models.response import PortListResponse, PortItemResponse
 
 
 class Users(BaseResource):

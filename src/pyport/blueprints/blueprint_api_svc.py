@@ -1,11 +1,7 @@
 from typing import Dict, List, Any, Optional, cast
 
 from src.pyport.models.api_category import BaseResource
-from src.pyport.models.response import PortListResponse
-from src.pyport.types import (
-    Blueprint, BlueprintResponse, BlueprintsResponse,
-    JsonDict, JsonList, Pagination
-)
+from src.pyport.types import Blueprint
 
 
 class Blueprints(BaseResource):

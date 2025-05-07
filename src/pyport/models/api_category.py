@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Dict, List, Optional, TypeVar, Generic, Union, cast, Protocol, runtime_checkable
+from typing import Any, Dict, List, Optional, TypeVar, Protocol, runtime_checkable
 
 # Define type variables for generic types
 T = TypeVar('T')  # Generic type for resource items

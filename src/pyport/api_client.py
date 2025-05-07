@@ -47,5 +47,4 @@ from src.pyport.client.client import PortClient
 # Re-export for backward compatibility
 __all__ = ['PortClient']
 
-# Re-export modules used in tests
-import requests
+# No need to import requests as it's not used directly
