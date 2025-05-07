@@ -9,9 +9,10 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-81.00%25-green)
+[![CI](https://github.com/port-experimental/pyport/actions/workflows/ci.yml/badge.svg)](https://github.com/port-experimental/pyport/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/port-experimental/pyport)](https://codecov.io/gh/port-experimental/pyport)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
-![Security](https://img.shields.io/badge/security-Error-red)
+![Security](https://img.shields.io/badge/security-Passed-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
 
 ![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)
@@ -25,7 +26,7 @@ _Package info_
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyport)](https://pypi.org/project/pyport)
 
 
-> **Simplify Your REST Interactions**  
+> **Simplify Your REST Interactions**
 > _A Python SDK for the Port IDP REST API that handles authentication, error handling, and logging so you can focus on building your solutions._
 
 
@@ -45,16 +46,16 @@ For detailed information about the data model and code implementation, please re
 
 ## ✨ Key Features
 
-- **Intuitive Client Interface**  
+- **Intuitive Client Interface**
   Interact with the Port IDP REST API effortlessly.
-  
-- **Automated Authentication**  
+
+- **Automated Authentication**
   Manage API tokens and credentials automatically.
-  
-- **Robust Error Handling**  
+
+- **Robust Error Handling**
   Receive clear, actionable error messages for smooth debugging.
-  
-- **Integrated Logging**  
+
+- **Integrated Logging**
   Built-in logging to help you trace and monitor API interactions.
 
 > **Note:** Additional features and improvements are planned for future releases!
@@ -88,7 +89,7 @@ PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
 
 port_client = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
 blueprints = port_client.blueprints.get_blueprints()
-```    
+```
 
 Happy Coding!
 
