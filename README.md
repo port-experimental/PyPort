@@ -12,7 +12,7 @@ _Repo metadata_
 [![CI](https://github.com/port-experimental/pyport/actions/workflows/ci.yml/badge.svg)](https://github.com/port-experimental/pyport/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/port-experimental/pyport)](https://codecov.io/gh/port-experimental/pyport)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
-![Security](https://img.shields.io/badge/security-Passed-brightgreen)
+![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
 
 ![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)

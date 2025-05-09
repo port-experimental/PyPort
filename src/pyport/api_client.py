@@ -42,7 +42,8 @@ organization, but this module is maintained for backward compatibility.
 """
 
 # Import from the refactored implementation
-from src.pyport.client.client import PortClient
+# Use relative import to avoid issues with installed package
+from .client.client import PortClient
 
 # Re-export for backward compatibility
 __all__ = ['PortClient']

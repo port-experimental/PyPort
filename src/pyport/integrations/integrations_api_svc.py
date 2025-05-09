@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from pyport.models.api_category import BaseResource
+from ..models.api_category import BaseResource
 
 
 class Integrations(BaseResource):

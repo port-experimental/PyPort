@@ -9,29 +9,29 @@ import logging
 import requests
 from typing import Optional, Set, Type, Union
 
-from src.pyport.action_runs.action_runs_api_svc import ActionRuns
-from src.pyport.actions.actions_api_svc import Actions
-from src.pyport.apps.apps_api_svc import Apps
-from src.pyport.audit.audit_api_svc import Audit
-from src.pyport.blueprints.blueprint_api_svc import Blueprints
-from src.pyport.checklist.checklist_api_svc import Checklist
-from src.pyport.client.auth import AuthManager
-from src.pyport.client.request import RequestManager
-from src.pyport.constants import PORT_API_URL, PORT_API_US_URL, GENERIC_HEADERS
-from src.pyport.entities.entities_api_svc import Entities
+from ..action_runs.action_runs_api_svc import ActionRuns
+from ..actions.actions_api_svc import Actions
+from ..apps.apps_api_svc import Apps
+from ..audit.audit_api_svc import Audit
+from ..blueprints.blueprint_api_svc import Blueprints
+from ..checklist.checklist_api_svc import Checklist
+from .auth import AuthManager
+from .request import RequestManager
+from ..constants import PORT_API_URL, PORT_API_US_URL, GENERIC_HEADERS
+from ..entities.entities_api_svc import Entities
 # PortApiError is not used directly
-from src.pyport.integrations.integrations_api_svc import Integrations
-from src.pyport.logging import configure_logging, logger
-from src.pyport.migrations.migrations_api_svc import Migrations
-from src.pyport.organization.organization_api_svc import Organizations
-from src.pyport.pages.pages_api_svc import Pages
-from src.pyport.retry import RetryConfig, RetryStrategy
-from src.pyport.roles.roles_api_svc import Roles
-from src.pyport.scorecards.scorecards_api_svc import Scorecards
-from src.pyport.search.search_api_svc import Search
-from src.pyport.sidebars.sidebars_api_svc import Sidebars
-from src.pyport.teams.teams_api_svc import Teams
-from src.pyport.users.users_api_svc import Users
+from ..integrations.integrations_api_svc import Integrations
+from ..logging import configure_logging, logger
+from ..migrations.migrations_api_svc import Migrations
+from ..organization.organization_api_svc import Organizations
+from ..pages.pages_api_svc import Pages
+from ..retry import RetryConfig, RetryStrategy
+from ..roles.roles_api_svc import Roles
+from ..scorecards.scorecards_api_svc import Scorecards
+from ..search.search_api_svc import Search
+from ..sidebars.sidebars_api_svc import Sidebars
+from ..teams.teams_api_svc import Teams
+from ..users.users_api_svc import Users
 
 
 class PortClient:

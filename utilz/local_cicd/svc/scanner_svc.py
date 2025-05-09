@@ -28,20 +28,28 @@ class CodeScanner(object):
         self.cicd_cfg = cicd_cfg
         self.logger = get_logger('scanner')
 
-    def scan_maintainability(self) -> list[tuple[float, str]]:
+    def scan_maintainability(self) -> Optional[List[Tuple[float, str]]]:
         """
         Run Radon to compute maintainability and build the maintainability badge.
+
+        Returns:
+            A list of tuples containing the maintainability score and file path,
+            or None if radon is not available.
         """
         radon_result = None
         self.logger.info("Running Radon to compute maintainability...")
         try:
             radon_result = subprocess.run(
-                ["radon", "mi", self.cicd_cfg.src_folder],
+                ["radon", "mi", str(self.cicd_cfg.src_folder)],
                 capture_output=True, text=True, check=True
             )
             self.logger.debug(f"Radon output:\n{radon_result.stdout}")
+        except FileNotFoundError:
+            self.logger.warning("Radon command not found. Make sure radon is installed.")
+            return None
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Error running radon: {e}")
+            return []
 
         scores: List[Tuple[float, str]] = []
         for line in radon_result.stdout.splitlines():

@@ -26,7 +26,7 @@ client = PortClient(
 )
 
 # Custom retry configuration for a specific function
-from src.pyport.retry import RetryConfig, RetryStrategy, with_retry
+from .retry import RetryConfig, RetryStrategy, with_retry
 
 config = RetryConfig(
     max_retries=3,
@@ -50,7 +50,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Callable, List, Optional, Set, Type, TypeVar, Union
 
-from src.pyport.exceptions import PortApiError, PortRateLimitError
+from .exceptions import PortApiError, PortRateLimitError
 
 logger = logging.getLogger("pyport")
 

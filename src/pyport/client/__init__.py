@@ -11,6 +11,6 @@ It is split into multiple modules for better organization:
 The PortClient class is the main entry point for the library.
 """
 
-from src.pyport.client.client import PortClient
+from .client import PortClient
 
 __all__ = ["PortClient"]
