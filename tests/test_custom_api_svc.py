@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 import requests
 
-from src.pyport.custom.custom_api_svc import (
+from pyport.custom.custom_api_svc import (
     validate_http_method,
     validate_path,
     Custom,

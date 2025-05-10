@@ -1,6 +1,6 @@
 import unittest
 
-from src.pyport.exceptions import (
+from pyport.exceptions import (
     PortApiError,
     PortAuthenticationError,
     PortPermissionError,

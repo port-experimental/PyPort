@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 # Import directly from the source code.
-from src.pyport.apps.apps_api_svc import Apps
+from pyport.apps.apps_api_svc import Apps
 
 class TestApps(unittest.TestCase):
     def setUp(self):

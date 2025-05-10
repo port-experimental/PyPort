@@ -1,6 +1,6 @@
 import unittest
 
-from src.pyport.constants import PORT_API_URL, PORT_API_US_URL, LOG_LEVEL, GENERIC_HEADERS
+from pyport.constants import PORT_API_URL, PORT_API_US_URL, LOG_LEVEL, GENERIC_HEADERS
 
 
 class TestConstants(unittest.TestCase):

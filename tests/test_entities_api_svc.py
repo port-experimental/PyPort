@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from src.pyport.entities.entities_api_svc import Entities
-from src.pyport.api_client import PortClient
+from pyport.entities.entities_api_svc import Entities
+from pyport.api_client import PortClient
 
 class TestEntitiesService(unittest.TestCase):
     def setUp(self):

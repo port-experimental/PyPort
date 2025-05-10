@@ -1,7 +1,7 @@
 import unittest
 
 # Import the function from your module.
-from src.pyport.services.port_api_svc import get_requests_headers
+from pyport.services.port_api_svc import get_requests_headers
 
 class TestGetRequestsHeaders(unittest.TestCase):
     def test_with_valid_token(self):

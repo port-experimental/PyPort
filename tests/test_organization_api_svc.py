@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.organization.organization_api_svc import Organizations
+from pyport.organization.organization_api_svc import Organizations
 
 class TestOrganizations(unittest.TestCase):
     def setUp(self):

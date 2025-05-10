@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.users.users_api_svc import Users
+from pyport.users.users_api_svc import Users
 
 class TestUsers(unittest.TestCase):
     def setUp(self):

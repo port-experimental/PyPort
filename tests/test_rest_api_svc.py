@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import requests
 
-from src.pyport.services.rest_api_svc import post_request
+from pyport.services.rest_api_svc import post_request
 
 class TestPostRequest(unittest.TestCase):
 

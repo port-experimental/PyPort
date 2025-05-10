@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 # Import directly from the source.
-from src.pyport.scorecards.scorecards_api_svc import Scorecards
+from pyport.scorecards.scorecards_api_svc import Scorecards
 
 class TestScorecards(unittest.TestCase):
     def setUp(self):

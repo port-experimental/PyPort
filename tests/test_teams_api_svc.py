@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.teams.teams_api_svc import Teams
+from pyport.teams.teams_api_svc import Teams
 
 class TestTeams(unittest.TestCase):
     def setUp(self):

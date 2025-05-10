@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.pyport.models.response import PortResponse, PortListResponse, PortItemResponse
+from pyport.models.response import PortResponse, PortListResponse, PortItemResponse
 
 
 class TestPortResponse(unittest.TestCase):

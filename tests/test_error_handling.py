@@ -3,12 +3,12 @@ from unittest.mock import MagicMock, patch
 
 import requests
 
-from src.pyport.error_handling import (
+from pyport.error_handling import (
     handle_request_exception,
     handle_error_response,
     with_error_handling
 )
-from src.pyport.exceptions import (
+from pyport.exceptions import (
     PortApiError,
     PortAuthenticationError,
     PortPermissionError,

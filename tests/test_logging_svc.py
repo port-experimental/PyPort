@@ -3,7 +3,7 @@ import logging
 import os
 
 # Import the function and map from your module (adjust the path if needed)
-from src.pyport.logging import init_logging, LOG_LEVEL_MAP, logger
+from pyport.logging import init_logging, LOG_LEVEL_MAP, logger
 
 
 class TestInitLogging(unittest.TestCase):

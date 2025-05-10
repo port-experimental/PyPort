@@ -1,7 +1,7 @@
 import unittest
 from typing import Dict, List, Any, Optional
 
-from src.pyport.types import (
+from pyport.types import (
     Pagination,
     BlueprintProperty,
     Blueprint,

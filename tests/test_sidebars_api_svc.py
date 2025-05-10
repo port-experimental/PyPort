@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.sidebars.sidebars_api_svc import Sidebars
+from pyport.sidebars.sidebars_api_svc import Sidebars
 
 class TestSidebars(unittest.TestCase):
     def setUp(self):

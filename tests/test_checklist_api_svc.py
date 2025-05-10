@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.checklist.checklist_api_svc import Checklist
+from pyport.checklist.checklist_api_svc import Checklist
 
 class TestChecklist(unittest.TestCase):
     def setUp(self):
