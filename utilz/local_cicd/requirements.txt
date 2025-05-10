@@ -1,18 +1,28 @@
+# Core dependencies
 python-dotenv~=1.0.1
 requests~=2.32.3
 logging ~= 0.4.9.6
+toml~=0.10.2
+pydantic>=2.0.0
+typing-extensions>=4.0.0
 
-flake8~=4.0.1
+# Build and publishing tools
 build~=0.7.0
 twine~=3.8.0
+wheel~=0.45.1
+
+# Testing and coverage tools
 coverage~=7.6.11
 coverage_badge~=1.1.2
-toml~=0.10.2
 coverage-lcov~=0.3.0
+
+# Code quality tools
+flake8~=4.0.1
 radon~=6.0.1
 bandit~=1.8.2
-configparser~=7.1.0
 pip-audit~=2.8.0
+
+# Configuration and metadata
+configparser~=7.1.0
 importlib_metadata~=8.6.1
-wheel~=0.45.1
 

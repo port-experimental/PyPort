@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.pyport.action_runs.action_runs_api_svc import ActionRuns
+from pyport.action_runs.action_runs_api_svc import ActionRuns
 
 
 class TestActionRuns(unittest.TestCase):

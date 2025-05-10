@@ -1,0 +1,26 @@
+{
+  "project": {
+    "root": ".",
+    "src_folder": "src",
+    "tests_folder": "tests"
+  },
+  "tools": {
+    "coverage": {
+      "config_file": "utilz/local_cicd/cfg/.coveragerc",
+      "data_file": ".coverage",
+      "badge_pattern": "!\\[Coverage\\]\\(.*\\)"
+    },
+    "maintainability": {
+      "badge_pattern": "!\\[Maintainability\\]\\(.*\\)"
+    },
+    "security": {
+      "badge_pattern": "!\\[Security\\]\\(.*\\)"
+    },
+    "dependencies": {
+      "badge_pattern": "!\\[Dependencies\\]\\(.*\\)"
+    }
+  },
+  "build": {
+    "pypi_config": "utilz/local_cicd/cfg/.pypirc"
+  }
+}

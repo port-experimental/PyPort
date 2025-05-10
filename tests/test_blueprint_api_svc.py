@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from src.pyport.blueprints.blueprint_api_svc import Blueprints
-from src.pyport.api_client import PortClient
+from pyport.blueprints.blueprint_api_svc import Blueprints
+from pyport.api_client import PortClient
 
 class TestBlueprintsService(unittest.TestCase):
     def setUp(self):

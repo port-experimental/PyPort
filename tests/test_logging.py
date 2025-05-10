@@ -4,7 +4,7 @@ import json
 import re
 from unittest.mock import MagicMock, patch
 
-from src.pyport.logging import (
+from pyport.logging import (
     configure_logging,
     get_correlation_id,
     mask_sensitive_data,

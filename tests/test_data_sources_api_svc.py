@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.pyport.data_sources.data_sources_api_svc import DataSources
+from pyport.data_sources.data_sources_api_svc import DataSources
 
 
 class TestDataSources(unittest.TestCase):

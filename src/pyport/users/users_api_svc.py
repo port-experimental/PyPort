@@ -1,8 +1,8 @@
 from typing import Dict, List, Any, Optional, cast
 
-from src.pyport.types import User
+from .types import User
 
-from src.pyport.models.api_category import BaseResource
+from ..models.api_category import BaseResource
 
 
 class Users(BaseResource):

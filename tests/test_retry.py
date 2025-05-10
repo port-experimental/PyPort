@@ -7,13 +7,13 @@ from unittest.mock import MagicMock, patch
 
 import requests
 
-from src.pyport.exceptions import (
+from pyport.exceptions import (
     PortApiError,
     PortRateLimitError,
     PortServerError,
     PortTimeoutError
 )
-from src.pyport.retry import (
+from pyport.retry import (
     CircuitBreakerState,
     RetryConfig,
     RetryStats,

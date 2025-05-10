@@ -16,9 +16,9 @@ from typing import Dict, Any, Optional, Tuple
 import requests
 
 # No need to import PORT_API_URL and PORT_API_US_URL as they're not used directly
-from src.pyport.error_handling import handle_request_exception
-from src.pyport.exceptions import PortApiError, PortAuthenticationError, PortConfigurationError
-from src.pyport.logging import log_request, log_response, log_error, get_correlation_id, logger
+from ..error_handling import handle_request_exception
+from ..exceptions import PortApiError, PortAuthenticationError, PortConfigurationError
+from ..logging import log_request, log_response, log_error, get_correlation_id, logger
 
 
 class AuthManager:

@@ -1,9 +1,9 @@
 from typing import Dict, List, Any
 
-from src.pyport.models.api_category import BaseResource
+from ..models.api_category import BaseResource
 
 # Comment out the types import since it doesn't exist yet
-# from src.pyport.types import (
+# from .types import (
 #     Entity, EntityResponse, EntitiesResponse,
 #     JsonDict, JsonList, Pagination
 # )

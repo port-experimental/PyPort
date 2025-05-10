@@ -1,7 +1,7 @@
 from typing import Dict, List, Any, Optional, cast
 
-from src.pyport.models.api_category import BaseResource
-from src.pyport.types import Blueprint
+from ..models.api_category import BaseResource
+from ..types import Blueprint
 
 
 class Blueprints(BaseResource):

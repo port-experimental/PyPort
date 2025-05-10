@@ -11,9 +11,9 @@ from typing import Optional, TypeVar, Callable
 
 import requests
 
-from src.pyport.error_handling import handle_error_response, handle_request_exception, with_error_handling
-from src.pyport.logging import log_request, log_response, log_error, get_correlation_id, logger
-from src.pyport.retry import RetryConfig, with_retry
+from ..error_handling import handle_error_response, handle_request_exception, with_error_handling
+from ..logging import log_request, log_response, log_error, get_correlation_id, logger
+from ..retry import RetryConfig, with_retry
 
 # Type variable for generic functions
 T = TypeVar('T')

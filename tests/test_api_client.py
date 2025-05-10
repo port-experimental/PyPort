@@ -3,8 +3,8 @@ import unittest
 from unittest.mock import patch, MagicMock
 import requests
 
-from src.pyport.api_client import PortClient
-from src.pyport.exceptions import PortResourceNotFoundError
+from pyport.api_client import PortClient
+from pyport.exceptions import PortResourceNotFoundError
 
 class TestPortClient(unittest.TestCase):
     def setUp(self):

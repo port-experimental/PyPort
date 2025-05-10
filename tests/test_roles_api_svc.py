@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.roles.roles_api_svc import Roles
+from pyport.roles.roles_api_svc import Roles
 
 class TestRoles(unittest.TestCase):
     def setUp(self):

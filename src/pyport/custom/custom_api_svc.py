@@ -1,5 +1,5 @@
 from typing import Dict, Any, Optional
-from pyport.models.api_category import BaseResource
+from ..models.api_category import BaseResource
 
 # Define valid HTTP methods
 VALID_HTTP_METHODS = {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}

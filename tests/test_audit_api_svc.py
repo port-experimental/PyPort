@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.audit.audit_api_svc import Audit
+from pyport.audit.audit_api_svc import Audit
 
 class TestAudit(unittest.TestCase):
     def setUp(self):

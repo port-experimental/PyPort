@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from src.pyport.pages.pages_api_svc import Pages
-from src.pyport.api_client import PortClient
+from pyport.pages.pages_api_svc import Pages
+from pyport.api_client import PortClient
 
 class TestPagesService(unittest.TestCase):
     def setUp(self):

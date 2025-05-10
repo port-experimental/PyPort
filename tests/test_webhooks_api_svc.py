@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.pyport.webhooks.webhooks_api_svc import Webhooks
+from pyport.webhooks.webhooks_api_svc import Webhooks
 
 
 class TestWebhooks(unittest.TestCase):

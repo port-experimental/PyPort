@@ -3,8 +3,8 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 
-from src.pyport.api_client import PortClient
-from src.pyport.exceptions import PortResourceNotFoundError
+from pyport.api_client import PortClient
+from pyport.exceptions import PortResourceNotFoundError
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 

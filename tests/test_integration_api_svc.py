@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.integrations.integrations_api_svc import Integrations
+from pyport.integrations.integrations_api_svc import Integrations
 
 class TestIntegrations(unittest.TestCase):
     def setUp(self):

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.pyport.models.api_category import BaseResource
+from pyport.models.api_category import BaseResource
 
 
 class TestBaseResource(unittest.TestCase):

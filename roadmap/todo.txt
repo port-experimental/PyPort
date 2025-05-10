@@ -1,36 +1,5 @@
 # PyPort Development TODO List
 
-## Comprehensive Test Suite
-- Create a mock client for testing without making real API calls
-- Implement request recording and playback functionality
-- Add utilities for simulating different API responses
-- Develop unit tests for all API service classes
-- Create integration tests for core functionality
-- Add test fixtures for common scenarios
-- Implement CI/CD integration for automated testing
-- Achieve high code coverage (>90%)
-- Document testing best practices
-
-## Pagination Support
-- Add page and per_page parameters to list methods
-- Implement automatic pagination with auto_paginate parameter
-- Create iterator pattern for paginated results
-- Support lazy loading of pages
-- Add progress callbacks for long-running operations
-- Handle API-specific pagination quirks
-- Document pagination behavior
-- Add examples of different pagination approaches
-
-## Consistent Return Values
-- Define consistent patterns for different types of endpoints
-- Update all API service classes to follow these patterns
-- Add raw parameter to control whether to return raw responses
-- Implement response processing for different endpoint types
-- Consider using dataclasses or Pydantic models for responses
-- Create models for common response types
-- Add type conversion utilities
-- Ensure backward compatibility
-- Document return value structures
 
 ## Enhanced Retry Logic
 - Implement exponential backoff algorithm with jitter
@@ -44,26 +13,12 @@
 - Improve retry logging with detailed information
 - Add retry statistics
 
-## Performance Optimizations
-- Optimize masking of sensitive data to avoid unnecessary recursion for large objects
-- Implement caching for frequently accessed data
-- Optimize JSON serialization/deserialization for large payloads
-- Add support for connection pooling to reuse HTTP connections
-- Implement request batching for bulk operations
-
-## Code Structure and Organization
-- Standardize method signatures across all API service classes
-- Implement consistent parameter naming conventions
-- Create a more modular architecture with clear separation of concerns
-- Improve import structure to avoid circular dependencies
-- Organize code into logical packages based on functionality
-
-## Code Quality and Maintainability
-- Improve type hints with more specific types for complex data structures
-- Add more comprehensive docstrings with detailed examples
-- Implement consistent error handling patterns across all modules
-- Add more inline comments for complex logic
-- Implement consistent naming conventions for variables and functions
+## CI/CD and Tooling Improvements
+- Fix GitHub Actions workflow
+- Fix errored badge in README
+- Redesign and refactor the local CI/CD utilities in @utilz/local_cicd
+- Improve build and release automation
+- Enhance code quality checks in CI pipeline
 
 ## Feature Enhancements
 - Add context manager support for the client (with statement)

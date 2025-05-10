@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.pyport.migrations.migrations_api_svc import Migrations
+from pyport.migrations.migrations_api_svc import Migrations
 
 class TestMigrations(unittest.TestCase):
     def setUp(self):

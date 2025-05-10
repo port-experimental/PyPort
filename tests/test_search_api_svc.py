@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock
 
-from src.pyport.search.search_api_svc import Search
-from src.pyport.search.search_api_svc import Search
+from pyport.search.search_api_svc import Search
+from pyport.search.search_api_svc import Search
 
 class TestSearch(unittest.TestCase):
     def setUp(self):

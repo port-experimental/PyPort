@@ -9,7 +9,7 @@ Example usage:
 
 ```python
 # Using the with_error_handling decorator
-from src.pyport.error_handling import with_error_handling
+from .error_handling import with_error_handling
 
 @with_error_handling
 def get_blueprint(blueprint_id):
@@ -33,7 +33,7 @@ from typing import Dict, Any, Optional, Type, Callable, TypeVar
 
 import requests
 
-from src.pyport.exceptions import (
+from .exceptions import (
     PortApiError,
     PortAuthenticationError,
     PortPermissionError,
