@@ -26,9 +26,30 @@ def list_test_files(suite: unittest.TestSuite) -> list[str]:
     return list(test_files)
 
 
+def run_integration_test(cicd_cfg: CicdConfig):
+    """Run the integration test to verify package import and authentication."""
+    print("Running integration test...")
+
+    # Determine the project root
+    os.chdir(cicd_cfg.project_root)
+
+    # Run the integration test specifically
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.loadTestsFromName('tests.test_integration')
+    test_runner = unittest.TextTestRunner()
+    result = test_runner.run(test_suite)
+
+    # Determine exit code based on test success
+    exit_code = 0 if result.wasSuccessful() else 1
+
+    print(f"Integration test completed. Exiting with code {exit_code}.")
+    return exit_code
+
+
 def run_tests(cicd_cfg: CicdConfig):
     """Run tests with coverage and Code Climate test reporter integration."""
     print("Running tests with coverage and Code Climate test reporter...")
+    print("Integration test (test_integration.py) will be excluded from this run.")
 
     # Determine the project root (assumes this file is in a subfolder, e.g. 'scripts')
     os.chdir(cicd_cfg.project_root)
@@ -38,10 +59,21 @@ def run_tests(cicd_cfg: CicdConfig):
     cov.erase()
     cov.start()
 
-    # Discover and run tests using unittest.
+    # Discover and run tests using unittest, excluding the integration test
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('tests')
-    # files = list_test_files(test_suite)
+
+    # Load all test modules except test_integration.py
+    test_suite = unittest.TestSuite()
+    for test_file in os.listdir('tests'):
+        if test_file.startswith('test_') and test_file.endswith('.py') and test_file != 'test_integration.py':
+            module_name = f'tests.{test_file[:-3]}'
+            try:
+                suite = test_loader.loadTestsFromName(module_name)
+                test_suite.addTest(suite)
+            except Exception as e:
+                print(f"Error loading tests from {module_name}: {e}")
+
+    # Run the tests
     test_runner = unittest.TextTestRunner()
     result = test_runner.run(test_suite)
 
@@ -54,3 +86,4 @@ def run_tests(cicd_cfg: CicdConfig):
     exit_code = 0 if result.wasSuccessful() else 1
 
     print(f"All tests completed. Exiting with code {exit_code}.")
+    return exit_code

@@ -58,6 +58,9 @@ For detailed information about the data model and code implementation, please re
 - **Integrated Logging**
   Built-in logging to help you trace and monitor API interactions.
 
+- **Data Management Utilities**
+  Easily create backups with snapshots and perform bulk operations like clearing all entities.
+
 > **Note:** Additional features and improvements are planned for future releases!
 
 ---
@@ -90,6 +93,75 @@ PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
 port_client = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
 blueprints = port_client.blueprints.get_blueprints()
 ```
+
+### High-Level Utilities
+
+PyPort includes high-level utility functions for common operations:
+
+```python
+from pyport import PortClient
+from pyport.utils import clear_blueprint, save_snapshot, restore_snapshot, list_snapshots
+
+# Initialize the client
+client = PortClient(
+    client_id="your-client-id",
+    client_secret="your-client-secret"
+)
+
+# Clear all entities in a blueprint
+result = clear_blueprint(client, "service")
+print(f"Deleted {result['deleted_entities']} entities")
+
+# Save a snapshot of your Port data
+snapshot = save_snapshot(
+    client,
+    prefix="my-backup",
+    include_blueprints=True,
+    include_entities=True,
+    include_actions=True
+)
+print(f"Snapshot saved: {snapshot['snapshot_id']}")
+
+# List available snapshots
+snapshots = list_snapshots()
+for snapshot in snapshots:
+    print(f"{snapshot['snapshot_id']} ({snapshot['timestamp']})")
+
+# Restore a snapshot
+restore_result = restore_snapshot(
+    client,
+    "my-backup_20230101_120000",
+    restore_blueprints=True,
+    restore_entities=True
+)
+print(f"Restored {restore_result['restored_blueprints']} blueprints and {restore_result['restored_entities']} entities")
+```
+
+See the `examples` directory for more detailed examples.
+
+## 🆕 New Features
+
+### Snapshot Management
+
+The new snapshot functionality allows you to create complete backups of your Port data, including blueprints, entities, actions, pages, and scorecards. This is particularly useful for:
+
+- Creating backups before making significant changes
+- Migrating data between environments
+- Setting up test environments with production-like data
+- Implementing disaster recovery procedures
+
+Snapshots are stored locally in a structured directory format, making them easy to manage and transfer.
+
+### Blueprint Utilities
+
+The new blueprint utilities provide powerful operations for managing your Port data:
+
+- **Clear Blueprint**: Easily delete all entities in a blueprint with a single function call
+- **Save Snapshot**: Create comprehensive backups of your Port data
+- **Restore Snapshot**: Restore your Port data from a previous backup
+- **List Snapshots**: View all available snapshots with their timestamps and contents
+
+These utilities make it simple to perform bulk operations that would otherwise require multiple API calls and complex logic.
 
 Happy Coding!
 

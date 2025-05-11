@@ -36,7 +36,7 @@ class TestActionRuns(unittest.TestCase):
         self.mock_client.make_request.return_value = mock_response
 
         # Execute
-        result = self.action_runs.get_action_run(action_id, run_id)
+        result = self.action_runs.get_action_run(run_id=run_id)
 
         # Assert
         self.mock_client.make_request.assert_called_once_with(

@@ -78,13 +78,15 @@ pip install pyport
 Below is a boilerplate example to help you get started with PyPort:
 
 ```python
-    import pyport
+import os
+from pyport import PortClient
 
-    PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
-    PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
-    pc = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
-    bps = pc.blueprints.get_blueprints()
-```    
+PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
+PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
+
+port_client = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
+blueprints = port_client.blueprints.get_blueprints()
+``` 
 
 Happy Coding!
 
