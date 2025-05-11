@@ -91,7 +91,7 @@ def interactive_mode(config):
         print("2) Integration Test")
         print("3) Lint")
         print("4) Build")
-        print("5) Scan-all (maintainability, security, etc.)")
+        print("5) Scan-all + Update Badges (maintainability, security, coverage, etc.)")
         print("6) Release (Update Badges + Build + Ship + Cleanup)")
         print("7) Cleanup only")
         print("8) Exit")

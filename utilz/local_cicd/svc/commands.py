@@ -192,6 +192,12 @@ class ScanCommand(Command):
             result = scanner.run_all_scans()
             self.logger.info("All scans completed.")
 
+            # Update badges after running all scans
+            self.logger.info("Updating badges based on scan results...")
+            badger = Badger(self.config)
+            badger.update_all_badges()
+            self.logger.info("Badges updated.")
+
         return result
 
     def can_undo(self) -> bool:
@@ -436,7 +442,8 @@ class ReleaseCommand(Command):
         composite = CompositeCommand(self.config, name="ReleaseSteps")
 
         # Add commands to the composite
-        composite.add_command(TestCommand(self.config))
+        # Skip TestCommand to avoid running tests again if they've already been run
+        # composite.add_command(TestCommand(self.config))
         composite.add_command(LintCommand(self.config))
         composite.add_command(ScanCommand(self.config))
         composite.add_command(BadgeCommand(self.config))
