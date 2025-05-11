@@ -2,7 +2,9 @@
 
 This document outlines the high-level development roadmap for the PyPort client library. It provides an overview of completed features and planned future enhancements.
 
-## Completed Features (v0.2.0)
+## Completed Features
+
+### v0.2.0
 
 - ✅ **Consistent Error Handling**
   - Custom exception classes for different error types
@@ -19,9 +21,7 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Sensitive data masking
   - Configurable log levels and formats
 
-## Planned Features
-
-### Short-term (v0.2.1)
+### v0.2.1 - v0.2.3
 
 - ✅ **Comprehensive Test Suite**
   - Unit and integration tests
@@ -33,19 +33,41 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Configurable retry settings
   - Improved handling of transient errors
 
-### Medium-term (v0.2.2)
+### v0.2.4
 
-- 🔜 **Performance Optimizations**
-  - Efficient sensitive data masking
-  - Caching for frequently accessed data
-  - Connection pooling and request batching
+- ✅ **Utility Functions**
+  - Blueprint clearing functionality
+  - Snapshot creation and restoration
+  - Backup management tools
+  - Improved error handling
 
-- 🔜 **Code Quality Improvements**
-  - Standardized method signatures
-  - Enhanced type hints and docstrings
-  - Consistent error handling patterns
+## Planned Features
 
-### Long-term (v0.2.3)
+### Short-term (v0.2.5)
+
+- 🔜 **Code Structure and Organization**
+  - Base API service class to reduce duplication
+  - Improved type hints for complex data structures
+  - Standardized method signatures across services
+
+- 🔜 **Error Handling and Logging**
+  - Consolidated error handling approach
+  - Enhanced logging with more context
+  - Retry logic optimization for transient errors
+
+### Medium-term (v0.2.6)
+
+- 🔜 **Testing Improvements**
+  - Increased test coverage for all modules
+  - Mock server for API testing
+  - Enhanced integration tests
+
+- 🔜 **Documentation**
+  - Comprehensive API reference
+  - More usage examples
+  - Step-by-step tutorials
+
+### Long-term (v0.2.7)
 
 - 🔜 **Feature Enhancements**
   - Context manager support
@@ -53,10 +75,10 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Batch operations
   - Request throttling
 
-- 🔜 **Testing Improvements**
-  - Edge case tests
-  - Integration tests
-  - Performance and load testing
+- 🔜 **Performance Optimizations**
+  - Connection pooling
+  - Response caching
+  - Request batching
 
 ## Future Considerations
 
