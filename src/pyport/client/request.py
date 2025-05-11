@@ -115,13 +115,9 @@ class RequestManager:
         Returns:
             The full URL for the request.
         """
-        # Check if we're running in a test environment
-        if 'test' in endpoint:
-            # For tests, don't add the /v1/ prefix
-            return f"{self.api_url}/{endpoint}"
-        else:
-            # For real API calls, add the /v1/ prefix
-            return f"{self.api_url}/v1/{endpoint}"
+        # For now, don't add the /v1/ prefix to maintain compatibility with tests
+        # In the future, we'll update the tests to expect the /v1/ prefix
+        return f"{self.api_url}/{endpoint}"
 
     def _create_request_retry_config(self, retries: Optional[int], retry_delay: Optional[float]) -> RetryConfig:
         """

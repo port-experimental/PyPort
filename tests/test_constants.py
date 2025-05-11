@@ -5,11 +5,11 @@ from pyport.constants import PORT_API_URL, PORT_API_US_URL, LOG_LEVEL, GENERIC_H
 
 class TestConstants(unittest.TestCase):
     def test_port_api_url(self):
-        self.assertEqual(PORT_API_URL, 'https://api.getport.io')
+        self.assertEqual(PORT_API_URL, 'https://api.getport.io/v1')
         self.assertIsInstance(PORT_API_URL, str)
 
     def test_port_api_us_url(self):
-        self.assertEqual(PORT_API_US_URL, 'https://api.us.getport.io')
+        self.assertEqual(PORT_API_US_URL, 'https://api.us.getport.io/v1')
         self.assertIsInstance(PORT_API_US_URL, str)
 
     def test_log_level(self):

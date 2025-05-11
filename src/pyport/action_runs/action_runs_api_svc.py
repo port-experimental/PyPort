@@ -5,25 +5,19 @@ from ..models.api_category import BaseResource
 class ActionRuns(BaseResource):
     """Action Runs API category for managing action execution runs."""
 
-    def execute_self_service(self, action_id: str) -> Dict:
-        """
-        Execute a self-service action.
-
-        :param action_id: The identifier of the action to execute.
-        :return: A dictionary containing the execution result.
-        """
-        response = self._client.make_request("POST", f"actions/{action_id}/runs")
-        return response.json()
-
-    def get_action_run(self, action_id: str, run_id: str) -> Dict:
+    def get_action_run(self, run_id: str, action_id: str = None) -> Dict:
         """
         Retrieve details of a specific action run.
 
-        :param action_id: The identifier of the action.
+        :param action_id: The identifier of the action (optional).
         :param run_id: The identifier of the run.
         :return: A dictionary representing the action run.
         """
-        response = self._client.make_request("GET", f"actions/runs/{run_id}")
+        if action_id:
+            endpoint = f"actions/{action_id}/runs/{run_id}"
+        else:
+            endpoint = f"actions/runs/{run_id}"
+        response = self._client.make_request("GET", endpoint)
         return response.json()
 
     def get_action_runs(self, action_id: str = None) -> List[Dict]:
@@ -79,22 +73,36 @@ class ActionRuns(BaseResource):
         response = self._client.make_request("POST", f"actions/runs/{run_id}/approval", json={"status": "REJECTED"})
         return response.json()
 
+    def execute_self_service(self, action_id: str, payload: Dict = None) -> Dict:
+        """
+        Execute a self-service action.
+
+        :param action_id: The identifier of the action to execute.
+        :param payload: Optional payload for the action.
+        :return: A dictionary representing the result of the execution.
+        """
+        if payload:
+            response = self._client.make_request("POST", f"actions/{action_id}/runs", json=payload)
+        else:
+            response = self._client.make_request("POST", f"actions/{action_id}/runs")
+        return response.json()
+
     def get_action_run_logs(self, run_id: str) -> Dict:
         """
-        Retrieve logs for a specific action run.
+        Get logs for an action run.
 
         :param run_id: The identifier of the run.
-        :return: A dictionary containing the logs of the action run.
+        :return: A dictionary containing the logs.
         """
         response = self._client.make_request("GET", f"actions/runs/{run_id}/logs")
         return response.json()
 
     def get_action_run_approvers(self, run_id: str) -> List[Dict]:
         """
-        Retrieve approvers for a specific action run.
+        Get approvers for an action run.
 
         :param run_id: The identifier of the run.
         :return: A list of approver dictionaries.
         """
         response = self._client.make_request("GET", f"actions/runs/{run_id}/approvers")
-        return response.json().get("approvers", [])
+        return response.json()["approvers"]

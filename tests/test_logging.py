@@ -178,8 +178,11 @@ class TestLogging(unittest.TestCase):
         # Just check that the response was processed
         self.assertIn("status_code", response_info)
 
-    @patch("src.pyport.logging.logger")
+    @patch("pyport.logging.logger")
     def test_log_request(self, mock_logger):
+        # Set up the mock logger to indicate that debug logging is enabled
+        mock_logger.isEnabledFor.return_value = True
+
         # Test logging a request
         correlation_id = log_request(
             method="POST",
@@ -198,8 +201,11 @@ class TestLogging(unittest.TestCase):
         uuid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
         self.assertTrue(uuid_pattern.match(correlation_id))
 
-    @patch("src.pyport.logging.logger")
+    @patch("pyport.logging.logger")
     def test_log_response(self, mock_logger):
+        # Set up the mock logger to indicate that debug logging is enabled
+        mock_logger.isEnabledFor.return_value = True
+
         # Test logging a response
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -218,8 +224,11 @@ class TestLogging(unittest.TestCase):
         debug_call = mock_logger.debug.call_args[0][0]
         self.assertIn("Response:", debug_call)
 
-    @patch("src.pyport.logging.logger")
+    @patch("pyport.logging.logger")
     def test_log_error(self, mock_logger):
+        # Set up the mock logger to indicate that error logging is enabled
+        mock_logger.isEnabledFor.return_value = True
+
         # Test logging an error
         error = ValueError("Test error")
 
