@@ -43,17 +43,20 @@
   - ✅ Created type stub files (.pyi) for key modules
   - ✅ Added dedicated IDE support documentation
 
-### Feature Enhancements (v0.2.7)
+### Future Enhancements
 - Add context manager support for the client (with statement)
 - Implement resource pooling for efficient client usage
 - Add batch operations for bulk API calls
 - Implement automatic request throttling to prevent rate limiting
 - Add support for custom serializers/deserializers
 
-### Performance Optimizations (v0.2.7)
+### Version 0.2.7
+- To be determined
+
+### Future Performance Optimizations
 - Implement connection pooling for better performance
 - Add caching for frequently accessed resources
-- Batch multiple requests together when possible
+- Implement request batching for improved efficiency
 - Optimize sensitive data masking for better performance
 - Implement more efficient JSON parsing
 

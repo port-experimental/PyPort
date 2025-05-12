@@ -102,6 +102,9 @@ This document tracks the changes and improvements made in each version of the Py
 ## Upcoming Features
 
 ### Version 0.2.7
+- To be determined
+
+### Future Versions
 - Feature Enhancements
   - Context manager support for the client (with statement)
   - Resource pooling for efficient client usage
@@ -112,7 +115,7 @@ This document tracks the changes and improvements made in each version of the Py
 - Performance Optimizations
   - Connection pooling for better performance
   - Caching for frequently accessed resources
-  - Batching multiple requests together when possible
+  - Request batching for improved efficiency
   - Optimized sensitive data masking
   - More efficient JSON parsing
 

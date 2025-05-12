@@ -79,18 +79,10 @@ This document outlines the high-level development roadmap for the PyPort client 
 
 ## Planned Features
 
-### Short-term (v0.2.7)
+### Version 0.2.7
 
-- 🔜 **Feature Enhancements**
-  - Context manager support
-  - Resource pooling
-  - Batch operations
-  - Request throttling
-
-- 🔜 **Performance Optimizations**
-  - Connection pooling
-  - Response caching
-  - Request batching
+- 🔜 **To Be Determined**
+  - Planning in progress
 
 ## Future Considerations
 
