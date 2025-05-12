@@ -52,7 +52,9 @@ class BaseResource(ABC):
             ValueError: If resource_name is not set and not provided.
         """
         if not self._resource_name:
-            raise ValueError("Resource name not set. Either set it in the constructor or provide it in the method call.")
+            raise ValueError(
+                "Resource name not set. Either set it in the constructor or provide it in the method call."
+            )
 
         path = self._resource_name
 
@@ -132,9 +134,13 @@ class BaseResource(ABC):
         """
         # For backward compatibility, only include params if it's not None and not empty
         if params is not None and params:
-            response = self._client.make_request("POST", self._get_resource_path(), json=data, params=params, **kwargs)
+            response = self._client.make_request(
+                "POST", self._get_resource_path(), json=data, params=params, **kwargs
+            )
         else:
-            response = self._client.make_request("POST", self._get_resource_path(), json=data, **kwargs)
+            response = self._client.make_request(
+                "POST", self._get_resource_path(), json=data, **kwargs
+            )
         return response.json()
 
     def update(self, resource_id: str, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
@@ -159,9 +165,13 @@ class BaseResource(ABC):
         """
         # For backward compatibility, only include params if it's not None and not empty
         if params is not None and params:
-            response = self._client.make_request("PUT", self._get_resource_path(resource_id), json=data, params=params, **kwargs)
+            response = self._client.make_request(
+                "PUT", self._get_resource_path(resource_id), json=data, params=params, **kwargs
+            )
         else:
-            response = self._client.make_request("PUT", self._get_resource_path(resource_id), json=data, **kwargs)
+            response = self._client.make_request(
+                "PUT", self._get_resource_path(resource_id), json=data, **kwargs
+            )
         return response.json()
 
     def patch(self, resource_id: str, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
@@ -187,9 +197,13 @@ class BaseResource(ABC):
         """
         # For backward compatibility, only include params if it's not None and not empty
         if params is not None and params:
-            response = self._client.make_request("PATCH", self._get_resource_path(resource_id), json=data, params=params, **kwargs)
+            response = self._client.make_request(
+                "PATCH", self._get_resource_path(resource_id), json=data, params=params, **kwargs
+            )
         else:
-            response = self._client.make_request("PATCH", self._get_resource_path(resource_id), json=data, **kwargs)
+            response = self._client.make_request(
+                "PATCH", self._get_resource_path(resource_id), json=data, **kwargs
+            )
         return response.json()
 
     def delete(self, resource_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> bool:

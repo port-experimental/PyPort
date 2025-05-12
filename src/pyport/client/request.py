@@ -181,7 +181,9 @@ class RequestManager:
         # Make the request with retry handling
         return make_request_with_retry(method, url, endpoint, correlation_id, **request_kwargs)
 
-    def _make_single_request(self, method: str, url: str, endpoint: str, correlation_id: str, **kwargs) -> requests.Response:
+    def _make_single_request(
+        self, method: str, url: str, endpoint: str, correlation_id: str, **kwargs
+    ) -> requests.Response:
         """
         Make a single HTTP request to the API.
 
@@ -214,7 +216,9 @@ class RequestManager:
             log_error(error, correlation_id)
             raise error
 
-    def _handle_response(self, response: requests.Response, endpoint: str, method: str, correlation_id: str) -> requests.Response:
+    def _handle_response(
+        self, response: requests.Response, endpoint: str, method: str, correlation_id: str
+    ) -> requests.Response:
         """
         Handle the response, returning it if successful or raising an appropriate exception.
 

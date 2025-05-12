@@ -26,7 +26,10 @@ class Roles(BaseAPIService):
         """
         super().__init__(client, resource_name="roles", response_key="role")
 
-    def get_roles(self, page: Optional[int] = None, per_page: Optional[int] = None, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Role]:
+    def get_roles(
+        self, page: Optional[int] = None, per_page: Optional[int] = None,
+        params: Optional[Dict[str, Any]] = None, **kwargs
+    ) -> List[Role]:
         """
         Retrieve all roles.
 

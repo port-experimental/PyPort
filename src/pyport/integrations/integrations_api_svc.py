@@ -321,8 +321,10 @@ class Integrations(BaseAPIService):
         response = self._make_request_with_params('GET', endpoint, params=all_params)
         return response.get("examples", [])
 
-    def create_integration_kind_example(self, integration_id: str, kind: str,
-                                        example_data: Dict[str, Any], params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def create_integration_kind_example(
+        self, integration_id: str, kind: str, example_data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Create a new example for a specific integration kind.
 
@@ -372,8 +374,10 @@ class Integrations(BaseAPIService):
         response = self._make_request_with_params('GET', endpoint, params=params)
         return response.get("example", {})
 
-    def update_integration_kind_example(self, integration_id: str, kind: str, example_id: str,
-                                        example_data: Dict[str, Any], params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def update_integration_kind_example(
+        self, integration_id: str, kind: str, example_id: str, example_data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """
         Update an existing integration kind example.
 

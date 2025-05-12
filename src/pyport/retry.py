@@ -462,7 +462,9 @@ class RetryConfig:
                 "retry_status_codes": list(self.retry_status_codes),
                 "idempotent_methods": list(self.idempotent_methods)
             },
-            "circuit_breaker": self.circuit_breaker.get_status() if hasattr(self.circuit_breaker, 'get_status') else str(self.circuit_breaker),
+            "circuit_breaker": (self.circuit_breaker.get_status()
+                if hasattr(self.circuit_breaker, 'get_status')
+                else str(self.circuit_breaker)),
             "stats": self.stats.get_status()
         }
 
@@ -742,7 +744,8 @@ def with_retry(
 
                     # Add more detailed debug logging
                     logger.debug(
-                        f"Retry details: function={func_name}, attempt={attempt + 1}/{config.max_retries}, "
+                        f"Retry details: function={func_name}, "
+                        f"attempt={attempt + 1}/{config.max_retries}, "
                         f"delay={delay:.2f}s, error_type={e.__class__.__name__}, "
                         f"circuit_breaker_status={config.circuit_breaker}"
                     )

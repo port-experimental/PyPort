@@ -73,7 +73,7 @@ def configure_logging(
         propagate: Whether to propagate log messages to the root logger (default: False).
         log_file: Path to a log file. If provided, a FileHandler will be added.
     """
-    global logger
+    # Access the logger defined at module level
 
     # Set the logging level
     logger.setLevel(level)
@@ -274,8 +274,12 @@ def format_response_for_logging(
             response_info["content_length"] = len(response.content)
 
             # Include a preview of text content if it's not too large
-            if len(response.content) < 1000 and response.headers.get("content-type", "").startswith("text/"):
-                response_info["body_preview"] = response.text[:500] + "..." if len(response.text) > 500 else response.text
+            content_type = response.headers.get("content-type", "")
+            if len(response.content) < 1000 and content_type.startswith("text/"):
+                preview = response.text[:500]
+                if len(response.text) > 500:
+                    preview += "..."
+                response_info["body_preview"] = preview
 
     return response_info
 

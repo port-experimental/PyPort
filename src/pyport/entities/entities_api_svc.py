@@ -52,7 +52,9 @@ class Entities(BaseAPIService):
         """
         super().__init__(client, response_key="entity")
 
-    def get_entities(self, blueprint_identifier: str, page: Optional[int] = None, per_page: Optional[int] = None) -> List[Entity]:
+    def get_entities(
+        self, blueprint_identifier: str, page: Optional[int] = None, per_page: Optional[int] = None
+    ) -> List[Entity]:
         """
         Retrieve a list of all entities for the specified blueprint with pagination support.
 

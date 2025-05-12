@@ -23,7 +23,10 @@ class Organizations(BaseAPIService):
         """
         super().__init__(client, resource_name="organizations", response_key="organization")
 
-    def get_organizations(self, page: Optional[int] = None, per_page: Optional[int] = None, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Dict[str, Any]]:
+    def get_organizations(
+        self, page: Optional[int] = None, per_page: Optional[int] = None,
+        params: Optional[Dict[str, Any]] = None, **kwargs
+    ) -> List[Dict[str, Any]]:
         """
         Retrieve all organizations.
 
@@ -48,7 +51,9 @@ class Organizations(BaseAPIService):
         # Use the base class get_all method which handles pagination
         return self.get_all(page=page, per_page=per_page, params=params, **kwargs)
 
-    def get_organization(self, organization_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
+    def get_organization(
+        self, organization_id: str, params: Optional[Dict[str, Any]] = None, **kwargs
+    ) -> Dict[str, Any]:
         """
         Retrieve details for a specific organization.
 

@@ -186,7 +186,8 @@ class PortClient:
                 Only applies to status codes returned by the API.
             retry_on: Exception types or a function that returns True if the exception should be retried.
                 If None, uses default logic based on exception type and status code.
-            idempotent_methods: HTTP methods that are safe to retry (default: {"GET", "HEAD", "PUT", "DELETE", "OPTIONS"}).
+            idempotent_methods: HTTP methods that are safe to retry
+                (default: {"GET", "HEAD", "PUT", "DELETE", "OPTIONS"}).
                 Non-idempotent methods like POST are not retried by default to avoid duplicate operations.
             skip_auth: Whether to skip authentication (default: False).
                 This is primarily used for testing.
