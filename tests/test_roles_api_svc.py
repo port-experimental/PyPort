@@ -30,26 +30,26 @@ class TestRoles(unittest.TestCase):
 
     def test_create_role(self):
         role_data = {"name": "Editor"}
-        fake_response_data = {"id": "role_new", "name": "Editor"}
+        fake_role = {"id": "role_new", "name": "Editor"}
         mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
+        mock_response.json.return_value = {"role": fake_role}
         self.mock_client.make_request.return_value = mock_response
 
         result = self.roles.create_role(role_data)
         self.mock_client.make_request.assert_called_once_with("POST", "roles", json=role_data)
-        self.assertEqual(result, fake_response_data)
+        self.assertEqual(result, fake_role)
 
     def test_update_role(self):
         role_id = "role1"
         role_data = {"name": "Super Admin"}
-        fake_response_data = {"id": role_id, "name": "Super Admin"}
+        fake_role = {"id": role_id, "name": "Super Admin"}
         mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
+        mock_response.json.return_value = {"role": fake_role}
         self.mock_client.make_request.return_value = mock_response
 
         result = self.roles.update_role(role_id, role_data)
         self.mock_client.make_request.assert_called_once_with("PUT", f"roles/{role_id}", json=role_data)
-        self.assertEqual(result, fake_response_data)
+        self.assertEqual(result, fake_role)
 
     def test_delete_role(self):
         role_id = "role1"

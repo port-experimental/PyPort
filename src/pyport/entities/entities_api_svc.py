@@ -1,6 +1,6 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
-from ..models.api_category import BaseResource
+from ..services.base_api_service import BaseAPIService
 
 # Comment out the types import since it doesn't exist yet
 # from .types import (
@@ -17,7 +17,7 @@ JsonList = List[Dict[str, Any]]
 Pagination = Dict[str, Any]
 
 
-class Entities(BaseResource):
+class Entities(BaseAPIService):
     """Entities API category for managing entities in Port.
 
     Entities are instances of blueprints that represent real-world resources in your
@@ -44,7 +44,15 @@ class Entities(BaseResource):
         ... )
     """
 
-    def get_entities(self, blueprint_identifier: str, page: int = None, per_page: int = None) -> List[Entity]:
+    def __init__(self, client):
+        """Initialize the Entities API service.
+
+        Args:
+            client: The API client to use for requests.
+        """
+        super().__init__(client, response_key="entity")
+
+    def get_entities(self, blueprint_identifier: str, page: Optional[int] = None, per_page: Optional[int] = None) -> List[Entity]:
         """
         Retrieve a list of all entities for the specified blueprint with pagination support.
 
@@ -74,27 +82,17 @@ class Entities(BaseResource):
             >>> # Get the second page of service entities, 50 per page
             >>> page2 = client.entities.get_entities("service", page=2, per_page=50)
         """
-        # Only add pagination parameters if they are provided
-        params = {}
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities")
 
-        # Make the request with or without pagination parameters
-        if params:
-            response = self._client.make_request(
-                'GET',
-                f"blueprints/{blueprint_identifier}/entities",
-                params=params
-            )
-        else:
-            response = self._client.make_request(
-                'GET',
-                f"blueprints/{blueprint_identifier}/entities"
-            )
+        # Get pagination parameters
+        params = self._handle_pagination_params(page, per_page)
 
-        return response.json().get("entities", [])
+        # Make the request with pagination parameters
+        response = self._make_request_with_params('GET', endpoint, params=params)
+
+        # Extract and return the entities
+        return response.get("entities", [])
 
     def get_entity(self, blueprint_identifier: str, entity_identifier: str) -> Entity:
         """
@@ -124,10 +122,14 @@ class Entities(BaseResource):
             >>> print(api_service["title"])
             'API Service'
         """
-        response = self._client.make_request(
-            'GET', f"blueprints/{blueprint_identifier}/entities/{entity_identifier}"
-        )
-        return response.json().get("entity", {})
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities", entity_identifier)
+
+        # Make the request
+        response = self._make_request_with_params('GET', endpoint)
+
+        # Extract and return the entity
+        return response.get("entity", {})
 
     def create_entity(
         self,
@@ -190,13 +192,19 @@ class Entities(BaseResource):
             ...     upsert=True
             ... )
         """
-        url = (f"blueprints/{blueprint_identifier}/entities?"
-               f"upsert={str(upsert).lower()}&"
-               f"validation_only={str(validation_only).lower()}&"
-               f"create_missing_related_entities={str(create_missing_related_entities).lower()}&"
-               f"merge={str(merge).lower()}")
-        response = self._client.make_request('POST', url, json=entity_data)
-        return response.json()
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities")
+
+        # Create query parameters
+        params = {
+            "upsert": str(upsert).lower(),
+            "validation_only": str(validation_only).lower(),
+            "create_missing_related_entities": str(create_missing_related_entities).lower(),
+            "merge": str(merge).lower()
+        }
+
+        # Make the request
+        return self._make_request_with_params('POST', endpoint, params=params, json=entity_data)
 
     def update_entity(self, blueprint_identifier: str, entity_identifier: str, entity_data: Dict[str, Any]) -> Entity:
         """
@@ -226,10 +234,11 @@ class Entities(BaseResource):
             ...     {"title": "Payment Processing Service"}
             ... )
         """
-        response = self._client.make_request(
-            'PUT', f"blueprints/{blueprint_identifier}/entities/{entity_identifier}", json=entity_data
-        )
-        return response.json()
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities", entity_identifier)
+
+        # Make the request
+        return self._make_request_with_params('PUT', endpoint, json=entity_data)
 
     def delete_entity(self, blueprint_identifier: str, entity_identifier: str) -> bool:
         """
@@ -254,10 +263,13 @@ class Entities(BaseResource):
             >>> if success:
             ...     print("Entity deleted successfully")
         """
-        response = self._client.make_request(
-            'DELETE', f"blueprints/{blueprint_identifier}/entities/{entity_identifier}"
-        )
-        # Assuming a successful deletion returns HTTP status 204 No Content
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities", entity_identifier)
+
+        # Make the request
+        response = self._client.make_request('DELETE', endpoint)
+
+        # Return True if the status code is 204 (No Content)
         return response.status_code == 204
 
     def create_entities_bulk(self, blueprint_identifier: str, entities_data: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -301,10 +313,11 @@ class Entities(BaseResource):
             ... )
             >>> print(f"Created {result['created']} entities")
         """
-        response = self._client.make_request(
-            'POST', f"blueprints/{blueprint_identifier}/entities/bulk", json={"entities": entities_data}
-        )
-        return response.json()
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities", "bulk")
+
+        # Make the request
+        return self._make_request_with_params('POST', endpoint, json={"entities": entities_data})
 
     def get_entities_count(self, blueprint_identifier: str) -> int:
         """
@@ -327,9 +340,13 @@ class Entities(BaseResource):
             >>> count = client.entities.get_entities_count("service")
             >>> print(f"There are {count} service entities")
         """
-        response = self._client.make_request(
-            'GET', f"blueprints/{blueprint_identifier}/entities-count"
-        )
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities-count")
+
+        # Make the request
+        response = self._client.make_request('GET', endpoint)
+
+        # Extract and return the count
         return response.json().get("count", 0)
 
     def get_all_entities(self, blueprint_identifier: str) -> List[Entity]:
@@ -353,9 +370,13 @@ class Entities(BaseResource):
             >>> # Get all service entities including related entities
             >>> all_entities = client.entities.get_all_entities("service")
         """
-        response = self._client.make_request(
-            'GET', f"blueprints/{blueprint_identifier}/all-entities"
-        )
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "all-entities")
+
+        # Make the request
+        response = self._client.make_request('GET', endpoint)
+
+        # Extract and return the entities
         return response.json().get("entities", [])
 
     # Entity Search and Aggregation Methods
@@ -394,8 +415,14 @@ class Entities(BaseResource):
             ...     }
             ... })
         """
-        response = self._client.make_request('POST', "entities/search", json=search_data)
-        return response.json().get("entities", [])
+        # Create the endpoint path
+        endpoint = self._build_endpoint("entities", "search")
+
+        # Make the request
+        response = self._make_request_with_params('POST', endpoint, json=search_data)
+
+        # Extract and return the entities
+        return response.get("entities", [])
 
     def search_blueprint_entities(self, blueprint_identifier: str, search_data: Dict[str, Any]) -> List[Entity]:
         """
@@ -437,9 +464,13 @@ class Entities(BaseResource):
             ...     }
             ... )
         """
-        response = self._client.make_request(
-            'POST', f"blueprints/{blueprint_identifier}/entities/search", json=search_data
-        )
+        # Create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities", "search")
+
+        # Make the request
+        response = self._make_request_with_params('POST', endpoint, json=search_data)
+
+        # Extract and return the entities
         return response.json().get("entities", [])
 
     def aggregate_entities(self, aggregation_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -469,8 +500,11 @@ class Entities(BaseResource):
             ...     "group_by": ["blueprint"]
             ... })
         """
-        response = self._client.make_request('POST', "entities/aggregate", json=aggregation_data)
-        return response.json()
+        # Create the endpoint path
+        endpoint = self._build_endpoint("entities", "aggregate")
+
+        # Make the request
+        return self._make_request_with_params('POST', endpoint, json=aggregation_data)
 
     def aggregate_entities_over_time(self, aggregation_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -505,8 +539,11 @@ class Entities(BaseResource):
             ...     "end_time": "2023-01-31T23:59:59Z"
             ... })
         """
-        response = self._client.make_request('POST', "entities/aggregate-over-time", json=aggregation_data)
-        return response.json()
+        # Create the endpoint path
+        endpoint = self._build_endpoint("entities", "aggregate-over-time")
+
+        # Make the request
+        return self._make_request_with_params('POST', endpoint, json=aggregation_data)
 
     def get_entity_properties_history(self, history_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -541,5 +578,8 @@ class Entities(BaseResource):
             ...     "end_time": "2023-12-31T23:59:59Z"
             ... })
         """
-        response = self._client.make_request('POST', "entities/properties-history", json=history_data)
-        return response.json()
+        # Create the endpoint path
+        endpoint = self._build_endpoint("entities", "properties-history")
+
+        # Make the request
+        return self._make_request_with_params('POST', endpoint, json=history_data)

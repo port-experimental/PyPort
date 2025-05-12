@@ -1,59 +1,138 @@
-from typing import Dict, List
-from ..models.api_category import BaseResource
+from typing import Dict, List, Any, Optional
+from ..services.base_api_service import BaseAPIService
 
 
-class Organizations(BaseResource):
-    """Organizations API category for managing organizations."""
+class Organizations(BaseAPIService):
+    """Organizations API category for managing organizations.
 
-    def get_organizations(self) -> List[Dict]:
+    This class provides methods for interacting with the Organizations API endpoints.
+
+    Examples:
+        >>> client = PortClient(client_id="your-client-id", client_secret="your-client-secret")
+        >>> # Get all organizations
+        >>> organizations = client.organizations.get_organizations()
+        >>> # Get a specific organization
+        >>> organization = client.organizations.get_organization("org-id")
+    """
+
+    def __init__(self, client):
+        """Initialize the Organizations API service.
+
+        Args:
+            client: The API client to use for requests.
+        """
+        super().__init__(client, resource_name="organizations", response_key="organization")
+
+    def get_organizations(self, page: Optional[int] = None, per_page: Optional[int] = None, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Dict[str, Any]]:
         """
         Retrieve all organizations.
 
-        :return: A list of organization dictionaries.
-        """
-        response = self._client.make_request("GET", "organizations")
-        return response.json().get("organizations", [])
+        Args:
+            page: The page number to retrieve (default: None).
+            per_page: The number of organizations per page (default: None).
+            params: Optional query parameters for the request.
 
-    def get_organization(self, organization_id: str) -> Dict:
+        Returns:
+            A list of organization dictionaries, each containing:
+            - id: The unique identifier of the organization
+            - name: The name of the organization
+            - description: The description of the organization (if any)
+            - createdAt: The creation timestamp
+            - updatedAt: The last update timestamp
+
+        Examples:
+            >>> organizations = client.organizations.get_organizations()
+            >>> for org in organizations:
+            ...     print(f"{org['name']} ({org['id']})")
+        """
+        # Use the base class get_all method which handles pagination
+        return self.get_all(page=page, per_page=per_page, params=params, **kwargs)
+
+    def get_organization(self, organization_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
         """
         Retrieve details for a specific organization.
 
-        :param organization_id: The identifier of the organization.
-        :return: A dictionary representing the organization.
-        """
-        response = self._client.make_request("GET", f"organizations/{organization_id}")
-        return response.json().get("organization", {})
+        Args:
+            organization_id: The identifier of the organization.
+            params: Optional query parameters for the request.
 
-    def create_organization(self, organization_data: Dict) -> Dict:
+        Returns:
+            A dictionary containing the organization details:
+            - id: The unique identifier of the organization
+            - name: The name of the organization
+            - description: The description of the organization (if any)
+            - createdAt: The creation timestamp
+            - updatedAt: The last update timestamp
+
+        Examples:
+            >>> organization = client.organizations.get_organization("org-id")
+            >>> print(f"Organization: {organization['name']}")
+        """
+        # Use the base class get_by_id method which handles response extraction
+        return self.get_by_id(organization_id, params=params, **kwargs)
+
+    def create_organization(self, organization_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create a new organization.
 
-        :param organization_data: A dictionary containing organization data.
-        :return: A dictionary representing the newly created organization.
-        """
-        response = self._client.make_request("POST", "organizations", json=organization_data)
-        return response.json()
+        Args:
+            organization_data: A dictionary containing the data for the new organization.
+                Must include at minimum:
+                - name: The name of the organization (string)
 
-    def update_organization(self, organization_id: str, organization_data: Dict) -> Dict:
+                May also include:
+                - description: A description of the organization (string)
+
+        Returns:
+            A dictionary representing the created organization.
+
+        Examples:
+            >>> new_org = client.organizations.create_organization({
+            ...     "name": "Engineering Org",
+            ...     "description": "Engineering organization"
+            ... })
+        """
+        # Use the base class create_resource method which handles response extraction
+        return self.create_resource(organization_data)
+
+    def update_organization(self, organization_id: str, organization_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Update an existing organization.
 
-        :param organization_id: The identifier of the organization to update.
-        :param organization_data: A dictionary with updated organization data.
-        :return: A dictionary representing the updated organization.
+        Args:
+            organization_id: The identifier of the organization to update.
+            organization_data: A dictionary with updated organization data.
+                May include any of the fields mentioned in create_organization.
+
+        Returns:
+            A dictionary representing the updated organization.
+
+        Examples:
+            >>> updated_org = client.organizations.update_organization(
+            ...     "org-id",
+            ...     {"name": "Engineering Organization"}
+            ... )
         """
-        response = self._client.make_request("PUT", f"organizations/{organization_id}", json=organization_data)
-        return response.json()
+        # Use the base class update_resource method which handles response extraction
+        return self.update_resource(organization_id, organization_data)
 
     def delete_organization(self, organization_id: str) -> bool:
         """
         Delete an organization.
 
-        :param organization_id: The identifier of the organization to delete.
-        :return: True if deletion was successful (HTTP 204), else False.
+        Args:
+            organization_id: The identifier of the organization to delete.
+
+        Returns:
+            True if deletion was successful, otherwise False.
+
+        Examples:
+            >>> success = client.organizations.delete_organization("org-id")
+            >>> if success:
+            ...     print("Organization deleted successfully")
         """
-        response = self._client.make_request("DELETE", f"organizations/{organization_id}")
-        return response.status_code == 204
+        # Use the base class delete_resource method
+        return self.delete_resource(organization_id)
 
     # Organization Secrets Methods
 

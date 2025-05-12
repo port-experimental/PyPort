@@ -41,21 +41,23 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Backup management tools
   - Improved error handling
 
-## Planned Features
+### v0.2.5
 
-### Short-term (v0.2.5)
-
-- 🔜 **Code Structure and Organization**
+- ✅ **Code Structure and Organization**
   - Base API service class to reduce duplication
   - Improved type hints for complex data structures
   - Standardized method signatures across services
+  - Consistent parameter naming across all methods
 
-- 🔜 **Error Handling and Logging**
+- ✅ **Error Handling and Logging**
   - Consolidated error handling approach
   - Enhanced logging with more context
   - Retry logic optimization for transient errors
+  - Improved error messages for better debugging
 
-### Medium-term (v0.2.6)
+## Planned Features
+
+### Short-term (v0.2.6)
 
 - 🔜 **Testing Improvements**
   - Increased test coverage for all modules
@@ -67,7 +69,7 @@ This document outlines the high-level development roadmap for the PyPort client 
   - More usage examples
   - Step-by-step tutorials
 
-### Long-term (v0.2.7)
+### Medium-term (v0.2.7)
 
 - 🔜 **Feature Enhancements**
   - Context manager support
@@ -96,4 +98,4 @@ We welcome contributions to the PyPort client library! If you're interested in h
 
 ---
 
-*Last updated: May 2024*
+*Last updated: May 11, 2024*

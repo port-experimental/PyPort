@@ -109,6 +109,11 @@ class PortConnectionError(PortApiError):
     pass
 
 
+class PortNetworkError(PortApiError):
+    """Raised when there's a network-related error."""
+    pass
+
+
 class PortConfigurationError(Exception):
     """Raised when there's an issue with the client configuration."""
     pass

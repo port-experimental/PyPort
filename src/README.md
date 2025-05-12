@@ -7,7 +7,7 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-76.00%25-green)
+![Coverage](https://img.shields.io/badge/coverage-72.00%25-yellowgreen)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)

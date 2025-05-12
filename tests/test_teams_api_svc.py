@@ -31,26 +31,26 @@ class TestTeams(unittest.TestCase):
 
     def test_create_team(self):
         team_data = {"name": "New Team"}
-        fake_response_data = {"id": "team_new", "name": "New Team"}
+        fake_team = {"id": "team_new", "name": "New Team"}
         mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
+        mock_response.json.return_value = {"team": fake_team}
         self.mock_client.make_request.return_value = mock_response
 
         result = self.teams.create_team(team_data)
         self.mock_client.make_request.assert_called_once_with("POST", "teams", json=team_data)
-        self.assertEqual(result, fake_response_data)
+        self.assertEqual(result, fake_team)
 
     def test_update_team(self):
         team_id = "team1"
         team_data = {"name": "Updated Team"}
-        fake_response_data = {"id": team_id, "name": "Updated Team"}
+        fake_team = {"id": team_id, "name": "Updated Team"}
         mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
+        mock_response.json.return_value = {"team": fake_team}
         self.mock_client.make_request.return_value = mock_response
 
         result = self.teams.update_team(team_id, team_data)
         self.mock_client.make_request.assert_called_once_with("PUT", f"teams/{team_id}", json=team_data)
-        self.assertEqual(result, fake_response_data)
+        self.assertEqual(result, fake_team)
 
     def test_delete_team(self):
         team_id = "team1"

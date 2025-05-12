@@ -134,6 +134,8 @@ class TestRetryConfig(unittest.TestCase):
         """Test get_retry_delay with a rate limit error."""
         config = RetryConfig()
         error = PortRateLimitError("Rate limit", status_code=429, retry_after=10)
+        # Set test mode to disable jitter
+        error._test_mode = True
         delay = config.get_retry_delay(0, error)
         self.assertEqual(delay, 10)
 
