@@ -55,21 +55,31 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Retry logic optimization for transient errors
   - Improved error messages for better debugging
 
-## Planned Features
+### v0.2.6
 
-### Short-term (v0.2.6)
+- ✅ **IDE Support Improvements**
+  - Property decorators with explicit return types
+  - Type annotations in `__init__` methods
+  - Enhanced docstrings with detailed information
+  - Type stub files (.pyi) for key modules
+  - Dedicated IDE support documentation
 
-- 🔜 **Testing Improvements**
+- ✅ **Testing Improvements**
   - Increased test coverage for all modules
   - Mock server for API testing
   - Enhanced integration tests
+  - Edge case tests for error conditions
+  - Property-based testing framework
 
-- 🔜 **Documentation**
+- ✅ **Documentation Enhancements**
   - Comprehensive API reference
   - More usage examples
   - Step-by-step tutorials
+  - Architecture documentation for contributors
 
-### Medium-term (v0.2.7)
+## Planned Features
+
+### Short-term (v0.2.7)
 
 - 🔜 **Feature Enhancements**
   - Context manager support
@@ -98,4 +108,4 @@ We welcome contributions to the PyPort client library! If you're interested in h
 
 ---
 
-*Last updated: May 11, 2024*
+*Last updated: May 15, 2024*
