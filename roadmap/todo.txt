@@ -20,19 +20,28 @@
 
 ## Future Versions
 
-### Testing Improvements (v0.2.6)
-- Increase test coverage for modules with lower coverage
-- Implement a mock server for API testing
-- Enhance integration tests to cover more real-world scenarios
-- Add more edge case tests for error conditions
-- Implement property-based testing for API models
+### Testing Improvements (v0.2.6) - COMPLETED
+- ✅ Increase test coverage for modules with lower coverage
+  - ✅ Added tests for BaseAPIService class
+  - ✅ Added tests for client properties and type annotations
+  - ✅ Added tests for type stubs
+- ✅ Implement a mock server for API testing
+- ✅ Enhance integration tests to cover more real-world scenarios
+- ✅ Add more edge case tests for error conditions
+- ✅ Implement property-based testing for API models (framework implemented)
 
-### Documentation (v0.2.6)
-- Generate comprehensive API reference documentation
-- Add more usage examples for common operations
-- Create step-by-step tutorials for complex operations
-- Improve inline documentation and docstrings
-- Add architecture documentation for contributors
+### Documentation (v0.2.6) - COMPLETED
+- ✅ Generate comprehensive API reference documentation
+- ✅ Add more usage examples for common operations
+- ✅ Create step-by-step tutorials for complex operations
+- ✅ Improve inline documentation and docstrings
+- ✅ Add architecture documentation for contributors
+- ✅ Enhance IDE support for submodules with proper type annotations
+  - ✅ Added property decorators with explicit return types
+  - ✅ Added type annotations in __init__
+  - ✅ Enhanced docstrings for all services
+  - ✅ Created type stub files (.pyi) for key modules
+  - ✅ Added dedicated IDE support documentation
 
 ### Feature Enhancements (v0.2.7)
 - Add context manager support for the client (with statement)

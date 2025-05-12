@@ -2,28 +2,36 @@
 
 This document tracks the changes and improvements made in each version of the PyPort client library.
 
-## Version 0.2.5 (Latest)
+## Version 0.2.6 (Latest)
 
-### Code Structure and Organization
-- ✅ Created a BaseAPIService class with common functionality for all API services
-- ✅ Extracted common patterns from existing API service classes
-- ✅ Standardized method signatures across all API services
-- ✅ Improved type hints for complex data structures and API responses
-- ✅ Reduced code duplication in API service classes
-- ✅ Ensured consistent parameter naming across all methods
+### IDE Support Improvements
+- ✅ Added property decorators with explicit return types for all service attributes
+- ✅ Added type annotations in `__init__` with proper types
+- ✅ Enhanced docstrings with detailed information about each service
+- ✅ Created type stub files (.pyi) for key modules:
+  - ✅ Client module (PortClient class)
+  - ✅ Blueprints module
+  - ✅ Entities module
+  - ✅ BaseAPIService class
+  - ✅ Types module
+- ✅ Added dedicated IDE support documentation
+- ✅ Updated README with IDE support information
 
-### Error Handling and Logging
-- ✅ Consolidated error handling approaches across all API services
-- ✅ Enhanced logging with more context about API requests and responses
-- ✅ Optimized retry logic for better handling of transient errors
-- ✅ Improved error messages to be more actionable for users
-- ✅ Added more detailed logging for debugging purposes
-- ✅ Ensured consistent error handling patterns across the codebase
+### Testing Improvements
+- ✅ Increased test coverage for BaseAPIService class
+- ✅ Added tests for client properties and type annotations
+- ✅ Added tests for type stubs
+- ✅ Implemented mock server for API testing
+- ✅ Enhanced integration tests for real-world scenarios
+- ✅ Added edge case tests for error conditions
+- ✅ Implemented property-based testing framework
 
-### Code Quality
-- ✅ Fixed all linting issues across the codebase
-- ✅ Improved code formatting and consistency
-- ✅ Enhanced docstrings with better descriptions and examples
+### Documentation Enhancements
+- ✅ Created comprehensive API reference documentation
+- ✅ Added more usage examples for common operations
+- ✅ Created step-by-step tutorials for complex operations
+- ✅ Improved inline documentation and docstrings
+- ✅ Added architecture documentation for contributors
 
 ## Version 0.2.4
 
@@ -68,22 +76,30 @@ This document tracks the changes and improvements made in each version of the Py
 - ✅ Added sensitive data masking
 - ✅ Added configurable log levels and formats
 
+## Version 0.2.5
+
+### Code Structure and Organization
+- ✅ Created a BaseAPIService class with common functionality for all API services
+- ✅ Extracted common patterns from existing API service classes
+- ✅ Standardized method signatures across all API services
+- ✅ Improved type hints for complex data structures and API responses
+- ✅ Reduced code duplication in API service classes
+- ✅ Ensured consistent parameter naming across all methods
+
+### Error Handling and Logging
+- ✅ Consolidated error handling approaches across all API services
+- ✅ Enhanced logging with more context about API requests and responses
+- ✅ Optimized retry logic for better handling of transient errors
+- ✅ Improved error messages to be more actionable for users
+- ✅ Added more detailed logging for debugging purposes
+- ✅ Ensured consistent error handling patterns across the codebase
+
+### Code Quality
+- ✅ Fixed all linting issues across the codebase
+- ✅ Improved code formatting and consistency
+- ✅ Enhanced docstrings with better descriptions and examples
+
 ## Upcoming Features
-
-### Version 0.2.6 (Next Release)
-- Testing Improvements
-  - Increased test coverage for modules with lower coverage
-  - Mock server for API testing
-  - Enhanced integration tests for real-world scenarios
-  - Edge case tests for error conditions
-  - Property-based testing for API models
-
-- Documentation Enhancements
-  - Comprehensive API reference documentation
-  - More usage examples for common operations
-  - Step-by-step tutorials for complex operations
-  - Improved inline documentation and docstrings
-  - Architecture documentation for contributors
 
 ### Version 0.2.7
 - Feature Enhancements

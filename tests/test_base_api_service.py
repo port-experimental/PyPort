@@ -155,6 +155,74 @@ class TestBaseAPIService(unittest.TestCase):
         result = self.service.delete_resource("456")
         self.assertFalse(result)
 
+    def test_get_all_with_custom_params(self):
+        """Test getting all resources with custom parameters."""
+        # Set up mock response
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"test_resource": [{"id": "123"}, {"id": "456"}]}
+        self.mock_client.make_request.return_value = mock_response
+
+        # Test with custom parameters
+        result = self.service.get_all(params={"filter": "value"})
+        self.mock_client.make_request.assert_called_with(
+            "GET", "test_resource", params={"filter": "value"}
+        )
+        self.assertEqual(result, [{"id": "123"}, {"id": "456"}])
+
+        # Test with both pagination and custom parameters
+        result = self.service.get_all(page=2, per_page=50, params={"filter": "value"})
+        self.mock_client.make_request.assert_called_with(
+            "GET", "test_resource", params={"page": 2, "per_page": 50, "filter": "value"}
+        )
+        self.assertEqual(result, [{"id": "123"}, {"id": "456"}])
+
+    def test_create_resource_with_params(self):
+        """Test creating a resource with query parameters."""
+        # Set up mock response
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"test": {"id": "123", "name": "Test"}}
+        self.mock_client.make_request.return_value = mock_response
+
+        # Test with query parameters
+        data = {"name": "Test"}
+        params = {"dryRun": "true"}
+        result = self.service.create_resource(data, params=params)
+        self.mock_client.make_request.assert_called_with(
+            "POST", "test_resource", json=data, params=params
+        )
+        self.assertEqual(result, {"id": "123", "name": "Test"})
+
+    def test_update_resource_with_params(self):
+        """Test updating a resource with query parameters."""
+        # Set up mock response
+        mock_response = MagicMock()
+        mock_response.json.return_value = {"test": {"id": "123", "name": "Updated"}}
+        self.mock_client.make_request.return_value = mock_response
+
+        # Test with query parameters
+        data = {"name": "Updated"}
+        params = {"dryRun": "true"}
+        result = self.service.update_resource("123", data, params=params)
+        self.mock_client.make_request.assert_called_with(
+            "PUT", "test_resource/123", json=data, params=params
+        )
+        self.assertEqual(result, {"id": "123", "name": "Updated"})
+
+    def test_delete_resource_with_params(self):
+        """Test deleting a resource with query parameters."""
+        # Set up mock response
+        mock_response = MagicMock()
+        mock_response.status_code = 204
+        self.mock_client.make_request.return_value = mock_response
+
+        # Test with query parameters
+        params = {"force": "true"}
+        result = self.service.delete_resource("123", params=params)
+        self.mock_client.make_request.assert_called_with(
+            "DELETE", "test_resource/123", params=params
+        )
+        self.assertTrue(result)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -44,23 +44,73 @@ class PortClient:
     different parts of the API.
 
     Attributes:
-        blueprints: Access to blueprint-related operations
-        entities: Access to entity-related operations
-        actions: Access to action-related operations
-        action_runs: Access to action run-related operations
-        pages: Access to page-related operations
-        integrations: Access to integration-related operations
-        organizations: Access to organization-related operations
-        teams: Access to team-related operations
-        users: Access to user-related operations
-        roles: Access to role-related operations
-        audit: Access to audit-related operations
-        migrations: Access to migration-related operations
-        search: Access to search-related operations
-        sidebars: Access to sidebar-related operations
-        checklist: Access to checklist-related operations
-        apps: Access to app-related operations
-        scorecards: Access to scorecard-related operations
+        blueprints (Blueprints): Access to blueprint-related operations.
+            Use this to create, read, update, and delete blueprints.
+            Example: client.blueprints.get_blueprint("service")
+
+        entities (Entities): Access to entity-related operations.
+            Use this to create, read, update, and delete entities.
+            Example: client.entities.get_entity("service", "my-service")
+
+        actions (Actions): Access to action-related operations.
+            Use this to create, read, update, and delete actions.
+            Example: client.actions.get_action("action-id")
+
+        action_runs (ActionRuns): Access to action run-related operations.
+            Use this to create, read, update, and delete action runs.
+            Example: client.action_runs.get_action_run("run-id")
+
+        pages (Pages): Access to page-related operations.
+            Use this to create, read, update, and delete pages.
+            Example: client.pages.get_page("blueprint-id", "page-id")
+
+        integrations (Integrations): Access to integration-related operations.
+            Use this to create, read, update, and delete integrations.
+            Example: client.integrations.get_integration("integration-id")
+
+        organizations (Organizations): Access to organization-related operations.
+            Use this to read and update organization settings.
+            Example: client.organizations.get_organization()
+
+        teams (Teams): Access to team-related operations.
+            Use this to create, read, update, and delete teams.
+            Example: client.teams.get_team("team-id")
+
+        users (Users): Access to user-related operations.
+            Use this to create, read, update, and delete users.
+            Example: client.users.get_user("user-id")
+
+        roles (Roles): Access to role-related operations.
+            Use this to create, read, update, and delete roles.
+            Example: client.roles.get_role("role-id")
+
+        audit (Audit): Access to audit-related operations.
+            Use this to retrieve audit logs.
+            Example: client.audit.get_audit_logs()
+
+        migrations (Migrations): Access to migration-related operations.
+            Use this to create, read, update, and delete migrations.
+            Example: client.migrations.get_migration("migration-id")
+
+        search (Search): Access to search-related operations.
+            Use this to search for entities.
+            Example: client.search.search_entities({"query": "service"})
+
+        sidebars (Sidebars): Access to sidebar-related operations.
+            Use this to create, read, update, and delete sidebars.
+            Example: client.sidebars.get_sidebar("sidebar-id")
+
+        checklist (Checklist): Access to checklist-related operations.
+            Use this to create, read, update, and delete checklists.
+            Example: client.checklist.get_checklist("checklist-id")
+
+        apps (Apps): Access to app-related operations.
+            Use this to create, read, update, and delete apps.
+            Example: client.apps.get_app("app-id")
+
+        scorecards (Scorecards): Access to scorecard-related operations.
+            Use this to create, read, update, and delete scorecards.
+            Example: client.scorecards.get_scorecard("blueprint-id", "scorecard-id")
 
     Examples:
         >>> # Create a client
@@ -74,6 +124,19 @@ class PortClient:
         >>>
         >>> # Get a specific entity
         >>> entity = client.entities.get_entity("service", "my-service")
+        >>>
+        >>> # Create a new blueprint
+        >>> new_blueprint = client.blueprints.create_blueprint({
+        ...     "identifier": "microservice",
+        ...     "title": "Microservice",
+        ...     "properties": {
+        ...         "language": {
+        ...             "type": "string",
+        ...             "title": "Language",
+        ...             "enum": ["Python", "JavaScript", "Java", "Go"]
+        ...         }
+        ...     }
+        ... })
     """
 
     def __init__(self, client_id: str, client_secret: str, us_region: bool = False,
@@ -222,34 +285,114 @@ class PortClient:
 
     def _init_sub_clients(self):
         """Initializes all API sub-clients."""
-        # Map of attribute names to their corresponding service classes
-        service_classes = {
-            'blueprints': Blueprints,
-            'entities': Entities,
-            'actions': Actions,
-            'pages': Pages,
-            'integrations': Integrations,
-            'action_runs': ActionRuns,
-            'organizations': Organizations,
-            'teams': Teams,
-            'users': Users,
-            'roles': Roles,
-            'audit': Audit,
-            'migrations': Migrations,
-            'search': Search,
-            'sidebars': Sidebars,
-            'checklist': Checklist,
-            'apps': Apps,
-            'scorecards': Scorecards,
-        }
-
-        # Initialize each service class
-        for attr_name, service_class in service_classes.items():
-            setattr(self, attr_name, service_class(self))
+        # Initialize each service class with proper type annotations
+        self._blueprints: Blueprints = Blueprints(self)
+        self._entities: Entities = Entities(self)
+        self._actions: Actions = Actions(self)
+        self._pages: Pages = Pages(self)
+        self._integrations: Integrations = Integrations(self)
+        self._action_runs: ActionRuns = ActionRuns(self)
+        self._organizations: Organizations = Organizations(self)
+        self._teams: Teams = Teams(self)
+        self._users: Users = Users(self)
+        self._roles: Roles = Roles(self)
+        self._audit: Audit = Audit(self)
+        self._migrations: Migrations = Migrations(self)
+        self._search: Search = Search(self)
+        self._sidebars: Sidebars = Sidebars(self)
+        self._checklist: Checklist = Checklist(self)
+        self._apps: Apps = Apps(self)
+        self._scorecards: Scorecards = Scorecards(self)
 
         # Future services (commented out for now)
-        # 'webhooks': Webhooks,
-        # 'data_sources': DataSources,
+        # self._webhooks: Webhooks = Webhooks(self)
+        # self._data_sources: DataSources = DataSources(self)
+
+    # Property decorators for API services with explicit return types
+    @property
+    def blueprints(self) -> Blueprints:
+        """Access blueprint-related operations."""
+        return self._blueprints
+
+    @property
+    def entities(self) -> Entities:
+        """Access entity-related operations."""
+        return self._entities
+
+    @property
+    def actions(self) -> Actions:
+        """Access action-related operations."""
+        return self._actions
+
+    @property
+    def pages(self) -> Pages:
+        """Access page-related operations."""
+        return self._pages
+
+    @property
+    def integrations(self) -> Integrations:
+        """Access integration-related operations."""
+        return self._integrations
+
+    @property
+    def action_runs(self) -> ActionRuns:
+        """Access action run-related operations."""
+        return self._action_runs
+
+    @property
+    def organizations(self) -> Organizations:
+        """Access organization-related operations."""
+        return self._organizations
+
+    @property
+    def teams(self) -> Teams:
+        """Access team-related operations."""
+        return self._teams
+
+    @property
+    def users(self) -> Users:
+        """Access user-related operations."""
+        return self._users
+
+    @property
+    def roles(self) -> Roles:
+        """Access role-related operations."""
+        return self._roles
+
+    @property
+    def audit(self) -> Audit:
+        """Access audit-related operations."""
+        return self._audit
+
+    @property
+    def migrations(self) -> Migrations:
+        """Access migration-related operations."""
+        return self._migrations
+
+    @property
+    def search(self) -> Search:
+        """Access search-related operations."""
+        return self._search
+
+    @property
+    def sidebars(self) -> Sidebars:
+        """Access sidebar-related operations."""
+        return self._sidebars
+
+    @property
+    def checklist(self) -> Checklist:
+        """Access checklist-related operations."""
+        return self._checklist
+
+    @property
+    def apps(self) -> Apps:
+        """Access app-related operations."""
+        return self._apps
+
+    @property
+    def scorecards(self) -> Scorecards:
+        """Access scorecard-related operations."""
+        return self._scorecards
 
     def make_request(self, method: str, endpoint: str, retries: int = None, retry_delay: float = None,
                      correlation_id: str = None, **kwargs) -> requests.Response:

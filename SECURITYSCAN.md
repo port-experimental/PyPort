@@ -8,9 +8,9 @@ This report summarizes the results of our automated security scan.
 
 **Aggregated Metrics**
 
-- Total LOC: 14328
+- Total LOC: 14550
 - Weighted Vulnerability Score: 8
-- Vulnerability Density: 0.0006
+- Vulnerability Density: 0.0005
 
 **Overall Grade:** A
 
@@ -39,7 +39,7 @@ This report summarizes the results of our automated security scan.
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/checklist/types.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/checklist/types.py) | 13 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/__init__.py) | 11 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/auth.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/auth.py) | 244 | 0 | 0 | 1 | 1 | Fix Required |
-| [https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/client.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/client.py) | 261 | 0 | 0 | 0 | 0 | OK |
+| [https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/client.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/client.py) | 372 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/request.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/client/request.py) | 210 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/constants.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/constants.py) | 7 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/custom/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/custom/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
@@ -102,4 +102,4 @@ This report summarizes the results of our automated security scan.
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/webhooks/__init__.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/webhooks/__init__.py) | 0 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/webhooks/types.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/webhooks/types.py) | 13 | 0 | 0 | 0 | 0 | OK |
 | [https://github.com/port-experimental/PyPort/blob/main/src/pyport/webhooks/webhooks_api_svc.py](https://github.com/port-experimental/PyPort/blob/main/src/pyport/webhooks/webhooks_api_svc.py) | 44 | 0 | 0 | 0 | 0 | OK |
-| [https://github.com/port-experimental/PyPort/blob/main/](https://github.com/port-experimental/PyPort/blob/main/) | 7164 | 0 | 0 | 4 | 4 | Fix Required |
+| [https://github.com/port-experimental/PyPort/blob/main/](https://github.com/port-experimental/PyPort/blob/main/) | 7275 | 0 | 0 | 4 | 4 | Fix Required |
