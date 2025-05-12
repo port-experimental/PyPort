@@ -13,39 +13,39 @@ class TestEntitiesService(unittest.TestCase):
         self.addCleanup(patcher_token.stop)
         self.mock_get_access_token = patcher_token.start()
 
-        self.client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True)
+        self.client = PortClient(client_secret="dummy_secret", client_id="dummy_id", us_region=True, skip_auth=True)
         self.client.make_request = MagicMock()
         self.entities = Entities(self.client)
         self.blueprint_id = "bp_123"
         self.entity_id = "ent_456"
 
-    # def test_get_entities(self):
-    #     dummy_response = MagicMock()
-    #     dummy_response.json.return_value = {"entities": [{"id": self.entity_id}]}
-    #     self.client.make_request.return_value = dummy_response
-    #
-    #     result = self.entities.get_entities(self.blueprint_id)
-    #     self.client.make_request.assert_called_once_with('GET', f"blueprints/{self.blueprint_id}/entities")
-    #     self.assertEqual(result, [{"id": self.entity_id}])
-    #
-    # def test_get_entity(self):
-    #     dummy_response = MagicMock()
-    #     dummy_response.json.return_value = {"entity": {"id": self.entity_id}}
-    #     self.client.make_request.return_value = dummy_response
-    #
-    #     result = self.entities.get_entity(self.blueprint_id, self.entity_id)
-    #     self.client.make_request.assert_called_once_with('GET', f"blueprints/{self.blueprint_id}/entities/{self.entity_id}")
-    #     self.assertEqual(result, {"id": self.entity_id})
-    #
-    #
-    # def test_delete_entity(self):
-    #     dummy_response = MagicMock()
-    #     dummy_response.status_code = 204
-    #     self.client.make_request.return_value = dummy_response
-    #
-    #     result = self.entities.delete_entity(self.blueprint_id, self.entity_id)
-    #     self.client.make_request.assert_called_once_with('DELETE', f"blueprints/{self.blueprint_id}/entities/{self.entity_id}")
-    #     self.assertTrue(result)
+    def test_get_entities(self):
+        dummy_response = MagicMock()
+        dummy_response.json.return_value = {"entities": [{"id": self.entity_id}]}
+        self.client.make_request.return_value = dummy_response
+
+        result = self.entities.get_entities(self.blueprint_id)
+        self.client.make_request.assert_called_once_with('GET', f"blueprints/{self.blueprint_id}/entities")
+        self.assertEqual(result, [{"id": self.entity_id}])
+
+    def test_get_entity(self):
+        dummy_response = MagicMock()
+        dummy_response.json.return_value = {"entity": {"id": self.entity_id}}
+        self.client.make_request.return_value = dummy_response
+
+        result = self.entities.get_entity(self.blueprint_id, self.entity_id)
+        self.client.make_request.assert_called_once_with('GET', f"blueprints/{self.blueprint_id}/entities/{self.entity_id}")
+        self.assertEqual(result, {"id": self.entity_id})
+
+
+    def test_delete_entity(self):
+        dummy_response = MagicMock()
+        dummy_response.status_code = 204
+        self.client.make_request.return_value = dummy_response
+
+        result = self.entities.delete_entity(self.blueprint_id, self.entity_id)
+        self.client.make_request.assert_called_once_with('DELETE', f"blueprints/{self.blueprint_id}/entities/{self.entity_id}")
+        self.assertTrue(result)
 
 if __name__ == '__main__':
     unittest.main()

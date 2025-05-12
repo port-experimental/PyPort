@@ -1,10 +1,10 @@
 from typing import Dict, List, Any, Optional, cast
 
-from ..models.api_category import BaseResource
+from ..services.base_api_service import BaseAPIService
 from ..types import Blueprint
 
 
-class Blueprints(BaseResource):
+class Blueprints(BaseAPIService):
     """Blueprints API category for managing blueprint definitions.
 
     Blueprints define the structure of entities in Port. They specify the properties,
@@ -36,7 +36,7 @@ class Blueprints(BaseResource):
         Args:
             client: The API client to use for requests.
         """
-        super().__init__(client, resource_name="blueprints")
+        super().__init__(client, resource_name="blueprints", response_key="blueprint")
 
     def get_blueprints(self, page: Optional[int] = None, per_page: Optional[int] = None) -> List[Blueprint]:
         """
@@ -63,15 +63,8 @@ class Blueprints(BaseResource):
             >>> # Get the second page of blueprints, 50 per page
             >>> page2 = client.blueprints.get_blueprints(page=2, per_page=50)
         """
-        # Only add pagination parameters if they are provided
-        params: Dict[str, Any] = {}
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-
-        # Use the base class list method
-        blueprints = self.list(params=params)
+        # Use the base class get_all method which handles pagination
+        blueprints = self.get_all(page=page, per_page=per_page)
         return cast(List[Blueprint], blueprints)
 
     def get_blueprint(self, blueprint_identifier: str) -> Blueprint:
@@ -101,10 +94,8 @@ class Blueprints(BaseResource):
             >>> print(service_blueprint["title"])
             'Service'
         """
-        # Use the base class get method
-        response = self.get(blueprint_identifier)
-        blueprint = response.get("blueprint", {})
-        return cast(Blueprint, blueprint)
+        # Use the base class get_by_id method which handles response extraction
+        return cast(Blueprint, self.get_by_id(blueprint_identifier))
 
     def create_blueprint(self, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
@@ -146,10 +137,8 @@ class Blueprints(BaseResource):
             ...     }
             ... })
         """
-        # Use the base class create method
-        response = self.create(blueprint_data)
-        blueprint = response.get("blueprint", {})
-        return cast(Blueprint, blueprint)
+        # Use the base class create_resource method which handles response extraction
+        return cast(Blueprint, self.create_resource(blueprint_data))
 
     def update_blueprint(self, blueprint_identifier: str, blueprint_data: Dict[str, Any]) -> Blueprint:
         """
@@ -177,10 +166,8 @@ class Blueprints(BaseResource):
             ...     {"title": "Cloud Microservice"}
             ... )
         """
-        # Use the base class update method
-        response = self.update(blueprint_identifier, blueprint_data)
-        blueprint = response.get("blueprint", {})
-        return cast(Blueprint, blueprint)
+        # Use the base class update_resource method which handles response extraction
+        return cast(Blueprint, self.update_resource(blueprint_identifier, blueprint_data))
 
     def delete_blueprint(self, blueprint_identifier: str) -> bool:
         """
@@ -205,8 +192,8 @@ class Blueprints(BaseResource):
             >>> if success:
             ...     print("Blueprint deleted successfully")
         """
-        # Use the base class delete method
-        return self.delete(blueprint_identifier)
+        # Use the base class delete_resource method
+        return self.delete_resource(blueprint_identifier)
 
     # Blueprint Permissions Methods
 
@@ -214,21 +201,40 @@ class Blueprints(BaseResource):
         """
         Retrieve permissions for a specific blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :return: A dictionary representing the blueprint permissions.
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+
+        Returns:
+            A dictionary representing the blueprint permissions.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
         """
-        response = self._client.make_request('GET', f"blueprints/{blueprint_identifier}/permissions")
+        # Use the _build_endpoint method to create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "permissions")
+        response = self._client.make_request('GET', endpoint)
         return response.json().get("permissions", {})
 
     def update_blueprint_permissions(self, blueprint_identifier: str, permissions_data: Dict) -> Dict:
         """
         Update permissions for a specific blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :param permissions_data: A dictionary containing updated permissions data.
-        :return: A dictionary representing the updated blueprint permissions.
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+            permissions_data: A dictionary containing updated permissions data.
+
+        Returns:
+            A dictionary representing the updated blueprint permissions.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortValidationError: If the permissions data is invalid.
+            PortApiError: If another API error occurs.
         """
-        response = self._client.make_request('PUT', f"blueprints/{blueprint_identifier}/permissions", json=permissions_data)
+        # Use the _build_endpoint method to create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "permissions")
+        response = self._make_request_with_params('PUT', endpoint, json=permissions_data)
         return response.json()
 
     # Blueprint Property Operations Methods
@@ -237,44 +243,83 @@ class Blueprints(BaseResource):
         """
         Rename a property in a blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :param property_name: The name of the property to rename.
-        :param rename_data: A dictionary containing the new name for the property.
-        :return: A dictionary representing the result of the rename operation.
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+            property_name: The name of the property to rename.
+            rename_data: A dictionary containing the new name for the property.
+
+        Returns:
+            A dictionary representing the result of the rename operation.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint or property does not exist.
+            PortValidationError: If the rename data is invalid.
+            PortApiError: If another API error occurs.
         """
-        response = self._client.make_request('POST', f"blueprints/{blueprint_identifier}/properties/{property_name}/rename", json=rename_data)
+        # Use the _build_endpoint method to create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "properties", property_name, "rename")
+        response = self._make_request_with_params('POST', endpoint, json=rename_data)
         return response.json()
 
     def rename_blueprint_mirror(self, blueprint_identifier: str, mirror_name: str, rename_data: Dict) -> Dict:
         """
         Rename a mirror in a blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :param mirror_name: The name of the mirror to rename.
-        :param rename_data: A dictionary containing the new name for the mirror.
-        :return: A dictionary representing the result of the rename operation.
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+            mirror_name: The name of the mirror to rename.
+            rename_data: A dictionary containing the new name for the mirror.
+
+        Returns:
+            A dictionary representing the result of the rename operation.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint or mirror does not exist.
+            PortValidationError: If the rename data is invalid.
+            PortApiError: If another API error occurs.
         """
-        response = self._client.make_request('POST', f"blueprints/{blueprint_identifier}/mirror/{mirror_name}/rename", json=rename_data)
+        # Use the _build_endpoint method to create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "mirror", mirror_name, "rename")
+        response = self._make_request_with_params('POST', endpoint, json=rename_data)
         return response.json()
 
     def rename_blueprint_relation(self, blueprint_identifier: str, relation_identifier: str, rename_data: Dict) -> Dict:
         """
         Rename a relation in a blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :param relation_identifier: The identifier of the relation to rename.
-        :param rename_data: A dictionary containing the new name for the relation.
-        :return: A dictionary representing the result of the rename operation.
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+            relation_identifier: The identifier of the relation to rename.
+            rename_data: A dictionary containing the new name for the relation.
+
+        Returns:
+            A dictionary representing the result of the rename operation.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint or relation does not exist.
+            PortValidationError: If the rename data is invalid.
+            PortApiError: If another API error occurs.
         """
-        response = self._client.make_request('POST', f"blueprints/{blueprint_identifier}/relations/{relation_identifier}/rename", json=rename_data)
+        # Use the _build_endpoint method to create the endpoint path
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "relations", relation_identifier, "rename")
+        response = self._make_request_with_params('POST', endpoint, json=rename_data)
         return response.json()
 
     def get_blueprint_system_structure(self, blueprint_identifier: str) -> Dict:
         """
         Retrieve the system structure for a specific blueprint.
 
-        :param blueprint_identifier: The identifier of the blueprint.
-        :return: A dictionary representing the blueprint system structure.
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+
+        Returns:
+            A dictionary representing the blueprint system structure.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
         """
-        response = self._client.make_request('GET', f"blueprints/system/{blueprint_identifier}/structure")
+        # Use the _build_endpoint method to create the endpoint path
+        endpoint = self._build_endpoint("blueprints", "system", blueprint_identifier, "structure")
+        response = self._client.make_request('GET', endpoint)
         return response.json().get("structure", {})

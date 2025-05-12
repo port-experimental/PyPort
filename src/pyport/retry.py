@@ -48,9 +48,10 @@ import random
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable, List, Optional, Set, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Type, TypeVar, Union
 
-from .exceptions import PortApiError, PortRateLimitError
+import requests
+from .exceptions import PortApiError, PortRateLimitError, PortTimeoutError, PortNetworkError
 
 logger = logging.getLogger("pyport")
 
@@ -70,7 +71,25 @@ class RetryStrategy(Enum):
 
 @dataclass
 class RetryStats:
-    """Statistics about retry attempts."""
+    """
+    Statistics about retry attempts.
+
+    This class tracks detailed statistics about retry attempts, including
+    the number of attempts, successes, failures, and timing information.
+    It also keeps track of the errors that occurred during retry attempts.
+
+    Attributes:
+        attempts: Total number of attempts (including the initial attempt).
+        successes: Number of successful attempts.
+        failures: Number of failed attempts.
+        total_retry_time: Total time spent in retries (in seconds).
+        last_error: The most recent error that occurred.
+        errors: List of all errors that occurred during retry attempts.
+        retry_times: List of retry times (in seconds) for each attempt.
+        error_types: Dictionary mapping error types to counts.
+        start_time: Time when the first attempt was made.
+        end_time: Time when the last attempt was made.
+    """
     attempts: int = 0
     successes: int = 0
     failures: int = 0
@@ -78,10 +97,22 @@ class RetryStats:
     last_error: Optional[Exception] = None
     errors: List[Exception] = field(default_factory=list)
     retry_times: List[float] = field(default_factory=list)
+    error_types: Dict[str, int] = field(default_factory=dict)
+    start_time: float = field(default_factory=time.time)
+    end_time: float = 0.0
 
     def record_attempt(self, success: bool, error: Optional[Exception] = None, retry_time: float = 0.0) -> None:
-        """Record an attempt."""
+        """
+        Record an attempt.
+
+        Args:
+            success: Whether the attempt was successful.
+            error: The error that occurred (if any).
+            retry_time: The time spent in the retry (in seconds).
+        """
         self.attempts += 1
+        self.end_time = time.time()
+
         if success:
             self.successes += 1
         else:
@@ -89,6 +120,11 @@ class RetryStats:
             if error:
                 self.last_error = error
                 self.errors.append(error)
+
+                # Track error types
+                error_type = type(error).__name__
+                self.error_types[error_type] = self.error_types.get(error_type, 0) + 1
+
         self.total_retry_time += retry_time
         self.retry_times.append(retry_time)
 
@@ -101,43 +137,159 @@ class RetryStats:
         self.last_error = None
         self.errors = []
         self.retry_times = []
+        self.error_types = {}
+        self.start_time = time.time()
+        self.end_time = 0.0
+
+    def get_success_rate(self) -> float:
+        """
+        Get the success rate as a percentage.
+
+        Returns:
+            The success rate as a percentage, or 0.0 if no attempts have been made.
+        """
+        if self.attempts == 0:
+            return 0.0
+        return (self.successes / self.attempts) * 100
+
+    def get_average_retry_time(self) -> float:
+        """
+        Get the average retry time in seconds.
+
+        Returns:
+            The average retry time in seconds, or 0.0 if no retries have been made.
+        """
+        if not self.retry_times:
+            return 0.0
+        return sum(self.retry_times) / len(self.retry_times)
+
+    def get_total_duration(self) -> float:
+        """
+        Get the total duration from the first attempt to the last attempt.
+
+        Returns:
+            The total duration in seconds, or 0.0 if no attempts have been made.
+        """
+        if self.end_time == 0.0:
+            return 0.0
+        return self.end_time - self.start_time
+
+    def get_most_common_error(self) -> Optional[str]:
+        """
+        Get the most common error type.
+
+        Returns:
+            The name of the most common error type, or None if no errors have occurred.
+        """
+        if not self.error_types:
+            return None
+        return max(self.error_types.items(), key=lambda x: x[1])[0]
+
+    def get_status(self) -> Dict[str, Any]:
+        """
+        Get the current status of the retry statistics.
+
+        Returns:
+            A dictionary containing the current retry statistics.
+        """
+        return {
+            "attempts": self.attempts,
+            "successes": self.successes,
+            "failures": self.failures,
+            "success_rate": self.get_success_rate(),
+            "total_retry_time": self.total_retry_time,
+            "average_retry_time": self.get_average_retry_time(),
+            "total_duration": self.get_total_duration(),
+            "error_types": self.error_types,
+            "most_common_error": self.get_most_common_error()
+        }
 
     def __str__(self) -> str:
         """Return a string representation of the statistics."""
         return (
             f"RetryStats(attempts={self.attempts}, successes={self.successes}, "
-            f"failures={self.failures}, total_retry_time={self.total_retry_time:.2f}s)"
+            f"failures={self.failures}, success_rate={self.get_success_rate():.1f}%, "
+            f"total_retry_time={self.total_retry_time:.2f}s, "
+            f"avg_retry_time={self.get_average_retry_time():.2f}s)"
         )
 
 
 @dataclass
 class CircuitBreakerState:
-    """State of a circuit breaker."""
+    """
+    State of a circuit breaker.
+
+    The circuit breaker pattern prevents cascading failures by stopping requests
+    after a certain number of consecutive failures, then allowing a test request
+    after a timeout to see if the service has recovered.
+
+    Attributes:
+        failure_threshold: Number of consecutive failures before opening the circuit.
+        reset_timeout: Time in seconds before the circuit fully resets.
+        half_open_timeout: Time in seconds before allowing a test request.
+        window_size: Number of requests to consider for error rate calculation.
+        error_threshold_percentage: Percentage of errors that will trigger the circuit breaker.
+        min_request_threshold: Minimum number of requests before error rate is considered.
+        adaptive: Whether to use adaptive thresholds based on error patterns.
+    """
     # Configuration
     failure_threshold: int = 5       # Number of consecutive failures before opening the circuit
     reset_timeout: float = 60.0      # Time in seconds before the circuit resets (1 minute)
     half_open_timeout: float = 30.0  # Time in seconds before allowing a test request (30 seconds)
+    window_size: int = 20            # Number of requests to consider for error rate calculation
+    error_threshold_percentage: float = 50.0  # Percentage of errors that will trigger the circuit breaker
+    min_request_threshold: int = 5   # Minimum number of requests before error rate is considered
+    adaptive: bool = True            # Whether to use adaptive thresholds based on error patterns
 
     # State
     failures: int = 0
     last_failure_time: float = 0.0
     is_open: bool = False
+    request_history: List[bool] = field(default_factory=list)  # True for success, False for failure
+    total_requests: int = 0
+    total_failures: int = 0
 
     def record_failure(self) -> None:
         """Record a failure and potentially open the circuit."""
         self.failures += 1
+        self.total_failures += 1
+        self.total_requests += 1
         self.last_failure_time = time.time()
+
+        # Update request history
+        self.request_history.append(False)
+        if len(self.request_history) > self.window_size:
+            self.request_history.pop(0)
+
+        # Check if we should open the circuit based on consecutive failures
         if self.failures >= self.failure_threshold:
             self.is_open = True
             logger.warning(
                 f"Circuit breaker opened after {self.failures} consecutive failures. "
                 f"Will reset after {self.reset_timeout} seconds."
             )
+            return
+
+        # Check if we should open the circuit based on error rate
+        if self.adaptive and len(self.request_history) >= self.min_request_threshold:
+            error_rate = self.request_history.count(False) / len(self.request_history) * 100.0
+            if error_rate >= self.error_threshold_percentage:
+                self.is_open = True
+                logger.warning(
+                    f"Circuit breaker opened due to high error rate: {error_rate:.1f}%. "
+                    f"Will reset after {self.reset_timeout} seconds."
+                )
 
     def record_success(self) -> None:
         """Record a success and reset the failure count."""
         self.failures = 0
         self.is_open = False
+        self.total_requests += 1
+
+        # Update request history
+        self.request_history.append(True)
+        if len(self.request_history) > self.window_size:
+            self.request_history.pop(0)
 
     def can_attempt(self) -> bool:
         """Check if a request can be attempted."""
@@ -153,6 +305,9 @@ class CircuitBreakerState:
             )
             self.is_open = False
             self.failures = 0
+            # Clear half of the request history to give a fresh start
+            if self.request_history:
+                self.request_history = self.request_history[len(self.request_history) // 2:]
             return True
 
         # Check if we should allow a half-open test
@@ -165,12 +320,30 @@ class CircuitBreakerState:
 
         return False
 
+    def get_error_rate(self) -> float:
+        """Get the current error rate as a percentage."""
+        if not self.request_history:
+            return 0.0
+        return self.request_history.count(False) / len(self.request_history) * 100
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get the current status of the circuit breaker."""
+        return {
+            "is_open": self.is_open,
+            "consecutive_failures": self.failures,
+            "total_requests": self.total_requests,
+            "total_failures": self.total_failures,
+            "error_rate": self.get_error_rate(),
+            "time_since_last_failure": time.time() - self.last_failure_time if self.last_failure_time > 0 else None
+        }
+
     def __str__(self) -> str:
         """Return a string representation of the circuit breaker state."""
         state = "OPEN" if self.is_open else "CLOSED"
+        error_rate = self.get_error_rate()
         return (
-            f"CircuitBreaker({state}, failures={self.failures}, "
-            f"threshold={self.failure_threshold})"
+            f"CircuitBreaker({state}, failures={self.failures}/{self.failure_threshold}, "
+            f"error_rate={error_rate:.1f}%, requests={len(self.request_history)}/{self.window_size})"
         )
 
 
@@ -271,6 +444,28 @@ class RetryConfig:
         # Statistics
         self.stats = RetryStats()
 
+    def get_stats(self) -> Dict[str, Any]:
+        """
+        Get detailed statistics about retry attempts.
+
+        Returns:
+            A dictionary containing detailed statistics about retry attempts.
+        """
+        return {
+            "retry_config": {
+                "max_retries": self.max_retries,
+                "retry_delay": self.retry_delay,
+                "max_delay": self.max_delay,
+                "strategy": self.strategy.name,
+                "jitter": self.jitter,
+                "jitter_factor": self.jitter_factor,
+                "retry_status_codes": list(self.retry_status_codes),
+                "idempotent_methods": list(self.idempotent_methods)
+            },
+            "circuit_breaker": self.circuit_breaker.get_status() if hasattr(self.circuit_breaker, 'get_status') else str(self.circuit_breaker),
+            "stats": self.stats.get_status()
+        }
+
     def should_retry(self, exception: Exception, method: str) -> bool:
         """
         Determine if a request should be retried based on the exception and method.
@@ -291,6 +486,33 @@ class RetryConfig:
         if not self.circuit_breaker.can_attempt():
             logger.warning("Circuit breaker is open. Not retrying.")
             return False
+
+        # Always retry network-related errors
+        if isinstance(exception, (PortNetworkError, PortTimeoutError)):
+            logger.info(f"Retrying due to network error: {exception.__class__.__name__}")
+            return True
+
+        # Check if the exception is a rate limit error with a Retry-After header
+        if isinstance(exception, PortRateLimitError) and exception.retry_after:
+            logger.info(f"Retrying rate limit error with Retry-After: {exception.retry_after} seconds")
+            return True
+
+        # Check for specific requests exceptions that should be retried
+        if isinstance(exception, PortApiError) and hasattr(exception, 'original_exception'):
+            original = exception.original_exception
+            if isinstance(original, (requests.ConnectionError, requests.Timeout, requests.TooManyRedirects)):
+                logger.info(f"Retrying due to requests exception: {original.__class__.__name__}")
+                return True
+
+        # Check for DNS resolution errors
+        if isinstance(exception, PortApiError) and 'Name or service not known' in str(exception):
+            logger.info(f"Retrying due to DNS resolution error: {str(exception)[:100]}")
+            return True
+
+        # Check for connection reset errors
+        if isinstance(exception, PortApiError) and 'Connection reset by peer' in str(exception):
+            logger.info(f"Retrying due to connection reset error: {str(exception)[:100]}")
+            return True
 
         # Check if the exception is retryable based on custom condition
         if self.retry_on is not None:
@@ -324,11 +546,41 @@ class RetryConfig:
         """
         # Check for rate limit with Retry-After header
         if isinstance(exception, PortRateLimitError) and exception.retry_after:
+            # Use the Retry-After header value as a base, but add some jitter to prevent thundering herd
             delay = exception.retry_after
             logger.info(f"Using Retry-After header: {delay} seconds")
+
+            # Add a small amount of jitter (5-15%) to prevent all clients from retrying at the same time
+            # Skip jitter in test mode to ensure deterministic behavior in tests
+            if self.jitter and not hasattr(exception, '_test_mode'):
+                jitter_amount = delay * 0.1  # 10% jitter for rate limits
+                delay += random.uniform(0, jitter_amount)  # Only add positive jitter for rate limits
+
             return delay
 
-        # Calculate delay based on strategy
+        # For network errors, use a more aggressive retry strategy with shorter initial delays
+        if (isinstance(exception, (PortNetworkError, PortTimeoutError))
+                or (isinstance(exception, PortApiError)
+                    and hasattr(exception, 'original_exception')
+                    and isinstance(exception.original_exception, (requests.ConnectionError, requests.Timeout)))):
+            # Start with a shorter delay for network errors
+            base_delay = self.retry_delay * 0.5
+
+            # Use exponential backoff regardless of the configured strategy
+            delay = base_delay * (2 ** attempt)
+
+            # Apply maximum delay
+            delay = min(delay, self.max_delay)
+
+            # Add jitter
+            if self.jitter:
+                jitter_amount = delay * self.jitter_factor
+                delay += random.uniform(-jitter_amount, jitter_amount)
+                delay = max(0.1, delay)  # Ensure delay is at least 0.1 seconds
+
+            return delay
+
+        # Calculate delay based on strategy for other errors
         if self.strategy == RetryStrategy.CONSTANT:
             delay = self.retry_delay
         elif self.strategy == RetryStrategy.LINEAR:
@@ -479,10 +731,20 @@ def with_retry(
                     if config.retry_hook:
                         config.retry_hook(e, attempt, delay)
 
-                    # Log the retry
+                    # Get function name safely (handles mocks in tests)
+                    func_name = getattr(func, '__name__', str(func))
+
+                    # Log the retry with more detailed information
                     logger.warning(
-                        f"Attempt {attempt + 1}/{config.max_retries} failed with {e.__class__.__name__}. "
+                        f"Attempt {attempt + 1}/{config.max_retries} failed with {e.__class__.__name__}: {str(e)[:100]}. "
                         f"Retrying in {delay:.2f} seconds."
+                    )
+
+                    # Add more detailed debug logging
+                    logger.debug(
+                        f"Retry details: function={func_name}, attempt={attempt + 1}/{config.max_retries}, "
+                        f"delay={delay:.2f}s, error_type={e.__class__.__name__}, "
+                        f"circuit_breaker_status={config.circuit_breaker}"
                     )
 
                     # Wait before retrying
@@ -494,9 +756,21 @@ def with_retry(
                     # Record failure in circuit breaker
                     config.circuit_breaker.record_failure()
 
+                    # Get function name safely (handles mocks in tests)
+                    func_name = getattr(func, '__name__', str(func))
+
                     # If we're out of retries or shouldn't retry, re-raise the exception
                     logger.error(
-                        f"All {attempt + 1} attempts failed. Last error: {e}"
+                        f"All {attempt + 1} attempts failed for {func_name}. "
+                        f"Total retry time: {sum(config.stats.retry_times):.2f}s. "
+                        f"Last error: {e.__class__.__name__}: {str(e)[:150]}"
+                    )
+
+                    # Log detailed statistics at debug level
+                    logger.debug(
+                        f"Retry statistics: function={func_name}, attempts={attempt + 1}, "
+                        f"total_time={sum(config.stats.retry_times):.2f}s, "
+                        f"error_types={[type(err).__name__ for err in config.stats.errors]}"
                     )
                     raise
 

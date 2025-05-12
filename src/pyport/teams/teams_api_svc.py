@@ -2,10 +2,10 @@ from typing import Dict, List, Any, Optional, cast
 
 from .types import Team
 
-from ..models.api_category import BaseResource
+from ..services.base_api_service import BaseAPIService
 
 
-class Teams(BaseResource):
+class Teams(BaseAPIService):
     """Teams API category for managing teams.
 
     This class provides methods for interacting with the Teams API endpoints.
@@ -24,15 +24,17 @@ class Teams(BaseResource):
         Args:
             client: The API client to use for requests.
         """
-        super().__init__(client, resource_name="teams")
+        super().__init__(client, resource_name="teams", response_key="team")
 
-    def get_teams(self, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Team]:
+    def get_teams(self, page: Optional[int] = None, per_page: Optional[int] = None, params: Optional[Dict[str, Any]] = None, **kwargs) -> List[Team]:
         """
         Retrieve all teams.
 
         This method retrieves a list of all teams in the organization.
 
         Args:
+            page: The page number to retrieve (default: None).
+            per_page: The number of teams per page (default: None).
             params: Optional query parameters for the request.
 
         Returns:
@@ -49,9 +51,8 @@ class Teams(BaseResource):
             >>> for team in teams:
             ...     print(f"{team['name']} ({team['id']})")
         """
-        # For backward compatibility, ignore kwargs
-        # Use the base class list method
-        teams = self.list(params=params)
+        # Use the base class get_all method which handles pagination
+        teams = self.get_all(page=page, per_page=per_page, params=params, **kwargs)
         return cast(List[Team], teams)
 
     def get_team(self, team_id: str, params: Optional[Dict[str, Any]] = None, **kwargs) -> Team:
@@ -78,38 +79,70 @@ class Teams(BaseResource):
             >>> print(f"Team: {team['name']}")
             >>> print(f"Members: {len(team['members'])}")
         """
-        # For backward compatibility, ignore kwargs
-        # Use the base class get method
-        response = self.get(team_id, params=params)
-        return cast(Team, response.get("team", {}))
+        # Use the base class get_by_id method which handles response extraction
+        return cast(Team, self.get_by_id(team_id, params=params, **kwargs))
 
-    def create_team(self, team_data: Dict) -> Dict:
+    def create_team(self, team_data: Dict[str, Any]) -> Team:
         """
         Create a new team.
 
-        :param team_data: A dictionary containing team data.
-        :return: A dictionary representing the newly created team.
-        """
-        response = self._client.make_request("POST", "teams", json=team_data)
-        return response.json()
+        Args:
+            team_data: A dictionary containing the data for the new team.
+                Must include at minimum:
+                - name: The name of the team (string)
 
-    def update_team(self, team_id: str, team_data: Dict) -> Dict:
+                May also include:
+                - description: A description of the team (string)
+                - members: A list of member IDs (list of strings)
+
+        Returns:
+            A dictionary representing the created team.
+
+        Examples:
+            >>> new_team = client.teams.create_team({
+            ...     "name": "Engineering",
+            ...     "description": "Engineering team",
+            ...     "members": ["user-1", "user-2"]
+            ... })
+        """
+        # Use the base class create_resource method which handles response extraction
+        return cast(Team, self.create_resource(team_data))
+
+    def update_team(self, team_id: str, team_data: Dict[str, Any]) -> Team:
         """
         Update an existing team.
 
-        :param team_id: The identifier of the team to update.
-        :param team_data: A dictionary with updated team data.
-        :return: A dictionary representing the updated team.
+        Args:
+            team_id: The identifier of the team to update.
+            team_data: A dictionary with updated team data.
+                May include any of the fields mentioned in create_team.
+
+        Returns:
+            A dictionary representing the updated team.
+
+        Examples:
+            >>> updated_team = client.teams.update_team(
+            ...     "team-id",
+            ...     {"name": "Engineering Team"}
+            ... )
         """
-        response = self._client.make_request("PUT", f"teams/{team_id}", json=team_data)
-        return response.json()
+        # Use the base class update_resource method which handles response extraction
+        return cast(Team, self.update_resource(team_id, team_data))
 
     def delete_team(self, team_id: str) -> bool:
         """
         Delete a team.
 
-        :param team_id: The identifier of the team to delete.
-        :return: True if deletion was successful (HTTP 204), else False.
+        Args:
+            team_id: The identifier of the team to delete.
+
+        Returns:
+            True if deletion was successful, otherwise False.
+
+        Examples:
+            >>> success = client.teams.delete_team("team-id")
+            >>> if success:
+            ...     print("Team deleted successfully")
         """
-        response = self._client.make_request("DELETE", f"teams/{team_id}")
-        return response.status_code == 204
+        # Use the base class delete_resource method
+        return self.delete_resource(team_id)

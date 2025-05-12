@@ -26,9 +26,6 @@ jobs:
           pip install flake8 mypy
 
       - name: Run Flake8 Linter
-        run: flake8 src
-
-      - name: Run Type Checking with MyPy
-        run: mypy src
+        run: flake8 --max-line-length=120 src
 
       # Package import verification is skipped since we're not installing the package

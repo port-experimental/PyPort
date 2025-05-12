@@ -32,26 +32,26 @@ class TestOrganizations(unittest.TestCase):
 
     def test_create_organization(self):
         org_data = {"name": "New Organization"}
-        fake_response_data = {"id": "org_new", "name": "New Organization"}
+        fake_org = {"id": "org_new", "name": "New Organization"}
         mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
+        mock_response.json.return_value = {"organization": fake_org}
         self.mock_client.make_request.return_value = mock_response
 
         result = self.organizations.create_organization(org_data)
         self.mock_client.make_request.assert_called_once_with("POST", "organizations", json=org_data)
-        self.assertEqual(result, fake_response_data)
+        self.assertEqual(result, fake_org)
 
     def test_update_organization(self):
         organization_id = "org1"
         org_data = {"name": "Updated Organization"}
-        fake_response_data = {"id": organization_id, "name": "Updated Organization"}
+        fake_org = {"id": organization_id, "name": "Updated Organization"}
         mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
+        mock_response.json.return_value = {"organization": fake_org}
         self.mock_client.make_request.return_value = mock_response
 
         result = self.organizations.update_organization(organization_id, org_data)
         self.mock_client.make_request.assert_called_once_with("PUT", f"organizations/{organization_id}", json=org_data)
-        self.assertEqual(result, fake_response_data)
+        self.assertEqual(result, fake_org)
 
     def test_delete_organization(self):
         organization_id = "org1"

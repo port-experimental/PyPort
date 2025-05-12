@@ -9,7 +9,7 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-76.00%25-green)
+![Coverage](https://img.shields.io/badge/coverage-73.00%25-yellowgreen)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
@@ -59,6 +59,9 @@ For detailed information about the data model and code implementation, please re
 
 - **Data Management Utilities**
   Easily create backups with snapshots and perform bulk operations like clearing all entities.
+
+- **Enhanced IDE Support**
+  Comprehensive type hints and docstrings for better autocompletion and documentation in your IDE.
 
 > **Note:** Additional features and improvements are planned for future releases!
 
@@ -137,6 +140,23 @@ print(f"Restored {restore_result['restored_blueprints']} blueprints and {restore
 ```
 
 See the `examples` directory for more detailed examples.
+
+### IDE Support
+
+PyPort provides comprehensive type hints and docstrings that enable your IDE to offer better autocompletion and documentation:
+
+```python
+from pyport import PortClient
+
+client = PortClient(client_id="your-client-id", client_secret="your-client-secret")
+
+# Your IDE will show all available methods with documentation
+client.blueprints.get_blueprint("service")
+```
+
+This makes it easier to discover and use the library's features without constantly referring to external documentation.
+
+For more information about IDE support, see [IDE Support Documentation](docs/ide_support.md).
 
 ## 🆕 New Features
 
