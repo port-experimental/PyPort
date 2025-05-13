@@ -89,14 +89,9 @@ This document outlines the high-level development roadmap for the PyPort client 
 - 🔜 **Testing Enhancements**
   - ✅ Snapshot testing
 
-- 🔜 **Packaging Improvements**
-  - Conditional dependencies
-  - Type stub package
-  - Binary wheels
-
 - 🔜 **Monitoring and Telemetry**
   - Usage statistics
-  - Error reporting
+  - Enhanced error reporting
   - Performance metrics
 
 - 🔜 **Compatibility and Interoperability**
@@ -130,6 +125,12 @@ This document outlines the high-level development roadmap for the PyPort client 
 - 🔄 **Testing Enhancements**
   - Fuzzing tests
   - Performance benchmarks
+
+- 🔄 **Packaging Improvements**
+  - Conditional dependencies
+  - Type stub package
+  - Binary wheels
+
 - 🔄 **Streaming Support** for large datasets
 - 🔄 **CLI Tool** for common operations
 - 🔄 **Framework Integrations** (FastAPI, Django, etc.)

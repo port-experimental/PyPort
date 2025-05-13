@@ -110,14 +110,9 @@ This document tracks the changes and improvements made in each version of the Py
 - Testing Enhancements
   - ✅ Snapshot testing
 
-- Packaging Improvements
-  - Conditional dependencies
-  - Type stub package
-  - Binary wheels
-
 - Monitoring and Telemetry
   - Usage statistics
-  - Error reporting
+  - Enhanced error reporting
   - Performance metrics
 
 - Compatibility and Interoperability
@@ -157,6 +152,11 @@ This document tracks the changes and improvements made in each version of the Py
 - Testing Enhancements
   - Fuzzing tests
   - Performance benchmarks
+
+- Packaging Improvements
+  - Conditional dependencies
+  - Type stub package
+  - Binary wheels
 
 - Performance Optimizations
   - Connection pooling for better performance

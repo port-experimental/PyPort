@@ -68,7 +68,7 @@
 - Add fuzzing tests
 - Create performance benchmarks
 
-### Version 0.2.7 - Packaging Improvements
+### Future Packaging Improvements
 - Add conditional dependencies
 - Create type stub package
 - Build binary wheels
