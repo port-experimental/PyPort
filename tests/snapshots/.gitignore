@@ -1,0 +1,2 @@
+# Include all snapshot files in version control
+!*.json
