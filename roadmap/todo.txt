@@ -63,10 +63,10 @@
 
 ### Version 0.2.7 - Testing Enhancements
 - ✅ Implement snapshot testing
-- Create performance benchmarks
 
 ### Future Testing Enhancements
 - Add fuzzing tests
+- Create performance benchmarks
 
 ### Version 0.2.7 - Packaging Improvements
 - Add conditional dependencies

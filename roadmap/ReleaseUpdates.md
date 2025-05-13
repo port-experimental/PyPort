@@ -109,7 +109,6 @@ This document tracks the changes and improvements made in each version of the Py
 
 - Testing Enhancements
   - ✅ Snapshot testing
-  - Performance benchmarks
 
 - Packaging Improvements
   - Conditional dependencies
@@ -157,6 +156,7 @@ This document tracks the changes and improvements made in each version of the Py
 
 - Testing Enhancements
   - Fuzzing tests
+  - Performance benchmarks
 
 - Performance Optimizations
   - Connection pooling for better performance
