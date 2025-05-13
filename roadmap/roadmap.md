@@ -90,9 +90,9 @@ This document outlines the high-level development roadmap for the PyPort client 
   - ✅ Snapshot testing
 
 - 🔜 **Code Quality**
-  - Dependency analysis
+  - ✅ Dependency analysis
   - Code complexity metrics
-  - Documentation coverage
+  - ✅ Documentation coverage
 
 ## Future Considerations
 
