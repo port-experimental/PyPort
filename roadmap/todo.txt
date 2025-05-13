@@ -86,7 +86,7 @@
 - Create interactive CLI
 - Implement configuration wizard
 
-### Version 0.2.7 - Build and Release Process
+### Future Build and Release Process
 - Set up semantic release
 - Implement changelog generation
 - Create detailed release notes

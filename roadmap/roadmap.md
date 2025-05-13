@@ -89,11 +89,6 @@ This document outlines the high-level development roadmap for the PyPort client 
 - 🔜 **Testing Enhancements**
   - ✅ Snapshot testing
 
-- 🔜 **Build and Release Process**
-  - Semantic release
-  - Changelog generation
-  - Release notes
-
 - 🔜 **Code Quality**
   - Dependency analysis
   - Code complexity metrics
@@ -128,6 +123,11 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Progress bars
   - Interactive CLI
   - Configuration wizard
+
+- 🔄 **Build and Release Process**
+  - Semantic release
+  - Changelog generation
+  - Release notes
 
 - 🔄 **Streaming Support** for large datasets
 - 🔄 **CLI Tool** for common operations

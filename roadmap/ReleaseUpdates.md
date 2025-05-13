@@ -110,11 +110,6 @@ This document tracks the changes and improvements made in each version of the Py
 - Testing Enhancements
   - ✅ Snapshot testing
 
-- Build and Release Process
-  - Semantic release
-  - Changelog generation
-  - Release notes
-
 - Code Quality
   - Dependency analysis
   - Code complexity metrics
@@ -155,6 +150,11 @@ This document tracks the changes and improvements made in each version of the Py
   - Progress bars
   - Interactive CLI
   - Configuration wizard
+
+- Build and Release Process
+  - Semantic release
+  - Changelog generation
+  - Release notes
 
 - Performance Optimizations
   - Connection pooling for better performance
