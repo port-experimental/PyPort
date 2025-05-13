@@ -2,6 +2,8 @@
 
 This document provides an overview of the PyPort library architecture for contributors. It explains the design principles, code organization, and key components of the library.
 
+> **Note**: For visual representations of the architecture, see the [Architecture Diagrams](architecture/architecture.md).
+
 ## Design Principles
 
 PyPort is designed with the following principles in mind:
@@ -68,7 +70,7 @@ Each API service is implemented as a separate class that inherits from `BaseAPIS
 class Blueprints(BaseAPIService):
     def __init__(self, client):
         super().__init__(client, resource_name="blueprints")
-    
+
     def get_blueprints(self, page=None, per_page=None, params=None):
         # Implementation
 ```
@@ -151,14 +153,14 @@ def get_blueprint_schema(
 ) -> Dict[str, Any]:
     """
     Get the JSON schema for a specific blueprint.
-    
+
     Args:
         blueprint_identifier: The identifier of the blueprint.
         params: Additional query parameters for the request.
-        
+
     Returns:
         A dictionary containing the blueprint schema.
-        
+
     Raises:
         PortResourceNotFoundError: If the blueprint does not exist.
         PortApiError: If the API request fails for another reason.
