@@ -88,7 +88,6 @@ This document outlines the high-level development roadmap for the PyPort client 
 
 - 🔜 **Testing Enhancements**
   - ✅ Snapshot testing
-  - Fuzzing tests
   - Performance benchmarks
 
 - 🔜 **Packaging Improvements**
@@ -128,6 +127,9 @@ This document outlines the high-level development roadmap for the PyPort client 
   - VS Code devcontainer
   - Makefile for common tasks
   - CLI tool for CICD
+
+- 🔄 **Testing Enhancements**
+  - Fuzzing tests
 - 🔄 **Streaming Support** for large datasets
 - 🔄 **CLI Tool** for common operations
 - 🔄 **Framework Integrations** (FastAPI, Django, etc.)

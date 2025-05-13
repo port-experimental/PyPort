@@ -109,7 +109,6 @@ This document tracks the changes and improvements made in each version of the Py
 
 - Testing Enhancements
   - ✅ Snapshot testing
-  - Fuzzing tests
   - Performance benchmarks
 
 - Packaging Improvements
@@ -155,6 +154,9 @@ This document tracks the changes and improvements made in each version of the Py
   - VS Code devcontainer
   - Makefile for common tasks
   - CLI tool for CICD
+
+- Testing Enhancements
+  - Fuzzing tests
 
 - Performance Optimizations
   - Connection pooling for better performance
