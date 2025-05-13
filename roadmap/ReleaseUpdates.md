@@ -110,11 +110,6 @@ This document tracks the changes and improvements made in each version of the Py
 - Testing Enhancements
   - ✅ Snapshot testing
 
-- Compatibility and Interoperability
-  - OpenAPI specification
-  - SDK generation tools
-  - Compatibility layer
-
 - User Experience
   - Progress bars
   - Interactive CLI
@@ -157,6 +152,9 @@ This document tracks the changes and improvements made in each version of the Py
   - Usage statistics
   - Enhanced error reporting
   - Performance metrics
+
+- Compatibility and Interoperability
+  - Compatibility layer for API version differences
 
 - Performance Optimizations
   - Connection pooling for better performance

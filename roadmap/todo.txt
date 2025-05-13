@@ -78,10 +78,8 @@
 - Enhance error reporting
 - Add performance metrics
 
-### Version 0.2.7 - Compatibility and Interoperability
-- Generate OpenAPI specification
-- Create SDK generation tools
-- Add compatibility layer
+### Future Compatibility and Interoperability
+- Add compatibility layer for API version differences
 
 ### Version 0.2.7 - User Experience
 - Add progress bars

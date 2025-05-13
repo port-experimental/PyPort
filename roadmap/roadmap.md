@@ -89,11 +89,6 @@ This document outlines the high-level development roadmap for the PyPort client 
 - 🔜 **Testing Enhancements**
   - ✅ Snapshot testing
 
-- 🔜 **Compatibility and Interoperability**
-  - OpenAPI specification
-  - SDK generation tools
-  - Compatibility layer
-
 - 🔜 **User Experience**
   - Progress bars
   - Interactive CLI
@@ -130,6 +125,9 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Usage statistics
   - Enhanced error reporting
   - Performance metrics
+
+- 🔄 **Compatibility and Interoperability**
+  - Compatibility layer for API version differences
 
 - 🔄 **Streaming Support** for large datasets
 - 🔄 **CLI Tool** for common operations
