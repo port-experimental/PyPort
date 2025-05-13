@@ -86,11 +86,6 @@ This document outlines the high-level development roadmap for the PyPort client 
   - ✅ Jupyter notebooks
   - ✅ Architecture diagrams
 
-- 🔜 **Developer Experience**
-  - Pre-commit hooks
-  - VS Code devcontainer
-  - Makefile for common tasks
-
 - 🔜 **Testing Enhancements**
   - Snapshot testing
   - Fuzzing tests
@@ -128,6 +123,11 @@ This document outlines the high-level development roadmap for the PyPort client 
 
 ## Future Considerations
 
+- 🔄 **Developer Experience**
+  - Pre-commit hooks
+  - VS Code devcontainer
+  - Makefile for common tasks
+  - CLI tool for CICD
 - 🔄 **Streaming Support** for large datasets
 - 🔄 **CLI Tool** for common operations
 - 🔄 **Framework Integrations** (FastAPI, Django, etc.)

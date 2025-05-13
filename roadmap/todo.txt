@@ -55,10 +55,11 @@
 - ✅ Create Jupyter notebooks
 - ✅ Design architecture diagrams
 
-### Version 0.2.7 - Developer Experience
+### Future Developer Experience
 - Set up pre-commit hooks
 - Create VS Code devcontainer
 - Add Makefile for common tasks
+- Create CLI tool for CICD
 
 ### Version 0.2.7 - Testing Enhancements
 - Implement snapshot testing

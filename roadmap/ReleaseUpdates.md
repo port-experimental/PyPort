@@ -107,11 +107,6 @@ This document tracks the changes and improvements made in each version of the Py
   - ✅ Jupyter notebooks
   - ✅ Architecture diagrams
 
-- Developer Experience
-  - Pre-commit hooks
-  - VS Code devcontainer
-  - Makefile for common tasks
-
 - Testing Enhancements
   - Snapshot testing
   - Fuzzing tests
@@ -154,6 +149,12 @@ This document tracks the changes and improvements made in each version of the Py
   - Batch operations for bulk API calls
   - Automatic request throttling to prevent rate limiting
   - Support for custom serializers/deserializers
+
+- Developer Experience
+  - Pre-commit hooks
+  - VS Code devcontainer
+  - Makefile for common tasks
+  - CLI tool for CICD
 
 - Performance Optimizations
   - Connection pooling for better performance
