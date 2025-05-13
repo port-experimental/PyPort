@@ -73,7 +73,7 @@
 - Create type stub package
 - Build binary wheels
 
-### Version 0.2.7 - Monitoring and Telemetry
+### Future Monitoring and Telemetry
 - Implement usage statistics
 - Enhance error reporting
 - Add performance metrics

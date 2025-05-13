@@ -110,14 +110,9 @@ This document tracks the changes and improvements made in each version of the Py
 - Testing Enhancements
   - ✅ Snapshot testing
 
-- Monitoring and Telemetry
-  - Usage statistics
-  - Enhanced error reporting
-  - Performance metrics
-
 - Compatibility and Interoperability
   - OpenAPI specification
-  - SDK generation
+  - SDK generation tools
   - Compatibility layer
 
 - User Experience
@@ -157,6 +152,11 @@ This document tracks the changes and improvements made in each version of the Py
   - Conditional dependencies
   - Type stub package
   - Binary wheels
+
+- Monitoring and Telemetry
+  - Usage statistics
+  - Enhanced error reporting
+  - Performance metrics
 
 - Performance Optimizations
   - Connection pooling for better performance

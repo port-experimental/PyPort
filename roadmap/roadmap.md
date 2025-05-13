@@ -89,14 +89,9 @@ This document outlines the high-level development roadmap for the PyPort client 
 - 🔜 **Testing Enhancements**
   - ✅ Snapshot testing
 
-- 🔜 **Monitoring and Telemetry**
-  - Usage statistics
-  - Enhanced error reporting
-  - Performance metrics
-
 - 🔜 **Compatibility and Interoperability**
   - OpenAPI specification
-  - SDK generation
+  - SDK generation tools
   - Compatibility layer
 
 - 🔜 **User Experience**
@@ -130,6 +125,11 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Conditional dependencies
   - Type stub package
   - Binary wheels
+
+- 🔄 **Monitoring and Telemetry**
+  - Usage statistics
+  - Enhanced error reporting
+  - Performance metrics
 
 - 🔄 **Streaming Support** for large datasets
 - 🔄 **CLI Tool** for common operations
