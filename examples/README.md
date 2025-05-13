@@ -14,6 +14,14 @@ The [api_usage](api_usage/) directory contains comprehensive examples demonstrat
 - **[Advanced Search and Filtering](api_usage/06_advanced_search_and_filtering.py)**: Advanced search and filtering
 - **[Utility Functions](api_usage/07_utility_functions.py)**: Utility functions
 
+## Jupyter Notebooks
+
+The [notebooks](notebooks/) directory contains interactive Jupyter notebooks demonstrating the PyPort library's capabilities:
+
+- **[Basic Usage](notebooks/01_Basic_Usage.ipynb)**: Basic usage with visualizations
+- **[Blueprint and Entity Management](notebooks/02_Blueprint_and_Entity_Management.ipynb)**: Managing blueprints and entities
+- **[Advanced Operations and Utilities](notebooks/03_Advanced_Operations_and_Utilities.ipynb)**: Advanced operations and utilities
+
 ## Snapshot Utilities Examples
 
 The snapshot utilities allow you to backup, restore, and migrate Port data.
