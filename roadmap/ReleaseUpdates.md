@@ -105,7 +105,7 @@ This document tracks the changes and improvements made in each version of the Py
 - Documentation Improvements
   - ✅ API usage examples
   - ✅ Jupyter notebooks
-  - Architecture diagrams
+  - ✅ Architecture diagrams
 
 - Developer Experience
   - Pre-commit hooks

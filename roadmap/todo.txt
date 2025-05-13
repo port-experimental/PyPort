@@ -53,7 +53,7 @@
 ### Version 0.2.7 - Documentation Improvements
 - ✅ Add API usage examples
 - ✅ Create Jupyter notebooks
-- Design architecture diagrams
+- ✅ Design architecture diagrams
 
 ### Version 0.2.7 - Developer Experience
 - Set up pre-commit hooks

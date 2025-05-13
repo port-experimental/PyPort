@@ -84,7 +84,7 @@ This document outlines the high-level development roadmap for the PyPort client 
 - 🔜 **Documentation Improvements**
   - ✅ API usage examples
   - ✅ Jupyter notebooks
-  - Architecture diagrams
+  - ✅ Architecture diagrams
 
 - 🔜 **Developer Experience**
   - Pre-commit hooks
