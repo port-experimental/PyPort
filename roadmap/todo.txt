@@ -93,8 +93,10 @@
 
 ### Version 0.2.7 - Code Quality
 - ✅ Add dependency analysis
-- Track code complexity metrics
 - ✅ Ensure documentation coverage
+
+### Future Code Quality
+- Track code complexity metrics
 
 ### Future Performance Optimizations
 - Implement connection pooling for better performance

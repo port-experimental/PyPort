@@ -112,7 +112,6 @@ This document tracks the changes and improvements made in each version of the Py
 
 - Code Quality
   - ✅ Dependency analysis
-  - Code complexity metrics
   - ✅ Documentation coverage
 
 ### Future Versions
@@ -142,6 +141,9 @@ This document tracks the changes and improvements made in each version of the Py
   - Usage statistics
   - Enhanced error reporting
   - Performance metrics
+
+- Code Quality
+  - Code complexity metrics
 
 - Compatibility and Interoperability
   - Compatibility layer for API version differences

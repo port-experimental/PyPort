@@ -91,7 +91,6 @@ This document outlines the high-level development roadmap for the PyPort client 
 
 - 🔜 **Code Quality**
   - ✅ Dependency analysis
-  - Code complexity metrics
   - ✅ Documentation coverage
 
 ## Future Considerations
@@ -115,6 +114,9 @@ This document outlines the high-level development roadmap for the PyPort client 
   - Usage statistics
   - Enhanced error reporting
   - Performance metrics
+
+- 🔄 **Code Quality**
+  - Code complexity metrics
 
 - 🔄 **Compatibility and Interoperability**
   - Compatibility layer for API version differences
