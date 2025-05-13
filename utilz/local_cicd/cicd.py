@@ -6,7 +6,8 @@ from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
 from utilz.local_cicd.svc.command_svc import CommandInvoker, CommandFactory
 from utilz.local_cicd.svc.commands import (
     TestCommand, IntegrationTestCommand, LintCommand, BuildCommand, ScanCommand,
-    BadgeCommand, ShipCommand, CleanupCommand, CompositeCommand, ReleaseCommand
+    BadgeCommand, ShipCommand, CleanupCommand, CompositeCommand, ReleaseCommand,
+    DocCoverageCommand
 )
 from utilz.local_cicd.svc.logging_svc import (
     get_logger, configure_logging, LOG_LEVEL_INFO, LOG_FORMAT_STANDARD, LOG_OUTPUT_CONSOLE
@@ -67,6 +68,10 @@ def execute_choice(choice, config):
             command = CleanupCommand(config)
             invoker.execute(command)
         elif choice == '8':
+            # Documentation Coverage
+            command = DocCoverageCommand(config)
+            invoker.execute(command)
+        elif choice == '9':
             logger.info("Exiting...")
             return False
         else:
@@ -94,10 +99,11 @@ def interactive_mode(config):
         print("5) Scan-all + Update Badges (maintainability, security, coverage, etc.)")
         print("6) Release (Update Badges + Build + Ship + Cleanup)")
         print("7) Cleanup only")
-        print("8) Exit")
+        print("8) Documentation Coverage Analysis")
+        print("9) Exit")
 
         try:
-            choice = input("Enter your choice (1-8): ").strip()
+            choice = input("Enter your choice (1-9): ").strip()
             if not execute_choice(choice, config):
                 break
         except KeyboardInterrupt:

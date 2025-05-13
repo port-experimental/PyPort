@@ -241,6 +241,35 @@ class Badger(object):
             print(f"Unexpected error generating security badge: {e}")
             return "![Security](https://img.shields.io/badge/security-Error-red)"
 
+    def get_doc_coverage_badge(self) -> str:
+        """
+        Run interrogate to check documentation coverage and build the doc coverage badge.
+        """
+        try:
+            # Run interrogate to check documentation coverage
+            result = subprocess.run(
+                [sys.executable, "-m", "interrogate", self.cicd_cfg.src_folder],
+                capture_output=True, text=True, check=False
+            )
+
+            # Extract the coverage percentage
+            output = result.stdout
+            coverage = 0.0
+            if "actual: " in output:
+                try:
+                    coverage_str = output.split("actual: ")[1].split("%")[0]
+                    coverage = float(coverage_str)
+                except (IndexError, ValueError):
+                    pass
+
+            # Determine badge color
+            color = get_score_color(coverage)
+
+            return f"![Doc Coverage](https://img.shields.io/badge/doc%20coverage-{coverage:.1f}%25-{color})"
+        except Exception as e:
+            print(f"Error checking documentation coverage: {e}")
+            return "![Doc Coverage](https://img.shields.io/badge/doc%20coverage-Error-red)"
+
     def update_all_badges(self):
         """
         Update all badges in the README file.
@@ -249,7 +278,8 @@ class Badger(object):
             "coverage": self.get_coverage_badge(),
             "maintainability": self.get_maintainability_badge(),
             "dependencies": self.get_dependencies_badge(),
-            "security": self.get_security_badge()
+            "security": self.get_security_badge(),
+            "doc_coverage": self.get_doc_coverage_badge()
         }
         for badge_type, badge in badges.items():
             self.update_readme_badge(badge, badge_type)

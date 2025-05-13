@@ -19,6 +19,7 @@ from utilz.local_cicd.svc.lint_svc import lint_code
 from utilz.local_cicd.svc.scanner_svc import CodeScanner
 from utilz.local_cicd.svc.ship_svc import ship_package
 from utilz.local_cicd.svc.test_svc import run_tests, run_integration_test
+from utilz.local_cicd.svc.doc_coverage import analyze_doc_coverage
 
 
 @register_command
@@ -196,6 +197,12 @@ class ScanCommand(Command):
             self.logger.info("Updating badges based on scan results...")
             badger = Badger(self.config)
             badger.update_all_badges()
+
+            # Run documentation coverage analysis
+            self.logger.info("Running documentation coverage analysis...")
+            doc_coverage_command = DocCoverageCommand(self.config)
+            doc_coverage_command.execute()
+
             self.logger.info("Badges updated.")
 
         return result
@@ -251,6 +258,12 @@ class BadgeCommand(Command):
             badge = badger.get_dependencies_badge()
             badger.update_readme_badge(badge, "dependencies")
             self.logger.info("Dependencies badge updated.")
+            return badge
+        elif badge_type == "doc_coverage":
+            self.logger.info("Updating documentation coverage badge...")
+            badge = badger.get_doc_coverage_badge()
+            badger.update_readme_badge(badge, "doc_coverage")
+            self.logger.info("Documentation coverage badge updated.")
             return badge
         else:
             self.logger.info("Updating all badges...")
@@ -463,5 +476,41 @@ class ReleaseCommand(Command):
 
         Returns:
             False (release cannot be fully undone).
+        """
+        return False
+
+
+@register_command
+class DocCoverageCommand(Command):
+    """Command for analyzing documentation coverage."""
+
+    def execute(self, *args, **kwargs) -> Any:
+        """
+        Execute the documentation coverage command.
+
+        Args:
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The documentation coverage report.
+        """
+        self.logger.info("Analyzing documentation coverage...")
+        src_dir = self.config.src_folder
+        min_coverage = self.config.min_doc_coverage
+        report = analyze_doc_coverage(src_dir, min_coverage, verbose=True)
+        self.logger.info(f"Documentation coverage: {report['coverage']:.1f}% (Minimum: {min_coverage:.1f}%)")
+        if report["success"]:
+            self.logger.info("Documentation coverage check passed!")
+        else:
+            self.logger.warning("Documentation coverage check failed!")
+        return report
+
+    def can_undo(self) -> bool:
+        """
+        Check if the command can be undone.
+
+        Returns:
+            False (documentation coverage analysis cannot be undone).
         """
         return False

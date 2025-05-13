@@ -13,6 +13,7 @@ _Repo metadata_
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
+![Doc Coverage](https://img.shields.io/badge/doc%20coverage-90.4%25-brightgreen)
 
 ![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)
 [![GitHub tag](https://img.shields.io/github/tag/port-experimental/pyport?include_prereleases=&sort=semver&color=blue)](https://github.com/port-experimental/pyport/releases/)

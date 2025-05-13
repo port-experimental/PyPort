@@ -23,9 +23,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 mypy
+          pip install flake8 mypy interrogate
 
       - name: Run Flake8 Linter
         run: flake8 --max-line-length=120 src
+
+      - name: Check Documentation Coverage
+        run: interrogate -v --fail-under=80 src
 
       # Package import verification is skipped since we're not installing the package
