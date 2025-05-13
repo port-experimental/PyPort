@@ -2,6 +2,18 @@
 
 This directory contains example scripts demonstrating how to use PyPort for various tasks.
 
+## API Usage Examples
+
+The [api_usage](api_usage/) directory contains comprehensive examples demonstrating how to use the PyPort library for various API operations:
+
+- **[Basic Usage](api_usage/01_basic_usage.py)**: Basic usage of the PyPort library
+- **[Blueprint Management](api_usage/02_blueprint_management.py)**: Blueprint management operations
+- **[Entity Management](api_usage/03_entity_management.py)**: Entity management operations
+- **[Action Management](api_usage/04_action_management.py)**: Action management operations
+- **[Error Handling and Retry](api_usage/05_error_handling_and_retry.py)**: Error handling and retry configuration
+- **[Advanced Search and Filtering](api_usage/06_advanced_search_and_filtering.py)**: Advanced search and filtering
+- **[Utility Functions](api_usage/07_utility_functions.py)**: Utility functions
+
 ## Snapshot Utilities Examples
 
 The snapshot utilities allow you to backup, restore, and migrate Port data.
