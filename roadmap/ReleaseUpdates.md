@@ -101,7 +101,7 @@ This document tracks the changes and improvements made in each version of the Py
 
 ## Upcoming Features
 
-### Version 0.2.7
+### Version 0.2.7 (COMPLETED)
 - Documentation Improvements
   - ✅ API usage examples
   - ✅ Jupyter notebooks
