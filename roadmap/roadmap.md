@@ -87,7 +87,7 @@ This document outlines the high-level development roadmap for the PyPort client 
   - ✅ Architecture diagrams
 
 - 🔜 **Testing Enhancements**
-  - Snapshot testing
+  - ✅ Snapshot testing
   - Fuzzing tests
   - Performance benchmarks
 
