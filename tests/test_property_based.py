@@ -12,7 +12,6 @@ from unittest.mock import patch, MagicMock
 
 try:
     from hypothesis import given, strategies as st
-    from hypothesis.strategies import text, dictionaries, lists, integers, booleans, none
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
@@ -21,30 +20,34 @@ except ImportError:
         def decorator(f):
             return f
         return decorator
-    
+
     class st:
         @staticmethod
         def text(*args, **kwargs):
             return None
-        
+
         @staticmethod
         def dictionaries(*args, **kwargs):
             return None
-        
+
         @staticmethod
         def lists(*args, **kwargs):
             return None
-        
+
         @staticmethod
         def integers(*args, **kwargs):
             return None
-        
+
         @staticmethod
         def booleans(*args, **kwargs):
             return None
-        
+
         @staticmethod
         def none(*args, **kwargs):
+            return None
+
+        @staticmethod
+        def one_of(*args, **kwargs):
             return None
 
 from pyport import PortClient
@@ -55,18 +58,18 @@ from tests.mock_server import MockServer, MockResponse
 @unittest.skipIf(not HYPOTHESIS_AVAILABLE, "Hypothesis library not available")
 class TestPropertyBased(unittest.TestCase):
     """Property-based test cases for the PyPort client library."""
-    
+
     def setUp(self):
         """Set up test fixtures."""
         # Create a mock server
         self.server = MockServer()
-        
+
         # Register a route that echoes the request data
         def echo_response(endpoint, **kwargs):
             json_data = kwargs.get("json", {})
             params = kwargs.get("params", {})
             headers = kwargs.get("headers", {})
-            
+
             return MockResponse(
                 status_code=200,
                 json_data={
@@ -77,22 +80,22 @@ class TestPropertyBased(unittest.TestCase):
                     "headers": headers
                 }
             )
-        
+
         self.server.register_route("GET", r".*", echo_response)
         self.server.register_route("POST", r".*", echo_response)
         self.server.register_route("PUT", r".*", echo_response)
         self.server.register_route("DELETE", r".*", echo_response)
-        
+
         # Create a client with authentication disabled
         self.client = PortClient(
             client_id="test-client-id",
             client_secret="test-client-secret",
             skip_auth=True
         )
-        
+
         # Mock the client's make_request method to use the mock server
         self.mock_make_request = self.server.mock_client_request(self.client)
-    
+
     @given(
         endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
         params=dictionaries(
@@ -104,11 +107,11 @@ class TestPropertyBased(unittest.TestCase):
         """Test that GET requests correctly handle query parameters."""
         response = self.client.make_request("GET", endpoint, params=params)
         data = response.json()
-        
+
         self.assertEqual(data["method"], "GET")
         self.assertEqual(data["endpoint"], endpoint)
         self.assertEqual(data["params"], params)
-    
+
     @given(
         endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
         json_data=dictionaries(
@@ -125,11 +128,11 @@ class TestPropertyBased(unittest.TestCase):
         """Test that POST requests correctly handle JSON data."""
         response = self.client.make_request("POST", endpoint, json=json_data)
         data = response.json()
-        
+
         self.assertEqual(data["method"], "POST")
         self.assertEqual(data["endpoint"], endpoint)
         self.assertEqual(data["json"], json_data)
-    
+
     @given(
         endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
         json_data=dictionaries(
@@ -146,11 +149,11 @@ class TestPropertyBased(unittest.TestCase):
         """Test that PUT requests correctly handle JSON data."""
         response = self.client.make_request("PUT", endpoint, json=json_data)
         data = response.json()
-        
+
         self.assertEqual(data["method"], "PUT")
         self.assertEqual(data["endpoint"], endpoint)
         self.assertEqual(data["json"], json_data)
-    
+
     @given(
         endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
         params=dictionaries(
@@ -162,11 +165,11 @@ class TestPropertyBased(unittest.TestCase):
         """Test that DELETE requests correctly handle query parameters."""
         response = self.client.make_request("DELETE", endpoint, params=params)
         data = response.json()
-        
+
         self.assertEqual(data["method"], "DELETE")
         self.assertEqual(data["endpoint"], endpoint)
         self.assertEqual(data["params"], params)
-    
+
     @given(
         endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
         headers=dictionaries(
@@ -178,14 +181,14 @@ class TestPropertyBased(unittest.TestCase):
         """Test that requests correctly handle custom headers."""
         response = self.client.make_request("GET", endpoint, headers=headers)
         data = response.json()
-        
+
         self.assertEqual(data["method"], "GET")
         self.assertEqual(data["endpoint"], endpoint)
-        
+
         # The client adds some default headers, so we just check that our custom headers are included
         for key, value in headers.items():
             self.assertEqual(data["headers"].get(key), value)
-    
+
     @given(
         blueprint_id=text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
         entity_data=dictionaries(
@@ -218,19 +221,19 @@ class TestPropertyBased(unittest.TestCase):
             mock_response = MagicMock()
             mock_response.json.return_value = {"entity": entity_data}
             mock_request.return_value = mock_response
-            
+
             # Create an entity
             entity = self.client.entities.create_entity(blueprint_id, entity_data)
-            
+
             # Verify that the entity data was passed correctly
             mock_request.assert_called_once()
             args, kwargs = mock_request.call_args
             self.assertEqual(args[0], "POST")
             self.assertEqual(kwargs["json"], entity_data)
-            
+
             # Verify that the response was processed correctly
             self.assertEqual(entity, entity_data)
-    
+
     @given(
         blueprint_id=text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
         entity_id=text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
@@ -255,19 +258,19 @@ class TestPropertyBased(unittest.TestCase):
             mock_response = MagicMock()
             mock_response.json.return_value = {"entity": entity_data}
             mock_request.return_value = mock_response
-            
+
             # Update an entity
             entity = self.client.entities.update_entity(blueprint_id, entity_id, entity_data)
-            
+
             # Verify that the entity data was passed correctly
             mock_request.assert_called_once()
             args, kwargs = mock_request.call_args
             self.assertEqual(args[0], "PUT")
             self.assertEqual(kwargs["json"], entity_data)
-            
+
             # Verify that the response was processed correctly
             self.assertEqual(entity, entity_data)
-    
+
     @given(
         page=st.integers(min_value=1, max_value=100),
         per_page=st.integers(min_value=1, max_value=100)
@@ -282,10 +285,10 @@ class TestPropertyBased(unittest.TestCase):
             mock_response = MagicMock()
             mock_response.json.return_value = {"blueprints": []}
             mock_request.return_value = mock_response
-            
+
             # Get blueprints with pagination
             self.client.blueprints.get_blueprints(page=page, per_page=per_page)
-            
+
             # Verify that the pagination parameters were passed correctly
             mock_request.assert_called_once()
             args, kwargs = mock_request.call_args
