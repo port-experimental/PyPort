@@ -47,7 +47,7 @@ class CicdConfig(object):
         self.maintainability_badge_pattern = self._config.maintainability_badge_pattern
         self.security_badge_pattern = self._config.security_badge_pattern
         self.dependencies_badge_pattern = self._config.dependencies_badge_pattern
-        self.doc_coverage_badge_pattern = self._config.doc_coverage_badge_pattern
+        self.doc_coverage_badge_pattern = self._config.get('tools.doc_coverage.badge_pattern', r'!\[Doc Coverage\]\(.*\)')
         self.pypi_repo_config_file = self._config.pypi_config_file
         self.min_doc_coverage = self._config.get('project.min_doc_coverage', 80.0)
 
