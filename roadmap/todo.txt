@@ -81,7 +81,7 @@
 ### Future Compatibility and Interoperability
 - Add compatibility layer for API version differences
 
-### Version 0.2.7 - User Experience
+### Future User Experience
 - Add progress bars
 - Create interactive CLI
 - Implement configuration wizard

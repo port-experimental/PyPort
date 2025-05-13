@@ -110,11 +110,6 @@ This document tracks the changes and improvements made in each version of the Py
 - Testing Enhancements
   - ✅ Snapshot testing
 
-- User Experience
-  - Progress bars
-  - Interactive CLI
-  - Configuration wizard
-
 - Build and Release Process
   - Semantic release
   - Changelog generation
@@ -155,6 +150,11 @@ This document tracks the changes and improvements made in each version of the Py
 
 - Compatibility and Interoperability
   - Compatibility layer for API version differences
+
+- User Experience
+  - Progress bars
+  - Interactive CLI
+  - Configuration wizard
 
 - Performance Optimizations
   - Connection pooling for better performance
