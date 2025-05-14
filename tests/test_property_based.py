@@ -11,7 +11,9 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 try:
-    from hypothesis import given, strategies as st
+    from hypothesis import given
+    from hypothesis import strategies as st
+    from hypothesis.strategies import text, dictionaries, lists, integers, booleans, none
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
@@ -49,6 +51,25 @@ except ImportError:
         @staticmethod
         def one_of(*args, **kwargs):
             return None
+
+    # Define these functions to avoid NameError
+    def text(*args, **kwargs):
+        return None
+
+    def dictionaries(*args, **kwargs):
+        return None
+
+    def lists(*args, **kwargs):
+        return None
+
+    def integers(*args, **kwargs):
+        return None
+
+    def booleans(*args, **kwargs):
+        return None
+
+    def none(*args, **kwargs):
+        return None
 
 from pyport import PortClient
 from pyport.exceptions import PortApiError
