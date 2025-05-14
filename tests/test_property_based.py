@@ -13,7 +13,6 @@ from unittest.mock import patch, MagicMock
 try:
     from hypothesis import given
     from hypothesis import strategies as st
-    from hypothesis.strategies import text, dictionaries, lists, integers, booleans, none
     HYPOTHESIS_AVAILABLE = True
 except ImportError:
     HYPOTHESIS_AVAILABLE = False
@@ -26,7 +25,10 @@ except ImportError:
     class st:
         @staticmethod
         def text(*args, **kwargs):
-            return None
+            class DummyStrategy:
+                def filter(self, *args, **kwargs):
+                    return self
+            return DummyStrategy()
 
         @staticmethod
         def dictionaries(*args, **kwargs):
@@ -51,25 +53,6 @@ except ImportError:
         @staticmethod
         def one_of(*args, **kwargs):
             return None
-
-    # Define these functions to avoid NameError
-    def text(*args, **kwargs):
-        return None
-
-    def dictionaries(*args, **kwargs):
-        return None
-
-    def lists(*args, **kwargs):
-        return None
-
-    def integers(*args, **kwargs):
-        return None
-
-    def booleans(*args, **kwargs):
-        return None
-
-    def none(*args, **kwargs):
-        return None
 
 from pyport import PortClient
 from pyport.exceptions import PortApiError
@@ -118,10 +101,10 @@ class TestPropertyBased(unittest.TestCase):
         self.mock_make_request = self.server.mock_client_request(self.client)
 
     @given(
-        endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
-        params=dictionaries(
-            keys=text(min_size=1, max_size=20),
-            values=text(min_size=0, max_size=50)
+        endpoint=st.text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
+        params=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
+            values=st.text(min_size=0, max_size=50)
         )
     )
     def test_get_request_params(self, endpoint, params):
@@ -134,14 +117,14 @@ class TestPropertyBased(unittest.TestCase):
         self.assertEqual(data["params"], params)
 
     @given(
-        endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
-        json_data=dictionaries(
-            keys=text(min_size=1, max_size=20),
+        endpoint=st.text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
+        json_data=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
             values=st.one_of(
-                text(min_size=0, max_size=50),
-                integers(-1000, 1000),
-                booleans(),
-                none()
+                st.text(min_size=0, max_size=50),
+                st.integers(-1000, 1000),
+                st.booleans(),
+                st.none()
             )
         )
     )
@@ -155,14 +138,14 @@ class TestPropertyBased(unittest.TestCase):
         self.assertEqual(data["json"], json_data)
 
     @given(
-        endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
-        json_data=dictionaries(
-            keys=text(min_size=1, max_size=20),
+        endpoint=st.text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
+        json_data=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
             values=st.one_of(
-                text(min_size=0, max_size=50),
-                integers(-1000, 1000),
-                booleans(),
-                none()
+                st.text(min_size=0, max_size=50),
+                st.integers(-1000, 1000),
+                st.booleans(),
+                st.none()
             )
         )
     )
@@ -176,10 +159,10 @@ class TestPropertyBased(unittest.TestCase):
         self.assertEqual(data["json"], json_data)
 
     @given(
-        endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
-        params=dictionaries(
-            keys=text(min_size=1, max_size=20),
-            values=text(min_size=0, max_size=50)
+        endpoint=st.text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
+        params=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
+            values=st.text(min_size=0, max_size=50)
         )
     )
     def test_delete_request_params(self, endpoint, params):
@@ -192,10 +175,10 @@ class TestPropertyBased(unittest.TestCase):
         self.assertEqual(data["params"], params)
 
     @given(
-        endpoint=text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
-        headers=dictionaries(
-            keys=text(min_size=1, max_size=20),
-            values=text(min_size=0, max_size=50)
+        endpoint=st.text(min_size=1, max_size=100).filter(lambda s: "/" not in s),
+        headers=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
+            values=st.text(min_size=0, max_size=50)
         )
     )
     def test_request_headers(self, endpoint, headers):
@@ -211,21 +194,21 @@ class TestPropertyBased(unittest.TestCase):
             self.assertEqual(data["headers"].get(key), value)
 
     @given(
-        blueprint_id=text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
-        entity_data=dictionaries(
-            keys=text(min_size=1, max_size=20),
+        blueprint_id=st.text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
+        entity_data=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
             values=st.one_of(
-                text(min_size=0, max_size=50),
-                integers(-1000, 1000),
-                booleans(),
-                none(),
-                dictionaries(
-                    keys=text(min_size=1, max_size=10),
+                st.text(min_size=0, max_size=50),
+                st.integers(-1000, 1000),
+                st.booleans(),
+                st.none(),
+                st.dictionaries(
+                    keys=st.text(min_size=1, max_size=10),
                     values=st.one_of(
-                        text(min_size=0, max_size=20),
-                        integers(-100, 100),
-                        booleans(),
-                        none()
+                        st.text(min_size=0, max_size=20),
+                        st.integers(-100, 100),
+                        st.booleans(),
+                        st.none()
                     )
                 )
             )
@@ -256,15 +239,15 @@ class TestPropertyBased(unittest.TestCase):
             self.assertEqual(entity, entity_data)
 
     @given(
-        blueprint_id=text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
-        entity_id=text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
-        entity_data=dictionaries(
-            keys=text(min_size=1, max_size=20),
+        blueprint_id=st.text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
+        entity_id=st.text(min_size=1, max_size=50).filter(lambda s: "/" not in s),
+        entity_data=st.dictionaries(
+            keys=st.text(min_size=1, max_size=20),
             values=st.one_of(
-                text(min_size=0, max_size=50),
-                integers(-1000, 1000),
-                booleans(),
-                none()
+                st.text(min_size=0, max_size=50),
+                st.integers(-1000, 1000),
+                st.booleans(),
+                st.none()
             )
         )
     )
