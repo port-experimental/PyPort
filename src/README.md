@@ -1,3 +1,5 @@
+![Doc Coverage](https://img.shields.io/badge/doc%20coverage-0.0%25-red)
+
 # PyPort 🚀
 
 [![port-experimental - pyport](https://img.shields.io/static/v1?label=port-experimental&message=pyport&color=blue&logo=github)](https://github.com/port-experimental/pyport)
@@ -7,7 +9,7 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-73.00%25-yellowgreen)
+![Coverage](https://img.shields.io/badge/coverage-Error-red)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)

@@ -75,6 +75,7 @@ class TestPortClient(unittest.TestCase):
         """Test that make_request raises an exception on HTTP error."""
         dummy_response = MagicMock()
         dummy_response.status_code = 404
+        dummy_response.text = '{"error": "Resource not found"}'
         dummy_response.raise_for_status.side_effect = requests.HTTPError("Not Found")
         mock_request.return_value = dummy_response
 

@@ -288,7 +288,7 @@ def save_snapshot(
     prefix: str,
     backup_dir: Optional[str] = None,
     include_blueprints: bool = True,
-    include_entities: bool = True,
+    include_entities: bool = False,
     include_actions: bool = True,
     include_pages: bool = True,
     include_scorecards: bool = True
@@ -300,11 +300,11 @@ def save_snapshot(
         client: PortClient instance
         prefix: Prefix for the snapshot files
         backup_dir: Directory to save the snapshot (default: ./backups)
-        include_blueprints: Whether to include blueprints in the snapshot
-        include_entities: Whether to include entities in the snapshot
-        include_actions: Whether to include actions in the snapshot
-        include_pages: Whether to include pages in the snapshot
-        include_scorecards: Whether to include scorecards in the snapshot
+        include_blueprints: Whether to include blueprints in the snapshot (default: True)
+        include_entities: Whether to include entities in the snapshot (default: False)
+        include_actions: Whether to include actions in the snapshot (default: True)
+        include_pages: Whether to include pages in the snapshot (default: True)
+        include_scorecards: Whether to include scorecards in the snapshot (default: True)
 
     Returns:
         dict: Summary of the snapshot with file paths

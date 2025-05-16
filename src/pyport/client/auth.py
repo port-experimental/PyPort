@@ -151,7 +151,8 @@ class AuthManager:
         """
         # Prepare request
         endpoint, headers, payload = self._prepare_auth_request()
-        url = f'{self.api_url}/v1/{endpoint}'
+        # The API URL already includes /v1, so we don't need to add it again
+        url = f'{self.api_url}/{endpoint}'
 
         self._logger.debug("Sending authentication request to obtain access token...")
 

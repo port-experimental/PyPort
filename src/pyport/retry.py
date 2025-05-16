@@ -463,8 +463,7 @@ class RetryConfig:
                 "idempotent_methods": list(self.idempotent_methods)
             },
             "circuit_breaker": (self.circuit_breaker.get_status()
-                if hasattr(self.circuit_breaker, 'get_status')
-                else str(self.circuit_breaker)),
+                                if hasattr(self.circuit_breaker, 'get_status') else str(self.circuit_breaker)),
             "stats": self.stats.get_status()
         }
 

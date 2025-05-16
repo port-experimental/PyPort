@@ -2,7 +2,32 @@
 
 This document tracks the changes and improvements made in each version of the PyPort client library.
 
-## Version 0.2.6 (Latest)
+## Version 0.2.8 (Latest)
+
+### Bug Fixes
+- ✅ Fixed authentication URL bug that was duplicating the 'v1' path segment
+- ✅ Improved error messages in test mocks for better debugging
+
+### Testing Improvements
+- ✅ Enhanced test mocks to provide more realistic responses
+- ✅ Fixed snapshot utility to make saving entities optional (default: False)
+- ✅ Removed snapshot functionality from unit testing
+
+## Version 0.2.7
+
+### Documentation Improvements
+- ✅ API usage examples
+- ✅ Jupyter notebooks
+- ✅ Architecture diagrams
+
+### Testing Enhancements
+- ✅ Snapshot testing
+
+### Code Quality
+- ✅ Dependency analysis
+- ✅ Documentation coverage
+
+## Version 0.2.6
 
 ### IDE Support Improvements
 - ✅ Added property decorators with explicit return types for all service attributes
@@ -101,18 +126,13 @@ This document tracks the changes and improvements made in each version of the Py
 
 ## Upcoming Features
 
-### Version 0.2.7 (COMPLETED)
-- Documentation Improvements
-  - ✅ API usage examples
-  - ✅ Jupyter notebooks
-  - ✅ Architecture diagrams
-
-- Testing Enhancements
-  - ✅ Snapshot testing
-
-- Code Quality
-  - ✅ Dependency analysis
-  - ✅ Documentation coverage
+### Version 0.2.9 (In Progress)
+- Performance Optimizations
+  - Connection pooling for better performance
+  - Caching for frequently accessed resources
+  - Request batching for improved efficiency
+  - Optimized sensitive data masking
+  - More efficient JSON parsing
 
 ### Future Versions
 - Feature Enhancements
