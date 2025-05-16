@@ -55,8 +55,10 @@ def build_package(cicd_cfg: CicdConfig):
         update_version_in_toml(cicd_cfg)
         subprocess.run([python_executable, '-m', 'build', '--no-isolation'], cwd=src_path, check=True)
         print("Build completed successfully.")
+        return True
     except subprocess.CalledProcessError as e:
         print(f"Build failed: {e}", file=sys.stderr)
+        raise RuntimeError(f"Build failed: {e}")
 
 
 if __name__ == "__main__":

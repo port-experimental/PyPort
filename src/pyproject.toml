@@ -1,6 +1,6 @@
 [project]
 name = "pyport"
-version = "0.2.8"
+version = "0.2.7"
 description = "Port REST API Wrapper"
 authors = [
   { name = "Dan Amzulescu", email = "dan.a@getport.io" }
@@ -29,6 +29,9 @@ dependencies = [
 [build-system]
 requires = ["setuptools>=67.0", "wheel", "build"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["pyport", "pyport.client", "pyport.services", "pyport.utils", "pyport.types", "pyport.blueprints", "pyport.entities"]
 
 [project.optional-dependencies]
 dev = [

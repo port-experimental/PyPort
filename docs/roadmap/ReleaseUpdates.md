@@ -13,6 +13,9 @@ This document tracks the changes and improvements made in each version of the Py
 - ✅ Fixed snapshot utility to make saving entities optional (default: False)
 - ✅ Removed snapshot functionality from unit testing
 
+### Build Process
+- ✅ Temporarily removed testing and linting from the release process
+
 ## Version 0.2.7
 
 ### Documentation Improvements

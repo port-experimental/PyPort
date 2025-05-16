@@ -9,11 +9,11 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-73.00%25-yellowgreen)
+![Coverage](https://img.shields.io/badge/coverage-Error-red)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
-![Doc Coverage](https://img.shields.io/badge/doc%20coverage-90.4%25-brightgreen)
+![Doc Coverage](https://img.shields.io/badge/doc%20coverage-0.0%25-red)
 
 ![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)
 [![GitHub tag](https://img.shields.io/github/tag/port-experimental/pyport?include_prereleases=&sort=semver&color=blue)](https://github.com/port-experimental/pyport/releases/)

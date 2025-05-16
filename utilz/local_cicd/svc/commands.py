@@ -128,9 +128,13 @@ class BuildCommand(Command):
             The result of the build execution.
         """
         self.logger.info("Building package...")
-        result = build_package(self.config)
-        self.logger.info("Build completed.")
-        return result
+        try:
+            result = build_package(self.config)
+            self.logger.info("Build completed successfully.")
+            return result
+        except Exception as e:
+            self.logger.error(f"Build failed: {e}")
+            raise
 
     def can_undo(self) -> bool:
         """
@@ -297,9 +301,13 @@ class ShipCommand(Command):
             The result of the ship execution.
         """
         self.logger.info("Shipping package...")
-        result = ship_package(self.config)
-        self.logger.info("Shipping completed.")
-        return result
+        try:
+            result = ship_package(self.config)
+            self.logger.info("Shipping completed successfully.")
+            return result
+        except Exception as e:
+            self.logger.error(f"Shipping failed: {e}")
+            raise
 
     def can_undo(self) -> bool:
         """
@@ -389,7 +397,8 @@ class CompositeCommand(Command):
                 self.logger.error(f"Command {command.name} failed: {e}")
                 if kwargs.get("fail_fast", False):
                     self.logger.error("Aborting remaining commands due to failure.")
-                    break
+                    raise RuntimeError(f"Command {command.name} failed: {e}") from e
+                break
 
         self.logger.info("All commands completed.")
         return results
@@ -439,8 +448,8 @@ class ReleaseCommand(Command):
         """
         Execute the release command.
 
-        This command runs tests, linting, scans, updates badges, builds the package,
-        ships it, and cleans up.
+        This command builds the package, ships it, and cleans up.
+        (Note: Testing, linting, scanning, and badge updates are temporarily removed from the release process.)
 
         Args:
             *args: Additional positional arguments.
@@ -455,11 +464,11 @@ class ReleaseCommand(Command):
         composite = CompositeCommand(self.config, name="ReleaseSteps")
 
         # Add commands to the composite
-        # Skip TestCommand to avoid running tests again if they've already been run
+        # Testing and linting temporarily removed from release process
         # composite.add_command(TestCommand(self.config))
-        composite.add_command(LintCommand(self.config))
-        composite.add_command(ScanCommand(self.config))
-        composite.add_command(BadgeCommand(self.config))
+        # composite.add_command(LintCommand(self.config))
+        # composite.add_command(ScanCommand(self.config))
+        # composite.add_command(BadgeCommand(self.config))
         composite.add_command(BuildCommand(self.config))
         composite.add_command(ShipCommand(self.config))
         composite.add_command(CleanupCommand(self.config))

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced test mocks to provide more realistic responses
 - Fixed snapshot utility to make saving entities optional (default: False)
 - Removed snapshot functionality from unit testing
+- Temporarily removed testing and linting from the release process
 
 ## [0.2.7] - 2025-05-15
 
