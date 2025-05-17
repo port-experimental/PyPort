@@ -148,19 +148,19 @@ try:
         client_id="your-client-id",
         client_secret="your-client-secret"
     )
-    
+
     # This will raise PortResourceNotFoundError if the blueprint doesn't exist
     blueprint = client.blueprints.get_blueprint("non-existent-blueprint")
-    
+
 except PortResourceNotFoundError as e:
     print(f"Blueprint not found: {e}")
-    
+
 except PortValidationError as e:
     print(f"Validation error: {e}")
-    
+
 except PortAuthError as e:
     print(f"Authentication error: {e}")
-    
+
 except PortApiError as e:
     print(f"API error: {e}")
 ```
@@ -188,3 +188,4 @@ client = PortClient(
 - Check out the [Services](services/README.md) documentation for all available API services
 - Learn about [Error Handling](error_handling.md) for more advanced error handling techniques
 - Discover [Utilities](utilities.md) for helper functions and tools
+- Set up [Integration Testing](integration_testing.md) with real credentials

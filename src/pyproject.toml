@@ -35,7 +35,7 @@ packages = ["pyport", "pyport.client", "pyport.services", "pyport.utils", "pypor
 
 [project.optional-dependencies]
 dev = [
-  "flake8~=4.0.1",
-  "build~=0.7.0",
-  "twine~=3.8.0"
+  "flake8~=7.2.0",
+  "build~=1.2.2",
+  "twine~=6.1.0"
 ]

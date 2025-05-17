@@ -93,6 +93,25 @@ This document outlines the high-level development roadmap for the PyPort client 
   - ✅ Dependency analysis
   - ✅ Documentation coverage
 
+### Version 0.2.8 (COMPLETED)
+
+- ✅ **Bug Fixes**
+  - ✅ Fixed authentication URL bug that was duplicating the 'v1' path segment
+  - ✅ Improved error messages in test mocks for better debugging
+
+- ✅ **Testing Improvements**
+  - ✅ Enhanced test mocks to provide more realistic responses
+  - ✅ Fixed snapshot utility to make saving entities optional (default: False)
+  - ✅ Removed snapshot functionality from unit testing
+  - ✅ Added real integration testing with environment-based credentials
+  - ✅ Created simple client for testing specific PyPort versions
+
+- ✅ **Build Process**
+  - ✅ Temporarily removed testing and linting from the release process
+
+- ✅ **Documentation**
+  - ✅ Added integration testing documentation
+
 ## Future Considerations
 
 - 🔄 **Developer Experience**
