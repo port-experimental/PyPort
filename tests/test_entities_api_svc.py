@@ -5,11 +5,11 @@ from pyport.api_client import PortClient
 
 class TestEntitiesService(unittest.TestCase):
     def setUp(self):
-        patcher_env = patch('src.pyport.api_client.PortClient._get_local_env_cred', return_value=('dummy_id', 'dummy_secret'))
+        patcher_env = patch('pyport.client.client.AuthManager._get_local_env_cred', return_value=('dummy_id', 'dummy_secret'))
         self.addCleanup(patcher_env.stop)
         self.mock_get_local_env_cred = patcher_env.start()
 
-        patcher_token = patch('src.pyport.api_client.PortClient._get_access_token', return_value='dummy_token')
+        patcher_token = patch('pyport.client.client.AuthManager._get_access_token', return_value='dummy_token')
         self.addCleanup(patcher_token.stop)
         self.mock_get_access_token = patcher_token.start()
 

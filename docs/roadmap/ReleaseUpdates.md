@@ -12,9 +12,14 @@ This document tracks the changes and improvements made in each version of the Py
 - ✅ Enhanced test mocks to provide more realistic responses
 - ✅ Fixed snapshot utility to make saving entities optional (default: False)
 - ✅ Removed snapshot functionality from unit testing
+- ✅ Added real integration testing with environment-based credentials
+- ✅ Created simple client for testing specific PyPort versions
 
 ### Build Process
 - ✅ Temporarily removed testing and linting from the release process
+
+### Documentation
+- ✅ Added integration testing documentation
 
 ## Version 0.2.7
 

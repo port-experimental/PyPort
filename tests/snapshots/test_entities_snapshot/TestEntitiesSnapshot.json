@@ -1,0 +1,12 @@
+{
+  "test_delete_entity_response": {
+    "default": {
+      "data": false,
+      "metadata": {
+        "created_at": "2025-05-17T20:41:46.873592",
+        "pyport_version": "unknown",
+        "python_version": "3.12.9"
+      }
+    }
+  }
+}

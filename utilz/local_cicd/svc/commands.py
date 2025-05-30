@@ -18,13 +18,13 @@ from utilz.local_cicd.svc.command_svc import Command, register_command
 from utilz.local_cicd.svc.lint_svc import lint_code
 from utilz.local_cicd.svc.scanner_svc import CodeScanner
 from utilz.local_cicd.svc.ship_svc import ship_package
-from utilz.local_cicd.svc.test_svc import run_tests, run_integration_test
+from utilz.local_cicd.svc.test_svc import run_tests, run_tests_summary, run_tests_full, run_integration_test
 from utilz.local_cicd.svc.doc_coverage import analyze_doc_coverage
 
 
 @register_command
 class TestCommand(Command):
-    """Command for running tests."""
+    """Command for running tests with full output."""
 
     def execute(self, *args, **kwargs) -> Any:
         """
@@ -39,6 +39,66 @@ class TestCommand(Command):
         """
         self.logger.info("Running tests...")
         result = run_tests(self.config)
+        self.logger.info("Tests completed.")
+        return result
+
+    def can_undo(self) -> bool:
+        """
+        Check if the command can be undone.
+
+        Returns:
+            False (tests cannot be undone).
+        """
+        return False
+
+
+@register_command
+class TestSummaryCommand(Command):
+    """Command for running tests with summary output only."""
+
+    def execute(self, *args, **kwargs) -> Any:
+        """
+        Execute the test summary command.
+
+        Args:
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The result of the test execution.
+        """
+        self.logger.info("Running tests with summary output...")
+        result = run_tests_summary(self.config)
+        self.logger.info("Tests completed.")
+        return result
+
+    def can_undo(self) -> bool:
+        """
+        Check if the command can be undone.
+
+        Returns:
+            False (tests cannot be undone).
+        """
+        return False
+
+
+@register_command
+class TestFullCommand(Command):
+    """Command for running tests with full output."""
+
+    def execute(self, *args, **kwargs) -> Any:
+        """
+        Execute the test full command.
+
+        Args:
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The result of the test execution.
+        """
+        self.logger.info("Running tests with full output...")
+        result = run_tests_full(self.config)
         self.logger.info("Tests completed.")
         return result
 

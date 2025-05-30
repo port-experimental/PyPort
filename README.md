@@ -9,7 +9,7 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-Error-red)
+![Coverage](https://img.shields.io/badge/coverage-72.00%25-yellowgreen)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
 ![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
@@ -185,4 +185,27 @@ These utilities make it simple to perform bulk operations that would otherwise r
 
 Happy Coding!
 
+## Development
+
+### Testing
+
+To run the tests, you'll need to install the test dependencies:
+
+```bash
+pip install -r requirements-test.txt
+```
+
+Then you can run the tests using:
+
+```bash
+python -m unittest discover tests
+```
+
+Or using our custom test runner:
+
+```bash
+python moonshot/danpy.cicd/run_test_with_danpy.py test_*.py
+```
+
+The test suite includes property-based tests that use the Hypothesis library. These tests generate random inputs to find edge cases and ensure the code works correctly with a wide range of inputs. If you don't have Hypothesis installed, these tests will be skipped.
 
