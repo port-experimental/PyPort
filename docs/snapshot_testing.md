@@ -21,16 +21,17 @@ Snapshot testing is a testing approach where you capture the output of a compone
 To create a snapshot test, extend the `SnapshotTest` class from `tests.utils.snapshot_test`:
 
 ```python
-from tests.utils.snapshot_test import SnapshotTest
+from tests.snapshots.utils.snapshot_test import SnapshotTest
+
 
 class TestBlueprintService(SnapshotTest):
     def test_get_blueprint_response(self):
         # Arrange
         client = create_test_client()
-        
+
         # Act
         blueprint = client.blueprints.get_blueprint("service")
-        
+
         # Assert
         self.assert_matches_snapshot(blueprint)
 ```

@@ -8,7 +8,12 @@ import unittest
 import os
 import importlib.util
 import inspect
+import sys
+from pathlib import Path
 from typing import Dict, List, Any, Optional, Union, get_type_hints
+
+# Get the project root directory
+PROJECT_ROOT = Path(__file__).parent.parent.absolute()
 
 from pyport.client.client import PortClient
 from pyport.blueprints.blueprint_api_svc import Blueprints
@@ -21,32 +26,32 @@ class TestTypeStubs(unittest.TestCase):
 
     def test_client_stub_exists(self):
         """Test that the client.pyi stub file exists."""
-        stub_path = os.path.join("src", "pyport", "client", "client.pyi")
+        stub_path = os.path.join(PROJECT_ROOT, "src", "pyport", "client", "client.pyi")
         self.assertTrue(os.path.exists(stub_path), f"Stub file {stub_path} does not exist")
 
     def test_init_stub_exists(self):
         """Test that the __init__.pyi stub file exists."""
-        stub_path = os.path.join("src", "pyport", "__init__.pyi")
+        stub_path = os.path.join(PROJECT_ROOT, "src", "pyport", "__init__.pyi")
         self.assertTrue(os.path.exists(stub_path), f"Stub file {stub_path} does not exist")
 
     def test_blueprints_stub_exists(self):
         """Test that the blueprint_api_svc.pyi stub file exists."""
-        stub_path = os.path.join("src", "pyport", "blueprints", "blueprint_api_svc.pyi")
+        stub_path = os.path.join(PROJECT_ROOT, "src", "pyport", "blueprints", "blueprint_api_svc.pyi")
         self.assertTrue(os.path.exists(stub_path), f"Stub file {stub_path} does not exist")
 
     def test_entities_stub_exists(self):
         """Test that the entities_api_svc.pyi stub file exists."""
-        stub_path = os.path.join("src", "pyport", "entities", "entities_api_svc.pyi")
+        stub_path = os.path.join(PROJECT_ROOT, "src", "pyport", "entities", "entities_api_svc.pyi")
         self.assertTrue(os.path.exists(stub_path), f"Stub file {stub_path} does not exist")
 
     def test_base_api_service_stub_exists(self):
         """Test that the base_api_service.pyi stub file exists."""
-        stub_path = os.path.join("src", "pyport", "services", "base_api_service.pyi")
+        stub_path = os.path.join(PROJECT_ROOT, "src", "pyport", "services", "base_api_service.pyi")
         self.assertTrue(os.path.exists(stub_path), f"Stub file {stub_path} does not exist")
 
     def test_types_stub_exists(self):
         """Test that the types/__init__.pyi stub file exists."""
-        stub_path = os.path.join("src", "pyport", "types", "__init__.pyi")
+        stub_path = os.path.join(PROJECT_ROOT, "src", "pyport", "types", "__init__.pyi")
         self.assertTrue(os.path.exists(stub_path), f"Stub file {stub_path} does not exist")
 
     def test_client_property_types(self):

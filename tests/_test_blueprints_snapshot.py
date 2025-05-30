@@ -6,12 +6,10 @@ capture the structure and content of API responses to detect changes in behavior
 """
 
 import unittest
-from unittest.mock import patch, MagicMock
-from typing import Dict, Any, List
+from unittest.mock import MagicMock
 
-from pyport import PortClient
-from pyport.blueprints.blueprints_api_svc import Blueprints
-from tests.utils.snapshot_test import SnapshotTest
+from pyport.blueprints.blueprint_api_svc import Blueprints
+from tests.snapshots.utils.snapshot_test import SnapshotTest
 
 
 class TestBlueprintsSnapshot(SnapshotTest):

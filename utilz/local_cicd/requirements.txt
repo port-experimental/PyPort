@@ -1,7 +1,6 @@
 # Core dependencies
 python-dotenv~=1.0.1
 requests~=2.32.3
-logging ~= 0.4.9.6
 toml~=0.10.2
 pydantic>=2.0.0
 typing-extensions>=4.0.0

@@ -7,9 +7,8 @@ functionality.
 """
 
 import unittest
-from typing import Dict, Any, List
 
-from tests.utils.snapshot_test import SnapshotTest
+from tests.snapshots.utils.snapshot_test import SnapshotTest
 
 
 class TestSnapshotExample(SnapshotTest):

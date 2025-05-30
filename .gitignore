@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Moonshot design folder
+moonshot/
+
 # C extensions
 *.so
 

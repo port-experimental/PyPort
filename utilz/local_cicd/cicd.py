@@ -5,9 +5,9 @@ from typing import Dict, List, Optional, Tuple, Union, Any
 from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
 from utilz.local_cicd.svc.command_svc import CommandInvoker, CommandFactory
 from utilz.local_cicd.svc.commands import (
-    TestCommand, IntegrationTestCommand, LintCommand, BuildCommand, ScanCommand,
-    BadgeCommand, ShipCommand, CleanupCommand, CompositeCommand, ReleaseCommand,
-    DocCoverageCommand
+    TestCommand, TestSummaryCommand, TestFullCommand, IntegrationTestCommand,
+    LintCommand, BuildCommand, ScanCommand, BadgeCommand, ShipCommand,
+    CleanupCommand, CompositeCommand, ReleaseCommand, DocCoverageCommand
 )
 from utilz.local_cicd.svc.logging_svc import (
     get_logger, configure_logging, LOG_LEVEL_INFO, LOG_FORMAT_STANDARD, LOG_OUTPUT_CONSOLE
@@ -32,7 +32,7 @@ def execute_choice(choice, config):
     """Executes the command associated with the given choice.
 
     Args:
-        choice: The choice to execute (1-8).
+        choice: The choice to execute (1-10).
         config: The CI/CD configuration.
 
     Returns:
@@ -40,38 +40,42 @@ def execute_choice(choice, config):
     """
     try:
         if choice == '1':
-            # Test
-            command = TestCommand(config)
+            # Test Summary
+            command = TestSummaryCommand(config)
             invoker.execute(command)
         elif choice == '2':
+            # Test Full Output
+            command = TestFullCommand(config)
+            invoker.execute(command)
+        elif choice == '3':
             # Integration Test
             command = IntegrationTestCommand(config)
             invoker.execute(command)
-        elif choice == '3':
+        elif choice == '4':
             # Lint
             command = LintCommand(config)
             invoker.execute(command)
-        elif choice == '4':
+        elif choice == '5':
             # Build
             command = BuildCommand(config)
             invoker.execute(command)
-        elif choice == '5':
+        elif choice == '6':
             # Scan all
             command = ScanCommand(config)
             invoker.execute(command)
-        elif choice == '6':
+        elif choice == '7':
             # Release (update badges, build, ship, cleanup)
             command = ReleaseCommand(config)
             invoker.execute(command)
-        elif choice == '7':
+        elif choice == '8':
             # Cleanup
             command = CleanupCommand(config)
             invoker.execute(command)
-        elif choice == '8':
+        elif choice == '9':
             # Documentation Coverage
             command = DocCoverageCommand(config)
             invoker.execute(command)
-        elif choice == '9':
+        elif choice == '10':
             logger.info("Exiting...")
             return False
         else:
@@ -92,18 +96,19 @@ def interactive_mode(config):
 
     while True:
         print("\nCI/CD Menu:")
-        print("1) Test")
-        print("2) Integration Test")
-        print("3) Lint")
-        print("4) Build")
-        print("5) Scan-all + Update Badges (maintainability, security, coverage, etc.)")
-        print("6) Release (Update Badges + Build + Ship + Cleanup)")
-        print("7) Cleanup only")
-        print("8) Documentation Coverage Analysis")
-        print("9) Exit")
+        print("1) Test - Summary Only (shows test counts and coverage table)")
+        print("2) Test - Full Output (runs unittest with full output)")
+        print("3) Integration Test")
+        print("4) Lint")
+        print("5) Build")
+        print("6) Scan-all + Update Badges (maintainability, security, coverage, etc.)")
+        print("7) Release (Update Badges + Build + Ship + Cleanup)")
+        print("8) Cleanup only")
+        print("9) Documentation Coverage Analysis")
+        print("10) Exit")
 
         try:
-            choice = input("Enter your choice (1-9): ").strip()
+            choice = input("Enter your choice (1-10): ").strip()
             if not execute_choice(choice, config):
                 break
         except KeyboardInterrupt:

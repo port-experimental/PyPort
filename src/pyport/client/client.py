@@ -21,7 +21,7 @@ from ..constants import PORT_API_URL, PORT_API_US_URL, GENERIC_HEADERS
 from ..entities.entities_api_svc import Entities
 # PortApiError is not used directly
 from ..integrations.integrations_api_svc import Integrations
-from ..logging import configure_logging, logger
+from ..logging import configure_logging, logger, get_correlation_id
 from ..migrations.migrations_api_svc import Migrations
 from ..organization.organization_api_svc import Organizations
 from ..pages.pages_api_svc import Pages
@@ -395,8 +395,8 @@ class PortClient:
         """Access scorecard-related operations."""
         return self._scorecards
 
-    def make_request(self, method: str, endpoint: str, retries: int = None, retry_delay: float = None,
-                     correlation_id: str = None, **kwargs) -> requests.Response:
+    def make_request(self, method: str, endpoint: str, retries: Optional[int] = None, retry_delay: Optional[float] = None,
+                     correlation_id: Optional[str] = None, **kwargs) -> requests.Response:
         """
         Make an HTTP request to the API with error handling and retry logic.
 
@@ -459,6 +459,8 @@ class PortClient:
         """Handle the response, returning it if successful or raising an appropriate exception."""
         return self._request_manager._handle_response(response, endpoint, method, correlation_id)
 
-    def _make_single_request(self, method, url, endpoint, correlation_id=None, **kwargs):
+    def _make_single_request(self, method, url, endpoint, correlation_id: Optional[str] = None, **kwargs):
         """Make a single HTTP request and handle the response."""
-        return self._request_manager._make_single_request(method, url, endpoint, correlation_id, **kwargs)
+        # If correlation_id is None, the RequestManager will generate one
+        return self._request_manager._make_single_request(
+            method, url, endpoint, correlation_id if correlation_id is not None else get_correlation_id(), **kwargs)
