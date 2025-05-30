@@ -30,7 +30,7 @@ PORT_CLIENT_ID = os.getenv("PORT_CLIENT_ID")
 PORT_CLIENT_SECRET = os.getenv("PORT_CLIENT_SECRET")
 
 # Initialize the client with credentials
-port_client = PortClient(client_id=PORT_CLIENT_ID, client_secret=PORT_CLIENT_SECRET, us_region=True)
+port_client = PortClient(client_id=f"{PORT_CLIENT_ID}", client_secret=f"{PORT_CLIENT_SECRET}", us_region=True)
 
 # Test API connection by fetching blueprints
 blueprints = port_client.blueprints.get_blueprints()
