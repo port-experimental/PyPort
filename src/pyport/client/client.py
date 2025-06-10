@@ -200,14 +200,15 @@ class PortClient:
         self._setup_retry_config(max_retries, retry_delay, max_delay, retry_strategy, retry_jitter,
                                  retry_status_codes, retry_on, idempotent_methods)
 
-        # Initialize authentication manager
+        # Initialize authentication manager with token update callback
         self._auth_manager = AuthManager(
             client_id=client_id,
             client_secret=client_secret,
             api_url=self.api_url,
             auto_refresh=auto_refresh,
             refresh_interval=refresh_interval,
-            skip_auth=skip_auth
+            skip_auth=skip_auth,
+            token_update_callback=self._update_session_token
         )
 
         # For backward compatibility
@@ -279,6 +280,22 @@ class PortClient:
         self._session = requests.Session()
         self._session.headers.update(GENERIC_HEADERS)
         self._session.headers.update({"Authorization": f"Bearer {self._auth_manager.token}"})
+
+    def _update_session_token(self, new_token: str):
+        """
+        Update the session's Authorization header with a new token.
+
+        This method is called by the AuthManager when the token is refreshed
+        to ensure the session uses the updated token for subsequent requests.
+
+        Args:
+            new_token: The new JWT token to use for authentication.
+        """
+        if hasattr(self, '_session') and self._session:
+            self._session.headers.update({"Authorization": f"Bearer {new_token}"})
+            # Also update the backward compatibility token attribute
+            self.token = new_token
+            self._logger.debug("Session Authorization header updated with new token.")
 
     def default_headers(self) -> dict:
         """Return a copy of the default request headers."""

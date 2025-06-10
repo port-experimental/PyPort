@@ -11,7 +11,7 @@ import json
 import os
 import threading
 import time
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, Callable
 
 import requests
 
@@ -30,7 +30,7 @@ class AuthManager:
 
     def __init__(self, client_id: str, client_secret: str, api_url: str,
                  auto_refresh: bool = True, refresh_interval: int = 900,
-                 skip_auth: bool = False):
+                 skip_auth: bool = False, token_update_callback: Optional[Callable[[str], None]] = None):
         """
         Initialize the AuthManager.
 
@@ -41,6 +41,8 @@ class AuthManager:
             auto_refresh: Whether to automatically refresh the token.
             refresh_interval: Token refresh interval in seconds.
             skip_auth: Whether to skip authentication (for testing).
+            token_update_callback: Optional callback function to call when token is updated.
+                The callback will be called with the new token as an argument.
         """
         self.client_id = client_id
         self.client_secret = client_secret
@@ -49,6 +51,7 @@ class AuthManager:
         self._refresh_interval = refresh_interval
         self._logger = logger
         self._lock = threading.Lock()
+        self._token_update_callback = token_update_callback
 
         # Initialize token
         if skip_auth:
@@ -89,6 +92,13 @@ class AuthManager:
             # Update the token
             with self._lock:
                 self.token = new_token
+
+            # Call the callback to notify about token update
+            if self._token_update_callback:
+                try:
+                    self._token_update_callback(new_token)
+                except Exception as callback_error:
+                    self._logger.error(f"Error in token update callback: {str(callback_error)}")
 
             self._logger.info("Access token refreshed successfully.")
         except Exception as e:
