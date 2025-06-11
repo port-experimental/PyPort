@@ -4,6 +4,8 @@ import time
 import unittest
 import coverage
 import inspect
+import subprocess
+from pathlib import Path
 from typing import Dict, Any, List, Optional, Union
 
 from utilz.local_cicd.cfg.cicd_cfg import CicdConfig
@@ -162,17 +164,29 @@ def run_integration_test(cicd_cfg: CicdConfig):
     # Determine the project root
     os.chdir(cicd_cfg.project_root)
 
-    # Run the integration test specifically
-    test_loader = unittest.TestLoader()
-    test_suite = test_loader.loadTestsFromName('tests.test_integration')
-    test_runner = ProgressTextTestRunner()
-    result = test_runner.run(test_suite)
+    # Path to the integration test script
+    integration_test_script = Path(cicd_cfg.project_root) / "utilz" / "integration_tests" / "simple_pyport_client.py"
 
-    # Determine exit code based on test success
-    exit_code = 0 if result.wasSuccessful() else 1
+    if not integration_test_script.exists():
+        print(f"❌ Integration test script not found: {integration_test_script}")
+        return 1
 
-    print(f"Integration test completed. Exiting with code {exit_code}.")
-    return exit_code
+    # Run the integration test script
+    try:
+        print(f"Running integration test script: {integration_test_script}")
+        result = subprocess.run(
+            [sys.executable, str(integration_test_script)],
+            check=True,
+            cwd=cicd_cfg.project_root
+        )
+        print("✅ Integration test completed successfully!")
+        return 0
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Integration test failed with exit code: {e.returncode}")
+        return e.returncode
+    except Exception as e:
+        print(f"❌ Integration test error: {e}")
+        return 1
 
 
 def run_tests_summary(cicd_cfg: CicdConfig):

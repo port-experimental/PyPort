@@ -25,7 +25,7 @@ class Integrations(BaseAPIService):
         super().__init__(client, resource_name="integrations", response_key="integration")
 
     def get_integrations(self, page: Optional[int] = None, per_page: Optional[int] = None,
-                         params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+                         params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Retrieve all integrations.
 
@@ -35,12 +35,19 @@ class Integrations(BaseAPIService):
             params: Additional query parameters for the request.
 
         Returns:
-            A list of integration dictionaries.
+            A dictionary containing integrations data.
 
         Raises:
             PortApiError: If the API request fails.
         """
-        return self.get_all(page=page, per_page=per_page, params=params)
+        # Handle pagination parameters
+        all_params = self._handle_pagination_params(page, per_page)
+        if params:
+            all_params.update(params)
+
+        # Make the request
+        response = self._make_request_with_params('GET', "integration", params=all_params)
+        return response
 
     def get_integration(self, integration_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
@@ -57,7 +64,59 @@ class Integrations(BaseAPIService):
             PortResourceNotFoundError: If the integration does not exist.
             PortApiError: If the API request fails for another reason.
         """
-        return self.get_by_id(integration_id, params=params)
+        endpoint = self._build_endpoint("integration", integration_id)
+        response = self._make_request_with_params('GET', endpoint, params=params)
+        return response
+
+    def get_integration_logs(self, integration_id: str, page: Optional[int] = None,
+                             per_page: Optional[int] = None,
+                             params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Retrieve logs for a specific integration.
+
+        Args:
+            integration_id: The identifier of the integration.
+            page: The page number to retrieve (default: None).
+            per_page: The number of items per page (default: None).
+            params: Additional query parameters for the request.
+
+        Returns:
+            A dictionary containing integration logs.
+
+        Raises:
+            PortResourceNotFoundError: If the integration does not exist.
+            PortApiError: If the API request fails for another reason.
+        """
+        # Handle pagination parameters
+        all_params = self._handle_pagination_params(page, per_page)
+        if params:
+            all_params.update(params)
+
+        endpoint = self._build_endpoint("integration", integration_id, "logs")
+        response = self._make_request_with_params('GET', endpoint, params=all_params)
+        return response
+
+    def update_integration_config(self, integration_id: str, config_data: Dict[str, Any],
+                                  params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Update an integration's configuration.
+
+        Args:
+            integration_id: The identifier of the integration.
+            config_data: A dictionary containing updated configuration data.
+            params: Additional query parameters for the request.
+
+        Returns:
+            A dictionary representing the updated integration configuration.
+
+        Raises:
+            PortResourceNotFoundError: If the integration does not exist.
+            PortValidationError: If the configuration data is invalid.
+            PortApiError: If the API request fails for another reason.
+        """
+        endpoint = self._build_endpoint("integration", integration_id, "config")
+        response = self._make_request_with_params('PATCH', endpoint, json=config_data, params=params)
+        return response
 
     def create_integration(self, integration_data: Dict[str, Any],
                            params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -427,106 +486,3 @@ class Integrations(BaseAPIService):
         # Make the request
         response = self._client.make_request("DELETE", endpoint)
         return response.status_code == 204
-
-    # Integration Logs Methods
-
-    def get_integration_logs(self, integration_id: str, page: Optional[int] = None,
-                             per_page: Optional[int] = None,
-                             params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        """
-        Retrieve logs for a specific integration.
-
-        Args:
-            integration_id: The identifier of the integration.
-            page: The page number to retrieve (default: None).
-            per_page: The number of items per page (default: None).
-            params: Additional query parameters for filtering logs.
-
-        Returns:
-            A list of log dictionaries.
-
-        Raises:
-            PortResourceNotFoundError: If the integration does not exist.
-            PortApiError: If the API request fails for another reason.
-        """
-        # Handle pagination parameters
-        all_params = self._handle_pagination_params(page, per_page)
-        if params:
-            all_params.update(params)
-
-        # Build the endpoint
-        endpoint = self._build_endpoint("integrations", integration_id, "logs")
-
-        # Make the request
-        response = self._make_request_with_params('GET', endpoint, params=all_params)
-        return response.get("logs", [])
-
-    # Integration Config Methods
-
-    def get_integration_config(self, integration_id: str,
-                               params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Retrieve configuration for a specific integration.
-
-        Args:
-            integration_id: The identifier of the integration.
-            params: Additional query parameters for the request.
-
-        Returns:
-            A dictionary representing the integration configuration.
-
-        Raises:
-            PortResourceNotFoundError: If the integration does not exist.
-            PortApiError: If the API request fails for another reason.
-        """
-        # Build the endpoint
-        endpoint = self._build_endpoint("integrations", integration_id, "config")
-
-        # Make the request
-        response = self._make_request_with_params('GET', endpoint, params=params)
-        return response.get("config", {})
-
-    def update_integration_config(self, integration_id: str, config_data: Dict[str, Any],
-                                  params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Update configuration for a specific integration.
-
-        Args:
-            integration_id: The identifier of the integration.
-            config_data: A dictionary containing the updated configuration data.
-            params: Additional query parameters for the request.
-
-        Returns:
-            A dictionary representing the updated integration configuration.
-
-        Raises:
-            PortResourceNotFoundError: If the integration does not exist.
-            PortValidationError: If the configuration data is invalid.
-            PortApiError: If the API request fails for another reason.
-        """
-        # Build the endpoint
-        endpoint = self._build_endpoint("integrations", integration_id, "config")
-
-        # Make the request
-        response = self._make_request_with_params('PUT', endpoint, json=config_data, params=params)
-        return response
-
-    def check_provision_enabled(self, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Check if provisioning is enabled for integrations.
-
-        Args:
-            params: Additional query parameters for the request.
-
-        Returns:
-            A dictionary containing provisioning status information.
-
-        Raises:
-            PortApiError: If the API request fails.
-        """
-        # Build the endpoint
-        endpoint = self._build_endpoint("integrations", "provision-enabled")
-
-        # Make the request
-        response = self._make_request_with_params('GET', endpoint, params=params)
-        return response

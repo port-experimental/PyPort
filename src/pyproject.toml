@@ -1,6 +1,6 @@
 [project]
 name = "pyport"
-version = "0.3.0"
+version = "0.3.1"
 description = "Port REST API Wrapper"
 authors = [
   { name = "Dan Amzulescu", email = "dan.a@getport.io" }
@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
   "python-dotenv~=1.0.1",
-  "requests~=2.32.3",
+  "requests~=2.32.4",
 ]
 
 [build-system]

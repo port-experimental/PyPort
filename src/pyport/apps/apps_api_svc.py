@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 
 from ..services.base_api_service import BaseAPIService
 
@@ -25,7 +25,7 @@ class Apps(BaseAPIService):
         super().__init__(client, resource_name="apps", response_key="app")
 
     def get_apps(self, page: Optional[int] = None, per_page: Optional[int] = None,
-                 params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+                 params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Retrieve all apps.
 
@@ -35,12 +35,19 @@ class Apps(BaseAPIService):
             params: Additional query parameters for the request.
 
         Returns:
-            A list of app dictionaries.
+            A dictionary containing apps data.
 
         Raises:
             PortApiError: If the API request fails.
         """
-        return self.get_all(page=page, per_page=per_page, params=params)
+        # Handle pagination parameters
+        all_params = self._handle_pagination_params(page, per_page)
+        if params:
+            all_params.update(params)
+
+        # Make the request
+        response = self._make_request_with_params('GET', "apps", params=all_params)
+        return response
 
     def get_app(self, app_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
@@ -100,7 +107,7 @@ class Apps(BaseAPIService):
         response = self._client.make_request("PUT", f"apps/{app_id}", json=app_data)
         return response.json()
 
-    def delete_app(self, app_id: str, params: Optional[Dict[str, Any]] = None) -> bool:
+    def delete_app(self, app_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Delete an app.
 
@@ -109,13 +116,15 @@ class Apps(BaseAPIService):
             params: Additional query parameters for the request.
 
         Returns:
-            True if deletion was successful, False otherwise.
+            A dictionary representing the deletion result.
 
         Raises:
             PortResourceNotFoundError: If the app does not exist.
             PortApiError: If the API request fails for another reason.
         """
-        return self.delete_resource(app_id, params=params)
+        endpoint = self._build_endpoint("apps", app_id)
+        response = self._make_request_with_params('DELETE', endpoint, params=params)
+        return response
 
     def rotate_app_secret(self, app_id: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

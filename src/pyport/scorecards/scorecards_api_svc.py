@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 
 from ..services.base_api_service import BaseAPIService
 
@@ -24,67 +24,38 @@ class Scorecards(BaseAPIService):
         """
         super().__init__(client, resource_name="scorecards", response_key="scorecard")
 
-    def get_scorecards(self, blueprint_id: str, page: Optional[int] = None,
-                       per_page: Optional[int] = None,
-                       params: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    def get_scorecards(self, page: Optional[int] = None, per_page: Optional[int] = None,
+                       params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
-        Retrieve all scorecards for a blueprint.
+        Retrieve all scorecards.
 
         Args:
-            blueprint_id: The identifier of the blueprint the scorecard is part of.
             page: The page number to retrieve (default: None).
             per_page: The number of items per page (default: None).
             params: Additional query parameters for the request.
 
         Returns:
-            A list of scorecard dictionaries.
+            A dictionary containing scorecards data.
 
         Raises:
-            PortResourceNotFoundError: If the blueprint does not exist.
-            PortApiError: If the API request fails for another reason.
+            PortApiError: If the API request fails.
         """
         # Handle pagination parameters
         all_params = self._handle_pagination_params(page, per_page)
         if params:
             all_params.update(params)
 
-        # Build the endpoint
-        endpoint = self._build_endpoint("blueprints", blueprint_id, "scorecards")
-
         # Make the request
-        response = self._make_request_with_params('GET', endpoint, params=all_params)
-        return response.get("scorecards", [])
+        response = self._make_request_with_params('GET', "scorecards", params=all_params)
+        return response
 
-    def get_scorecard(self, blueprint_id: str, scorecard_id: str,
-                      params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """
-        Retrieve details for a specific scorecard.
-
-        Args:
-            blueprint_id: The identifier of the blueprint the scorecard is part of.
-            scorecard_id: The identifier of the scorecard.
-            params: Additional query parameters for the request.
-
-        Returns:
-            A dictionary representing the scorecard.
-
-        Raises:
-            PortResourceNotFoundError: If the blueprint or scorecard does not exist.
-            PortApiError: If the API request fails for another reason.
-        """
-        # Build the endpoint
-        endpoint = self._build_endpoint("blueprints", blueprint_id, "scorecards", scorecard_id)
-
-        # Make the request
-        response = self._make_request_with_params('GET', endpoint, params=params)
-        return response.get("scorecard", {})
-
-    def create_scorecard(self, scorecard_data: Dict[str, Any],
+    def create_scorecard(self, blueprint_identifier: str, scorecard_data: Dict[str, Any],
                          params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
-        Create a new scorecard.
+        Create a new scorecard for a blueprint.
 
         Args:
+            blueprint_identifier: The identifier of the blueprint.
             scorecard_data: A dictionary containing scorecard data.
             params: Additional query parameters for the request.
 
@@ -95,17 +66,18 @@ class Scorecards(BaseAPIService):
             PortValidationError: If the scorecard data is invalid.
             PortApiError: If the API request fails for another reason.
         """
-        # For backward compatibility with tests
-        response = self._client.make_request("POST", "scorecards", json=scorecard_data)
-        return response.json()
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "scorecards")
+        response = self._make_request_with_params('POST', endpoint, json=scorecard_data, params=params)
+        return response
 
-    def update_scorecard(self, scorecard_id: str, scorecard_data: Dict[str, Any],
-                         params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def update_scorecard(self, blueprint_identifier: str, scorecard_identifier: str,
+                         scorecard_data: Dict[str, Any], params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Update an existing scorecard.
 
         Args:
-            scorecard_id: The identifier of the scorecard to update.
+            blueprint_identifier: The identifier of the blueprint.
+            scorecard_identifier: The identifier of the scorecard to update.
             scorecard_data: A dictionary with updated scorecard data.
             params: Additional query parameters for the request.
 
@@ -117,23 +89,6 @@ class Scorecards(BaseAPIService):
             PortValidationError: If the scorecard data is invalid.
             PortApiError: If the API request fails for another reason.
         """
-        # For backward compatibility with tests
-        response = self._client.make_request("PUT", f"scorecards/{scorecard_id}", json=scorecard_data)
-        return response.json()
-
-    def delete_scorecard(self, scorecard_id: str, params: Optional[Dict[str, Any]] = None) -> bool:
-        """
-        Delete a scorecard.
-
-        Args:
-            scorecard_id: The identifier of the scorecard to delete.
-            params: Additional query parameters for the request.
-
-        Returns:
-            True if deletion was successful, False otherwise.
-
-        Raises:
-            PortResourceNotFoundError: If the scorecard does not exist.
-            PortApiError: If the API request fails for another reason.
-        """
-        return self.delete_resource(scorecard_id, params=params)
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "scorecards", scorecard_identifier)
+        response = self._make_request_with_params('PUT', endpoint, json=scorecard_data, params=params)
+        return response

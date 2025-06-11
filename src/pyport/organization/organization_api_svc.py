@@ -139,26 +139,70 @@ class Organizations(BaseAPIService):
         # Use the base class delete_resource method
         return self.delete_resource(organization_id)
 
+    # Organization Details Methods
+
+    def get_organization_details(self, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Retrieve organization details.
+
+        Args:
+            params: Additional query parameters for the request.
+
+        Returns:
+            A dictionary containing organization data.
+
+        Raises:
+            PortApiError: If the API request fails.
+        """
+        response = self._make_request_with_params('GET', "organization", params=params)
+        return response
+
     # Organization Secrets Methods
 
-    def get_organization_secrets(self) -> List[Dict]:
+    def get_organization_secrets(self, page: Optional[int] = None, per_page: Optional[int] = None,
+                                 params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Retrieve all organization secrets.
 
-        :return: A list of secret dictionaries.
-        """
-        response = self._client.make_request("GET", "organization/secrets")
-        return response.json().get("secrets", [])
+        Args:
+            page: The page number to retrieve (default: None).
+            per_page: The number of items per page (default: None).
+            params: Additional query parameters for the request.
 
-    def get_organization_secret(self, secret_name: str) -> Dict:
+        Returns:
+            A dictionary containing organization secrets data.
+
+        Raises:
+            PortApiError: If the API request fails.
+        """
+        # Handle pagination parameters
+        all_params = self._handle_pagination_params(page, per_page)
+        if params:
+            all_params.update(params)
+
+        # Make the request
+        endpoint = self._build_endpoint("organization", "secrets")
+        response = self._make_request_with_params('GET', endpoint, params=all_params)
+        return response
+
+    def get_organization_secret(self, secret_name: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Retrieve details for a specific organization secret.
 
-        :param secret_name: The name of the secret.
-        :return: A dictionary representing the secret.
+        Args:
+            secret_name: The name of the secret.
+            params: Additional query parameters for the request.
+
+        Returns:
+            A dictionary representing the secret.
+
+        Raises:
+            PortResourceNotFoundError: If the secret does not exist.
+            PortApiError: If the API request fails for another reason.
         """
-        response = self._client.make_request("GET", f"organization/secrets/{secret_name}")
-        return response.json().get("secret", {})
+        endpoint = self._build_endpoint("organization", "secrets", secret_name)
+        response = self._make_request_with_params('GET', endpoint, params=params)
+        return response
 
     def create_organization_secret(self, secret_data: Dict) -> Dict:
         """

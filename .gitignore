@@ -167,3 +167,4 @@ cython_debug/
 utilz/cc-test-reporter.exe
 temp/
 .temp
+/.json/

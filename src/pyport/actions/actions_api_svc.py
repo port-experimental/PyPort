@@ -170,3 +170,25 @@ class Actions(BaseAPIService):
         # For backward compatibility with tests
         response = self._client.make_request('PATCH', f"actions/{action_id}/permissions")
         return response.status_code == 200
+
+    def execute_action(self, action_id: str, run_data: Dict[str, Any],
+                       params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Execute an action by creating a new action run.
+
+        Args:
+            action_id: The identifier of the action to execute.
+            run_data: A dictionary containing data for the action run.
+            params: Additional query parameters for the request.
+
+        Returns:
+            A dictionary representing the created action run.
+
+        Raises:
+            PortResourceNotFoundError: If the action does not exist.
+            PortValidationError: If the run data is invalid.
+            PortApiError: If the API request fails for another reason.
+        """
+        endpoint = self._build_endpoint("actions", action_id, "runs")
+        response = self._make_request_with_params('POST', endpoint, json=run_data, params=params)
+        return response

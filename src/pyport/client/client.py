@@ -32,6 +32,7 @@ from ..search.search_api_svc import Search
 from ..sidebars.sidebars_api_svc import Sidebars
 from ..teams.teams_api_svc import Teams
 from ..users.users_api_svc import Users
+from ..webhooks.webhooks_api_svc import Webhooks
 
 
 class PortClient:
@@ -111,6 +112,10 @@ class PortClient:
         scorecards (Scorecards): Access to scorecard-related operations.
             Use this to create, read, update, and delete scorecards.
             Example: client.scorecards.get_scorecard("blueprint-id", "scorecard-id")
+
+        webhooks (Webhooks): Access to webhook-related operations.
+            Use this to create, read, update, and delete webhooks.
+            Example: client.webhooks.get_webhook("webhook-id")
 
     Examples:
         >>> # Create a client
@@ -321,9 +326,9 @@ class PortClient:
         self._checklist: Checklist = Checklist(self)
         self._apps: Apps = Apps(self)
         self._scorecards: Scorecards = Scorecards(self)
+        self._webhooks: Webhooks = Webhooks(self)
 
         # Future services (commented out for now)
-        # self._webhooks: Webhooks = Webhooks(self)
         # self._data_sources: DataSources = DataSources(self)
 
     # Property decorators for API services with explicit return types
@@ -411,6 +416,11 @@ class PortClient:
     def scorecards(self) -> Scorecards:
         """Access scorecard-related operations."""
         return self._scorecards
+
+    @property
+    def webhooks(self) -> Webhooks:
+        """Access webhook-related operations."""
+        return self._webhooks
 
     def make_request(self, method: str, endpoint: str, retries: Optional[int] = None, retry_delay: Optional[float] = None,
                      correlation_id: Optional[str] = None, **kwargs) -> requests.Response:

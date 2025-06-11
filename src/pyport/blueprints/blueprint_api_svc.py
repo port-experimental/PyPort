@@ -322,4 +322,40 @@ class Blueprints(BaseAPIService):
         # Use the _build_endpoint method to create the endpoint path
         endpoint = self._build_endpoint("blueprints", "system", blueprint_identifier, "structure")
         response = self._client.make_request('GET', endpoint)
+        return response.json()
+
+    def get_blueprint_entities_count(self, blueprint_identifier: str) -> Dict[str, Any]:
+        """
+        Get the entity count for a specific blueprint.
+
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+
+        Returns:
+            A dictionary containing the entity count information.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
+        """
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities-count")
+        response = self._client.make_request('GET', endpoint)
+        return response.json()
+
+    def delete_all_blueprint_entities(self, blueprint_identifier: str) -> Dict[str, Any]:
+        """
+        Delete all entities of a specific blueprint.
+
+        Args:
+            blueprint_identifier: The identifier of the blueprint.
+
+        Returns:
+            A dictionary containing the deletion result.
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
+        """
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "all-entities")
+        response = self._client.make_request('DELETE', endpoint)
         return response.json().get("structure", {})
