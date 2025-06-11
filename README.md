@@ -9,10 +9,10 @@
 
 _Repo metadata_
 
-![Coverage](https://img.shields.io/badge/coverage-72.00%25-yellowgreen)
+![Coverage](https://img.shields.io/badge/coverage-Error-red)
 ![Maintainability](https://img.shields.io/badge/maintainability-100.0_A-brightgreen)
 ![Security](https://img.shields.io/badge/security-A-brightgreen)
-![Dependencies](https://img.shields.io/badge/dependencies-Passed-brightgreen)
+![Dependencies](https://img.shields.io/badge/dependencies-Issues%201-red)
 ![Doc Coverage](https://img.shields.io/badge/doc%20coverage-0.0%25-red)
 
 ![GitHub issues](https://img.shields.io/github/issues/port-experimental/pyport)
