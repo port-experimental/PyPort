@@ -1,3 +1,8 @@
+"""Audit API service for Port audit logs.
+
+This module provides methods for retrieving and managing audit logs
+and audit-related operations in Port."""
+
 from typing import Dict, List, Optional, Any
 
 from ..services.base_api_service import BaseAPIService

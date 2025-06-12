@@ -379,10 +379,10 @@ class TestIntegrationWithMockServer(unittest.TestCase):
             self.assertEqual(len(actions), 2)
             self.assertEqual(actions[0]["identifier"], "deploy")
 
-            # Step 7: Run an action on the entity
-            run = self.client.action_runs.create_action_run(
-                "deploy",
-                {"blueprint": "service", "entity": "api-service"}
+            # Step 7: Update an action run
+            run = self.client.action_runs.update_action_run(
+                "run-123",
+                {"status": "success"}
             )
             self.assertEqual(run["id"], "run-123")
             self.assertEqual(run["status"], "success")

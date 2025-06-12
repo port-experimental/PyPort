@@ -1,3 +1,8 @@
+"""Teams API service for managing Port teams.
+
+This module provides methods for retrieving team information and managing
+team-related operations in Port."""
+
 from typing import Dict, Any, Optional
 
 from ..services.base_api_service import BaseAPIService

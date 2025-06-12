@@ -10,14 +10,12 @@ class TestApps(unittest.TestCase):
         self.apps = Apps(self.mock_client)
 
     def test_get_apps(self):
-        fake_apps = [{"id": "app1"}, {"id": "app2"}]
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"apps": fake_apps}
-        self.mock_client.make_request.return_value = mock_response
+        expected_result = {"apps": [{"id": "app1"}, {"id": "app2"}]}
+        self.apps._make_request_with_params = MagicMock(return_value=expected_result)
 
         result = self.apps.get_apps()
-        self.mock_client.make_request.assert_called_once_with("GET", "apps")
-        self.assertEqual(result, fake_apps)
+        self.apps._make_request_with_params.assert_called_once_with('GET', 'apps', params={})
+        self.assertEqual(result, expected_result)
 
     def test_get_app(self):
         app_id = "app1"

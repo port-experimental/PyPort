@@ -20,22 +20,23 @@ from pyport.utils import (
 ```python
 def clear_blueprint(
     client: PortClient,
-    blueprint_identifier: str,
-    batch_size: int = 100
+    blueprint_identifier: str
 ) -> Dict[str, Any]
 ```
 
-Delete all entities of a specific blueprint.
+Delete all entities of a specific blueprint using Port's bulk delete API.
+
+This utility function wraps the existing `delete_all_blueprint_entities` API method
+to provide a convenient interface for clearing blueprints.
 
 #### Parameters
 
 - **client** (PortClient): The Port client instance.
 - **blueprint_identifier** (str): The identifier of the blueprint.
-- **batch_size** (int, optional): The number of entities to delete in each batch. Default is 100.
 
 #### Returns
 
-- **Dict[str, Any]**: A dictionary containing the results of the operation.
+- **Dict[str, Any]**: A dictionary containing the results from the Port API.
 
 #### Raises
 
@@ -55,7 +56,10 @@ client = PortClient(
 
 # Delete all entities in the "service" blueprint
 result = clear_blueprint(client, "service")
-print(f"Deleted {result['deleted_entities']} entities")
+print(f"Operation result: {result}")
+
+# Alternative: Use the API method directly
+result = client.blueprints.delete_all_blueprint_entities("service")
 ```
 
 ## Snapshot Utilities

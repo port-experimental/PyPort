@@ -1,3 +1,8 @@
+"""Migrations API service for Port data migrations.
+
+This module provides methods for managing and monitoring
+data migration operations in Port."""
+
 from typing import Dict, Optional, Any
 
 from ..services.base_api_service import BaseAPIService

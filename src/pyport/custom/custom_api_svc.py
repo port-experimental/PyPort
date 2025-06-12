@@ -1,3 +1,8 @@
+"""Custom API service for Port custom resources.
+
+This module provides methods for managing custom resources and
+custom API operations in Port."""
+
 from typing import Dict, Any, Optional
 from ..models.api_category import BaseResource
 

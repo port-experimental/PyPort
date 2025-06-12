@@ -228,13 +228,11 @@ else:
     print("Failed to delete entity")
 ```
 
-### bulk_create_entities
+### create_entities_bulk
 
 ```python
-def bulk_create_entities(
-    blueprint_identifier: str,
-    entities_data: List[Dict[str, Any]],
-    params: Optional[Dict[str, Any]] = None
+def create_entities_bulk(
+    entities_data: List[Dict[str, Any]]
 ) -> Dict[str, Any]
 ```
 
@@ -242,9 +240,7 @@ Create multiple entities in a single request.
 
 #### Parameters
 
-- **blueprint_identifier** (str): The identifier of the blueprint.
 - **entities_data** (list): A list of dictionaries containing entity data.
-- **params** (dict, optional): Additional query parameters for the request. Default is None.
 
 #### Returns
 
@@ -260,8 +256,7 @@ Create multiple entities in a single request.
 
 ```python
 # Create multiple entities
-result = client.entities.bulk_create_entities(
-    "service",
+result = client.entities.create_entities_bulk(
     [
         {
             "identifier": "payment-service",

@@ -10,25 +10,21 @@ class TestIntegrations(unittest.TestCase):
 
     def test_get_integrations(self):
         # Setup a fake response for get_integrations.
-        fake_integrations = [{"id": "int1"}, {"id": "int2"}]
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"integrations": fake_integrations}
-        self.mock_client.make_request.return_value = mock_response
+        expected_result = {"integrations": [{"id": "int1"}, {"id": "int2"}]}
+        self.integrations._make_request_with_params = MagicMock(return_value=expected_result)
 
         result = self.integrations.get_integrations()
-        self.mock_client.make_request.assert_called_once_with("GET", "integrations")
-        self.assertEqual(result, fake_integrations)
+        self.integrations._make_request_with_params.assert_called_once_with('GET', 'integration', params={})
+        self.assertEqual(result, expected_result)
 
     def test_get_integration(self):
         integration_id = "int1"
-        fake_integration = {"id": integration_id, "name": "Test Integration"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"integration": fake_integration}
-        self.mock_client.make_request.return_value = mock_response
+        expected_result = {"integration": {"id": integration_id, "name": "Test Integration"}}
+        self.integrations._make_request_with_params = MagicMock(return_value=expected_result)
 
         result = self.integrations.get_integration(integration_id)
-        self.mock_client.make_request.assert_called_once_with("GET", f"integrations/{integration_id}")
-        self.assertEqual(result, fake_integration)
+        self.integrations._make_request_with_params.assert_called_once_with('GET', f'integration/{integration_id}', params=None)
+        self.assertEqual(result, expected_result)
 
     def test_create_integration(self):
         integration_data = {"name": "New Integration"}

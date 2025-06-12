@@ -1,3 +1,5 @@
+"""REST API utility functions."""
+
 from typing import Dict, Optional, Union, Any
 import logging
 import requests

@@ -1,3 +1,5 @@
+"""Logging utilities and configuration for PyPort."""
+
 import logging
 
 LOG_LEVEL_MAP = {
@@ -10,6 +12,11 @@ LOG_LEVEL_MAP = {
 
 
 def init_logging(log_level: str) -> None:
+    """Initialize logging configuration.
+
+    Args:
+        log_level: The logging level to set.
+    """
     level = LOG_LEVEL_MAP[log_level]
     logging.basicConfig(level=level,
                         format='%(asctime)s - %(levelname)s - %(message)s',

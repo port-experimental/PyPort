@@ -115,7 +115,20 @@ def handle_request_exception(
 
 
 def _extract_error_detail(response: requests.Response) -> tuple[str, Optional[Dict[str, Any]]]:
-    """Extract error details from a response."""
+    """Extract error details from an HTTP response.
+
+    This function attempts to parse the response body as JSON and extract
+    error information. If the response is not valid JSON, it falls back
+    to using the raw text content.
+
+    Args:
+        response: The HTTP response object to extract error details from.
+
+    Returns:
+        A tuple containing:
+        - error_detail (str): The error message or response text
+        - response_body (dict or None): The parsed JSON response body if available
+    """
     try:
         response_body = response.json()
         if isinstance(response_body, dict):
@@ -130,7 +143,20 @@ def _extract_error_detail(response: requests.Response) -> tuple[str, Optional[Di
 
 
 def _get_exception_class_and_message(status_code: int, error_detail: str) -> tuple[Type[PortApiError], str]:
-    """Get the appropriate exception class and message based on status code."""
+    """Get the appropriate exception class and message based on HTTP status code.
+
+    This function maps HTTP status codes to their corresponding Port exception
+    classes and creates appropriate error messages.
+
+    Args:
+        status_code: The HTTP status code from the response.
+        error_detail: The error detail message extracted from the response.
+
+    Returns:
+        A tuple containing:
+        - exception_class: The appropriate Port exception class
+        - message: The formatted error message
+    """
     exception_map = {
         400: (PortValidationError, f"Bad request: {error_detail}"),
         401: (PortAuthenticationError, f"Authentication failed: {error_detail}"),

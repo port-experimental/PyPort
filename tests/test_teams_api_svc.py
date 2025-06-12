@@ -20,47 +20,20 @@ class TestTeams(unittest.TestCase):
 
     def test_get_team(self):
         team_id = "team1"
-        fake_team = {"id": team_id, "name": "Test Team"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"team": fake_team}
-        self.mock_client.make_request.return_value = mock_response
+        expected_result = {"team": {"id": team_id, "name": "Test Team"}}
+        self.teams._make_request_with_params = MagicMock(return_value=expected_result)
 
         result = self.teams.get_team(team_id)
-        self.mock_client.make_request.assert_called_once_with("GET", f"teams/{team_id}")
-        self.assertEqual(result, fake_team)
+        self.teams._make_request_with_params.assert_called_once_with('GET', f'teams/{team_id}', params=None)
+        self.assertEqual(result, expected_result)
 
-    def test_create_team(self):
-        team_data = {"name": "New Team"}
-        fake_team = {"id": "team_new", "name": "New Team"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"team": fake_team}
-        self.mock_client.make_request.return_value = mock_response
+    def test_get_teams(self):
+        expected_result = {"teams": [{"id": "team1"}, {"id": "team2"}]}
+        self.teams._make_request_with_params = MagicMock(return_value=expected_result)
 
-        result = self.teams.create_team(team_data)
-        self.mock_client.make_request.assert_called_once_with("POST", "teams", json=team_data)
-        self.assertEqual(result, fake_team)
-
-    def test_update_team(self):
-        team_id = "team1"
-        team_data = {"name": "Updated Team"}
-        fake_team = {"id": team_id, "name": "Updated Team"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"team": fake_team}
-        self.mock_client.make_request.return_value = mock_response
-
-        result = self.teams.update_team(team_id, team_data)
-        self.mock_client.make_request.assert_called_once_with("PUT", f"teams/{team_id}", json=team_data)
-        self.assertEqual(result, fake_team)
-
-    def test_delete_team(self):
-        team_id = "team1"
-        mock_response = MagicMock()
-        mock_response.status_code = 204
-        self.mock_client.make_request.return_value = mock_response
-
-        result = self.teams.delete_team(team_id)
-        self.mock_client.make_request.assert_called_once_with("DELETE", f"teams/{team_id}")
-        self.assertTrue(result)
+        result = self.teams.get_teams()
+        self.teams._make_request_with_params.assert_called_once_with('GET', 'teams', params={})
+        self.assertEqual(result, expected_result)
 
 if __name__ == "__main__":
     unittest.main()

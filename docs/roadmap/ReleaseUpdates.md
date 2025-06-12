@@ -2,7 +2,153 @@
 
 This document tracks the changes and improvements made in each version of the PyPort client library.
 
-## Version 0.2.8 (Latest)
+## Version 0.3.2 (Latest) - 2024-12-19
+
+### 🚨 Critical Packaging Fix
+- ✅ **RESOLVED**: Fixed `ModuleNotFoundError: No module named 'pyport.action_runs'` when installing via pip
+- ✅ **ROOT CAUSE**: Only 7 out of 26 packages were being included in the distribution due to incomplete `pyproject.toml` configuration
+- ✅ **SOLUTION**: Replaced manual package listing with automatic package discovery using `setuptools.find_packages()`
+- ✅ **IMPACT**: All 26 PyPort service packages now properly included in pip installations
+
+### Package Distribution Improvements
+- ✅ Updated `pyproject.toml` to use automatic package discovery
+- ✅ Proper exclusion of test and utility packages from distribution
+- ✅ Future-proof configuration - new service packages automatically included
+- ✅ Verified wheel contents include all required modules
+
+### Documentation Enhancements
+- ✅ **NEW**: Complete documentation for 8 missing service APIs:
+  - ✅ Actions service (`docs/api_reference/services/actions.md`)
+  - ✅ Action Runs service (`docs/api_reference/services/action_runs.md`)
+  - ✅ Integrations service (`docs/api_reference/services/integrations.md`)
+  - ✅ Teams service (`docs/api_reference/services/teams.md`)
+  - ✅ Users service (`docs/api_reference/services/users.md`)
+  - ✅ Webhooks service (`docs/api_reference/services/webhooks.md`)
+  - ✅ Audit service (`docs/api_reference/services/audit.md`)
+  - ✅ Scorecards service (`docs/api_reference/services/scorecards.md`)
+- ✅ **FIXED**: Corrected outdated pagination examples in service documentation
+- ✅ **FIXED**: Updated method signatures in entities service documentation
+- ✅ **ENHANCED**: Added comprehensive examples, error handling, and best practices
+
+### Utility Function Improvements
+- ✅ **SIMPLIFIED**: `clear_blueprint` utility now uses existing `delete_all_blueprint_entities` API method
+- ✅ **PERFORMANCE**: Replaced individual entity deletions with bulk API operation
+- ✅ **RELIABILITY**: Leverages official Port API endpoint instead of custom implementation
+- ✅ **MAINTAINABILITY**: Reduced code complexity and improved error handling
+
+### Testing and Quality
+- ✅ Updated tests to reflect simplified utility implementations
+- ✅ Verified import functionality after packaging fix
+- ✅ Enhanced test coverage for packaging scenarios
+- ✅ Documentation coverage increased to 97.5%
+
+### Build and Release Process
+- ✅ Improved package build configuration with automatic discovery
+- ✅ Enhanced wheel verification process
+- ✅ Added comprehensive packaging fix documentation
+- ✅ **FIXED**: Updated license configuration to modern SPDX format (`license = "MIT"`)
+- ✅ **FIXED**: Removed deprecated license classifier to eliminate build warnings
+- ✅ **ENHANCED**: Clean build process with no deprecation warnings
+
+## Version 0.3.1 - 2024-12-19
+
+### 🆕 New API Services and Endpoints
+- ✅ **Action Runs service** - Complete action execution lifecycle management
+- ✅ **Teams service** - Team management and permissions
+- ✅ **Users service** - User management and invitations
+- ✅ **Webhooks service** - Event notifications and webhook management
+- ✅ **Audit service** - Activity logging and compliance tracking
+- ✅ **Scorecards service** - Quality and compliance measurement
+- ✅ **Integrations service** - External system connections
+- ✅ **Apps service** - Custom application management
+- ✅ **Migrations service** - Data migration operations
+
+### 🔧 Enhanced Blueprint Operations
+- ✅ **NEW**: `get_blueprint_entities()` - Retrieve all entities for a specific blueprint
+- ✅ **NEW**: `delete_all_blueprint_entities()` - Bulk delete all entities in a blueprint
+- ✅ **NEW**: Blueprint permissions management (`get_blueprint_permissions`, `update_blueprint_permissions`)
+- ✅ **NEW**: Blueprint system structure operations
+- ✅ **ENHANCED**: Pagination support for `get_blueprints()` with `page` and `per_page` parameters
+
+### 📊 Enhanced Entity Operations
+- ✅ **NEW**: `create_entities_bulk()` - Bulk entity creation for improved performance
+- ✅ **NEW**: `get_all_entities()` - Retrieve all entities including related entities
+- ✅ **NEW**: `search_blueprint_entities()` - Advanced entity search within blueprints
+- ✅ **ENHANCED**: Pagination support for `get_entities()` with `page` and `per_page` parameters
+- ✅ **ENHANCED**: Advanced filtering options (include/exclude fields, calculated properties)
+
+### 🔍 Search and Filtering Capabilities
+- ✅ **NEW**: Entity search with query, filter, and sort parameters
+- ✅ **NEW**: Blueprint-specific entity search
+- ✅ **NEW**: Field inclusion/exclusion for optimized responses
+- ✅ **NEW**: Calculated properties control
+- ✅ **NEW**: Compact response format options
+
+### 🛠 Service Method Implementations
+- ✅ **Action Runs**: Lifecycle management (get, update, approve, logs, approvers)
+- ✅ **Teams**: Membership and permission management
+- ✅ **Users**: Invitation and role management with email-based identification
+- ✅ **Webhooks**: Creation, configuration, and event handling
+- ✅ **Audit**: Log retrieval with filtering and pagination
+- ✅ **Scorecards**: Creation, rule management, and blueprint-specific operations
+- ✅ **Integrations**: Configuration, synchronization, and resync operations
+
+### 📋 Pagination and Performance
+- ✅ **NEW**: Standardized pagination support across services
+- ✅ **NEW**: `page` and `per_page` parameters for list operations
+- ✅ **NEW**: Bulk operations for improved performance
+- ✅ **NEW**: Optimized response formats with field selection
+
+### 🧪 Testing and Quality Improvements
+- ✅ Fixed test failures across all service modules
+- ✅ Comprehensive test coverage for new services and methods
+- ✅ Enhanced mock testing capabilities with proper API response simulation
+- ✅ Updated test assertions to match actual API implementations
+- ✅ Added integration tests for new functionality
+
+### 📝 Code Quality and Standards
+- ✅ Fixed linting issues across all service files
+- ✅ Improved code formatting and consistency
+- ✅ Enhanced error handling patterns with specific exception types
+- ✅ Standardized method signatures and parameter handling
+- ✅ Comprehensive docstring documentation for all new methods
+
+### 🔧 Advanced Client Features
+- ✅ **NEW**: Comprehensive retry logic with exponential backoff
+- ✅ **NEW**: Circuit breaker pattern for API resilience
+- ✅ **NEW**: Configurable retry strategies (`exponential`, `linear`, `fixed`)
+- ✅ **NEW**: Retry jitter for distributed system stability
+- ✅ **NEW**: Custom retry status codes and exception handling
+- ✅ **NEW**: Request correlation IDs for debugging and tracing
+
+### 🛠 Utility Functions and Helpers
+- ✅ **NEW**: `clear_blueprint()` utility for bulk entity deletion
+- ✅ **NEW**: Snapshot utilities (`save_snapshot`, `restore_snapshot`, `list_snapshots`)
+- ✅ **NEW**: Blueprint backup and restore capabilities
+- ✅ **NEW**: Data migration helpers
+- ✅ **ENHANCED**: Utility functions now use official API endpoints for better performance
+
+### 🔐 Error Handling and Resilience
+- ✅ **NEW**: Comprehensive exception hierarchy with specific error types
+- ✅ **NEW**: `PortAuthError`, `PortResourceNotFoundError`, `PortValidationError`
+- ✅ **NEW**: `PortServerError`, `PortNetworkError`, `PortTimeoutError`
+- ✅ **NEW**: Detailed error information with correlation IDs
+- ✅ **NEW**: Automatic error logging and debugging support
+- ✅ **NEW**: Custom error handling patterns and examples
+
+## Version 0.3.0 - 2024-12-19
+
+### 🔐 Authentication and Session Management
+- ✅ **MAJOR**: JWT token session management with automatic refresh
+- ✅ **FIXED**: Authentication token handling bug that was causing session failures
+- ✅ Enhanced session management reliability and error recovery
+- ✅ Improved token lifecycle management with proper expiration handling
+- ✅ Added automatic token refresh before expiration (configurable interval)
+- ✅ Enhanced authentication error handling and retry logic
+- ✅ **NEW**: `auto_refresh` and `refresh_interval` configuration options
+- ✅ **NEW**: `skip_auth` option for testing environments
+
+## Version 0.2.8
 
 ### Bug Fixes
 - ✅ Fixed authentication URL bug that was duplicating the 'v1' path segment

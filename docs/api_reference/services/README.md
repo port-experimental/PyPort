@@ -45,11 +45,11 @@ For example, the Blueprints service provides:
 Many methods that return lists of resources support pagination:
 
 ```python
-# Get the first page of blueprints (default page size)
-blueprints_page1 = client.blueprints.get_blueprints(page=1)
+# Get all blueprints (most Port API endpoints return all results)
+blueprints = client.blueprints.get_blueprints()
 
-# Get the second page with a custom page size
-blueprints_page2 = client.blueprints.get_blueprints(page=2, per_page=50)
+# Note: Most Port API endpoints do not support traditional pagination
+# Only search endpoints support cursor-based pagination with limit/from parameters
 ```
 
 ## Additional Parameters

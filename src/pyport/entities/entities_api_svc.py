@@ -426,24 +426,27 @@ class Entities(BaseAPIService):
         # Extract and return the entities
         return response.get("entities", [])
 
-    def search_blueprint_entities(self, blueprint_identifier: str, search_data: Dict[str, Any]) -> List[Entity]:
+    def search_blueprint_entities(self, blueprint_identifier: str, search_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Search for entities within a specific blueprint.
 
         This method searches for entities that match the specified criteria
-        within the specified blueprint.
+        within the specified blueprint. The returned entities are paginated for improved performance.
 
         Args:
             blueprint_identifier: The unique identifier of the blueprint.
             search_data: A dictionary containing search criteria, which may include:
-                - query: A string to search for in entity titles and properties
-                - filter: A dictionary of filters to apply to the search
-                - sort: A dictionary specifying the sort order
-                - page: The page number to retrieve
-                - per_page: The number of entities per page
+                - query: A dictionary with search query parameters
+                - include: An array of properties/relations to include (using identifiers)
+                - exclude: An array of properties/relations to exclude (using identifiers)
+                - limit: Maximum number of entities to return (1-1000, default: 200)
+                - from: String hash for pagination (from previous response)
 
         Returns:
-            A list of matching entity dictionaries.
+            A dictionary containing:
+            - ok: Boolean indicating success
+            - entities: List of matching entity dictionaries
+            - next: String hash for next page (if more results available)
 
         Raises:
             PortResourceNotFoundError: If the blueprint does not exist.
@@ -451,20 +454,30 @@ class Entities(BaseAPIService):
             PortApiError: If another API error occurs.
 
         Examples:
-            >>> # Search for service entities containing "api" in their title
-            >>> results = client.entities.search_blueprint_entities(
-            ...     "service", {"query": "api"}
+            >>> # Basic search
+            >>> result = client.entities.search_blueprint_entities(
+            ...     "service", {"query": {"title": {"$contains": "api"}}}
             ... )
+            >>> entities = result["entities"]
             >>>
-            >>> # Search with filters
-            >>> results = client.entities.search_blueprint_entities(
+            >>> # Search with pagination
+            >>> result = client.entities.search_blueprint_entities(
             ...     "service",
             ...     {
-            ...         "filter": {
-            ...             "properties.language": "Python"
-            ...         }
+            ...         "query": {"properties.language": "Python"},
+            ...         "limit": 50
             ...     }
             ... )
+            >>> # Get next page
+            >>> if "next" in result:
+            ...     next_result = client.entities.search_blueprint_entities(
+            ...         "service",
+            ...         {
+            ...             "query": {"properties.language": "Python"},
+            ...             "limit": 50,
+            ...             "from": result["next"]
+            ...         }
+            ...     )
         """
         # Create the endpoint path
         endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities", "search")
@@ -472,8 +485,8 @@ class Entities(BaseAPIService):
         # Make the request
         response = self._make_request_with_params('POST', endpoint, json=search_data)
 
-        # Extract and return the entities
-        return response.json().get("entities", [])
+        # Return the full response (includes pagination info)
+        return response.json()
 
     def aggregate_entities(self, aggregation_data: Dict[str, Any]) -> Dict[str, Any]:
         """

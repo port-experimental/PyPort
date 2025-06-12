@@ -1,3 +1,8 @@
+"""Search API service for Port search functionality.
+
+This module provides methods for searching entities and other resources
+within Port using various search criteria."""
+
 from typing import Dict, List, Optional, Any
 
 from ..services.base_api_service import BaseAPIService

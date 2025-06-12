@@ -9,37 +9,33 @@ class TestScorecards(unittest.TestCase):
         self.scorecards = Scorecards(self.mock_client)
 
     def test_create_scorecard(self):
+        blueprint_id = "service"
         scorecard_data = {"name": "New Scorecard"}
-        fake_response_data = {"id": "score_new", "name": "New Scorecard"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
-        self.mock_client.make_request.return_value = mock_response
+        expected_result = {"id": "score_new", "name": "New Scorecard"}
+        self.scorecards._make_request_with_params = MagicMock(return_value=expected_result)
 
-        result = self.scorecards.create_scorecard(scorecard_data)
-        self.mock_client.make_request.assert_called_once_with("POST", "scorecards", json=scorecard_data)
-        self.assertEqual(result, fake_response_data)
+        result = self.scorecards.create_scorecard(blueprint_id, scorecard_data)
+        self.scorecards._make_request_with_params.assert_called_once_with('POST', f'blueprints/{blueprint_id}/scorecards', json=scorecard_data, params=None)
+        self.assertEqual(result, expected_result)
 
     def test_update_scorecard(self):
+        blueprint_id = "service"
         scorecard_id = "score1"
         scorecard_data = {"name": "Updated Scorecard"}
-        fake_response_data = {"id": scorecard_id, "name": "Updated Scorecard"}
-        mock_response = MagicMock()
-        mock_response.json.return_value = fake_response_data
-        self.mock_client.make_request.return_value = mock_response
+        expected_result = {"id": scorecard_id, "name": "Updated Scorecard"}
+        self.scorecards._make_request_with_params = MagicMock(return_value=expected_result)
 
-        result = self.scorecards.update_scorecard(scorecard_id, scorecard_data)
-        self.mock_client.make_request.assert_called_once_with("PUT", f"scorecards/{scorecard_id}", json=scorecard_data)
-        self.assertEqual(result, fake_response_data)
+        result = self.scorecards.update_scorecard(blueprint_id, scorecard_id, scorecard_data)
+        self.scorecards._make_request_with_params.assert_called_once_with('PUT', f'blueprints/{blueprint_id}/scorecards/{scorecard_id}', json=scorecard_data, params=None)
+        self.assertEqual(result, expected_result)
 
-    def test_delete_scorecard(self):
-        scorecard_id = "score1"
-        mock_response = MagicMock()
-        mock_response.status_code = 204
-        self.mock_client.make_request.return_value = mock_response
+    def test_get_scorecards(self):
+        expected_result = {"scorecards": [{"id": "score1"}, {"id": "score2"}]}
+        self.scorecards._make_request_with_params = MagicMock(return_value=expected_result)
 
-        result = self.scorecards.delete_scorecard(scorecard_id)
-        self.mock_client.make_request.assert_called_once_with("DELETE", f"scorecards/{scorecard_id}")
-        self.assertTrue(result)
+        result = self.scorecards.get_scorecards()
+        self.scorecards._make_request_with_params.assert_called_once_with('GET', 'scorecards', params={})
+        self.assertEqual(result, expected_result)
 
 if __name__ == "__main__":
     unittest.main()

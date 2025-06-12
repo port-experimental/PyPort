@@ -18,76 +18,38 @@ class TestBlueprintUtils(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.client = MagicMock(spec=PortClient)
-        self.client.entities = MagicMock()
+        self.client.blueprints = MagicMock()
 
     def test_clear_blueprint(self):
-        """Test clearing a blueprint."""
-        # Mock the get_entities response
-        self.client.entities.get_entities.return_value = {
-            'data': [
-                {'identifier': 'entity1'},
-                {'identifier': 'entity2'},
-                {'identifier': 'entity3'}
-            ]
+        """Test clearing a blueprint using the API's delete all entities method."""
+        # Mock the delete_all_blueprint_entities response
+        expected_result = {
+            'deleted': True,
+            'message': 'All entities deleted successfully'
         }
-
-        # Mock the delete_entity method
-        self.client.entities.delete_entity = MagicMock()
+        self.client.blueprints.delete_all_blueprint_entities.return_value = expected_result
 
         # Call the function
         result = clear_blueprint(self.client, 'test-blueprint')
 
         # Check the result
-        self.assertEqual(result['blueprint_id'], 'test-blueprint')
-        self.assertEqual(result['total_entities'], 3)
-        self.assertEqual(result['deleted_entities'], 3)
-        self.assertEqual(result['failed_entities'], 0)
-        self.assertEqual(result['errors'], [])
+        self.assertEqual(result, expected_result)
 
-        # Check that delete_entity was called for each entity
-        self.assertEqual(self.client.entities.delete_entity.call_count, 3)
-        self.client.entities.delete_entity.assert_any_call(
-            blueprint='test-blueprint',
-            entity='entity1'
-        )
-        self.client.entities.delete_entity.assert_any_call(
-            blueprint='test-blueprint',
-            entity='entity2'
-        )
-        self.client.entities.delete_entity.assert_any_call(
-            blueprint='test-blueprint',
-            entity='entity3'
-        )
+        # Check that delete_all_blueprint_entities was called
+        self.client.blueprints.delete_all_blueprint_entities.assert_called_once_with('test-blueprint')
 
-    def test_clear_blueprint_with_errors(self):
-        """Test clearing a blueprint with errors."""
-        # Mock the get_entities response
-        self.client.entities.get_entities.return_value = {
-            'data': [
-                {'identifier': 'entity1'},
-                {'identifier': 'entity2'},
-                {'identifier': 'entity3'}
-            ]
-        }
+    def test_clear_blueprint_with_api_error(self):
+        """Test clearing a blueprint when the API call fails."""
+        # Mock the delete_all_blueprint_entities to raise an exception
+        from pyport.error_handling import PortApiError
+        self.client.blueprints.delete_all_blueprint_entities.side_effect = PortApiError("API Error")
 
-        # Mock the delete_entity method to raise an exception for entity2
-        def mock_delete_entity(blueprint, entity):
-            if entity == 'entity2':
-                raise Exception('Test error')
+        # Call the function and expect it to raise the exception
+        with self.assertRaises(PortApiError):
+            clear_blueprint(self.client, 'test-blueprint')
 
-        self.client.entities.delete_entity.side_effect = mock_delete_entity
-
-        # Call the function
-        result = clear_blueprint(self.client, 'test-blueprint')
-
-        # Check the result
-        self.assertEqual(result['blueprint_id'], 'test-blueprint')
-        self.assertEqual(result['total_entities'], 3)
-        self.assertEqual(result['deleted_entities'], 2)
-        self.assertEqual(result['failed_entities'], 1)
-        self.assertEqual(len(result['errors']), 1)
-        self.assertEqual(result['errors'][0]['entity_id'], 'entity2')
-        self.assertEqual(result['errors'][0]['error'], 'Test error')
+        # Check that delete_all_blueprint_entities was called
+        self.client.blueprints.delete_all_blueprint_entities.assert_called_once_with('test-blueprint')
 
 
 class TestBackupUtils(unittest.TestCase):

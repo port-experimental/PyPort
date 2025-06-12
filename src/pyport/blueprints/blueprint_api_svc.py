@@ -324,6 +324,78 @@ class Blueprints(BaseAPIService):
         response = self._client.make_request('GET', endpoint)
         return response.json()
 
+    def get_blueprint_entities(
+        self,
+        blueprint_identifier: str,
+        exclude_calculated_properties: Optional[bool] = None,
+        include: Optional[List[str]] = None,
+        exclude: Optional[List[str]] = None,
+        compact: Optional[bool] = None,
+        attach_title_to_relation: Optional[bool] = None,
+        attach_identifier_to_title_mirror_properties: Optional[bool] = None
+    ) -> Dict[str, Any]:
+        """
+        Get all entities of a blueprint.
+
+        This route allows you to fetch all entities in your software catalog based on a given blueprint.
+
+        Args:
+            blueprint_identifier: The identifier of the blueprint to operate on.
+            exclude_calculated_properties: If true, calculated properties will be excluded from the entities.
+            include: An array of values from the entity JSON. Only these values will be returned in the response.
+                For example: ["properties.propertyIdentifier", "identifier"]
+            exclude: An array of values from the entity JSON to be omitted from the response.
+                For example: ["properties.propertyIdentifier", "identifier"]
+            compact: Compact response format.
+            attach_title_to_relation: Attach title to relation.
+            attach_identifier_to_title_mirror_properties: Attach identifier to title mirror properties.
+
+        Returns:
+            A dictionary containing:
+            - ok: Boolean indicating success
+            - entities: List of entity dictionaries
+
+        Raises:
+            PortResourceNotFoundError: If the blueprint does not exist.
+            PortApiError: If another API error occurs.
+
+        Examples:
+            >>> # Get all entities for a blueprint
+            >>> result = client.blueprints.get_blueprint_entities("service")
+            >>> entities = result["entities"]
+
+            >>> # Get entities with specific fields only
+            >>> result = client.blueprints.get_blueprint_entities(
+            ...     "service",
+            ...     include=["identifier", "title", "properties.language"]
+            ... )
+
+            >>> # Get entities excluding calculated properties
+            >>> result = client.blueprints.get_blueprint_entities(
+            ...     "service",
+            ...     exclude_calculated_properties=True
+            ... )
+        """
+        endpoint = self._build_endpoint("blueprints", blueprint_identifier, "entities")
+
+        # Build query parameters
+        params = {}
+        if exclude_calculated_properties is not None:
+            params["exclude_calculated_properties"] = exclude_calculated_properties
+        if include is not None:
+            params["include"] = include
+        if exclude is not None:
+            params["exclude"] = exclude
+        if compact is not None:
+            params["compact"] = compact
+        if attach_title_to_relation is not None:
+            params["attach_title_to_relation"] = attach_title_to_relation
+        if attach_identifier_to_title_mirror_properties is not None:
+            params["attach_identifier_to_title_mirror_properties"] = attach_identifier_to_title_mirror_properties
+
+        response = self._client.make_request('GET', endpoint, params=params)
+        return response.json()
+
     def get_blueprint_entities_count(self, blueprint_identifier: str) -> Dict[str, Any]:
         """
         Get the entity count for a specific blueprint.

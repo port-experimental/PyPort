@@ -1,3 +1,8 @@
+"""Roles API service for managing Port user roles.
+
+This module provides methods for creating, retrieving, updating, and deleting
+user roles and permissions in Port."""
+
 from typing import Dict, List, Any, Optional, cast
 
 from .types import Role

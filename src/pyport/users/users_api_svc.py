@@ -1,3 +1,8 @@
+"""Users API service for managing Port users.
+
+This module provides methods for retrieving user information,
+inviting users, and managing user-related operations in Port."""
+
 from typing import Dict, Any, Optional
 
 from ..services.base_api_service import BaseAPIService

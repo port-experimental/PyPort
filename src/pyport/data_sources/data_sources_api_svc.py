@@ -1,3 +1,8 @@
+"""Data Sources API service for managing Port data sources.
+
+This module provides methods for creating, retrieving, updating, and deleting
+data sources in Port."""
+
 from typing import Dict, List, Optional, Any
 
 from ..services.base_api_service import BaseAPIService

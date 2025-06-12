@@ -1,3 +1,8 @@
+"""Apps API service for managing Port applications.
+
+This module provides methods for creating, retrieving, updating, and deleting
+applications in Port."""
+
 from typing import Dict, Optional, Any
 
 from ..services.base_api_service import BaseAPIService

@@ -10,38 +10,25 @@ from ..client.client import PortClient
 
 def clear_blueprint(client: PortClient, blueprint_id: str) -> Dict[str, Any]:
     """
-    Delete all entities in a blueprint.
+    Delete all entities in a blueprint using the Port API's bulk delete endpoint.
+
+    This function wraps the existing delete_all_blueprint_entities API method
+    to provide a convenient utility interface.
+
     Args:
         client: PortClient instance
         blueprint_id: ID of the blueprint to clear
+
     Returns:
-        dict: Summary of the operation with count of deleted entities
+        dict: Summary of the operation from the Port API
+
+    Raises:
+        PortResourceNotFoundError: If the blueprint does not exist
+        PortApiError: If the API request fails
+
+    Example:
+        >>> result = clear_blueprint(client, "service")
+        >>> print(f"Cleared blueprint: {result}")
     """
-    # Get all entities for the blueprint
-    entities = client.entities.get_entities(blueprint=blueprint_id)
-
-    # Track deletion results
-    results = {
-        'blueprint_id': blueprint_id,
-        'total_entities': len(entities['data']),
-        'deleted_entities': 0,
-        'failed_entities': 0,
-        'errors': []
-    }
-
-    # Delete each entity
-    for entity in entities['data']:
-        try:
-            client.entities.delete_entity(
-                blueprint=blueprint_id,
-                entity=entity['identifier']
-            )
-            results['deleted_entities'] += 1
-        except Exception as e:
-            results['failed_entities'] += 1
-            results['errors'].append({
-                'entity_id': entity['identifier'],
-                'error': str(e)
-            })
-
-    return results
+    # Use the existing API method to delete all entities
+    return client.blueprints.delete_all_blueprint_entities(blueprint_id)
