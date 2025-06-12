@@ -737,7 +737,8 @@ def with_retry(
 
                     # Log the retry with more detailed information
                     logger.warning(
-                        f"Attempt {attempt + 1}/{config.max_retries} failed with {e.__class__.__name__}: {str(e)[:100]}. "
+                        f"Attempt {attempt + 1}/{config.max_retries} failed with "
+                        f"{e.__class__.__name__}: {str(e)[:100]}. "
                         f"Retrying in {delay:.2f} seconds."
                     )
 

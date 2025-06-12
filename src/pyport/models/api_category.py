@@ -143,7 +143,13 @@ class BaseResource(ABC):
             )
         return response.json()
 
-    def update(self, resource_id: str, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
+    def update(
+        self,
+        resource_id: str,
+        data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None,
+        **kwargs
+    ) -> Dict[str, Any]:
         """
         Update a resource.
 
@@ -174,7 +180,13 @@ class BaseResource(ABC):
             )
         return response.json()
 
-    def patch(self, resource_id: str, data: Dict[str, Any], params: Optional[Dict[str, Any]] = None, **kwargs) -> Dict[str, Any]:
+    def patch(
+        self,
+        resource_id: str,
+        data: Dict[str, Any],
+        params: Optional[Dict[str, Any]] = None,
+        **kwargs
+    ) -> Dict[str, Any]:
         """
         Partially update a resource.
 
@@ -226,7 +238,9 @@ class BaseResource(ABC):
         """
         # For backward compatibility, only include params if it's not None and not empty
         if params is not None and params:
-            response = self._client.make_request("DELETE", self._get_resource_path(resource_id), params=params, **kwargs)
+            response = self._client.make_request(
+                "DELETE", self._get_resource_path(resource_id), params=params, **kwargs
+            )
         else:
             response = self._client.make_request("DELETE", self._get_resource_path(resource_id), **kwargs)
         return response.status_code == 204

@@ -40,8 +40,15 @@ class RequestManager:
         self.retry_config = retry_config
         self._logger = logger
 
-    def make_request(self, method: str, endpoint: str, retries: Optional[int] = None, retry_delay: Optional[float] = None,
-                     correlation_id: Optional[str] = None, **kwargs) -> requests.Response:
+    def make_request(
+        self,
+        method: str,
+        endpoint: str,
+        retries: Optional[int] = None,
+        retry_delay: Optional[float] = None,
+        correlation_id: Optional[str] = None,
+        **kwargs
+    ) -> requests.Response:
         """
         Make an HTTP request to the API with error handling and retry logic.
 
