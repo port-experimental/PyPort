@@ -486,7 +486,7 @@ class Entities(BaseAPIService):
         response = self._make_request_with_params('POST', endpoint, json=search_data)
 
         # Return the full response (includes pagination info)
-        return response.json()
+        return response
 
     def aggregate_entities(self, aggregation_data: Dict[str, Any]) -> Dict[str, Any]:
         """
