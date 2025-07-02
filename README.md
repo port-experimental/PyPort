@@ -5,7 +5,7 @@
 [![port-experimental - pyport](https://img.shields.io/static/v1?label=port-experimental&message=pyport&color=blue&logo=github)](https://github.com/port-experimental/pyport)
 [![stars - pyport](https://img.shields.io/github/stars/port-experimental/pyport?style=social)](https://github.com/port-experimental/pyport)
 [![forks - pyport](https://img.shields.io/github/forks/port-experimental/pyport?style=social)](https://github.com/port-experimental/pyport)
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/port-experimental/PyPort)
 
 _Repo metadata_
 
